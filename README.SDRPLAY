@@ -1,0 +1,12 @@
+
+A recent change in the sdrplay installer leads to incompatible naming
+with previous versions
+
+If you have the most recent version (afaik 14 nov 2015)
+uncomment the line
+#define	SDRPLAY_LIBRARY_NEW
+in the configuration file 
+
+On e.g. the RPI there might be an older version of the library,
+in that case comment the line out
+

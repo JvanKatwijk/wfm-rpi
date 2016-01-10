@@ -1,0 +1,5 @@
+
+The software is built using host1.07 driver software for airspy.
+Note that this version supports some functions that are not
+available in previous versions of the library
+
