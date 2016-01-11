@@ -133,7 +133,7 @@ LIBS		+= -lsamplerate
 #	the devices:
 #	for a "special" rtlsdr library use
 dabstick-new {
-	TARGET		= sdr-j-fm-dabstick
+	TARGET		= wfm-rpi-dabstick
 	DEFINES		+= HAVE_DABSTICK
 	FORMS		+= ./input/dabstick-new/dabstick-widget.ui
 	INCLUDEPATH	+= ./input/dabstick-new
@@ -147,7 +147,7 @@ dabstick-new {
 #	the devices
 #	for the "standard" rtlsdr library use:
 dabstick-osmo {
-	TARGET		= sdr-j-fm-dabstick
+	TARGET		= wfm-rpi-dabstick
 	DEFINES		+= HAVE_DABSTICK
 	FORMS		+= ./input/dabstick-osmo/dabstick-widget.ui
 	INCLUDEPATH	+= ./input/dabstick-osmo
@@ -156,13 +156,13 @@ dabstick-osmo {
 	                   ./input/dabstick-osmo/dongleselect.h
 	SOURCES		+= ./input/dabstick-osmo/dabstick.cpp \
 	                   ./input/dabstick-osmo/dongleselect.cpp
-	LIBS		+= -lrtlsdr
+#	LIBS		+= -lrtlsdr
 }
 #
 #	the SDRplay
 #
 sdrplay {
-	TARGET		= sdr-j-fm-sdrplay
+	TARGET		= wfm-rpi-sdrplay
 	DEFINES		+= HAVE_SDRPLAY
 	FORMS		+= ./input/sdrplay/sdrplay-widget.ui
 	INCLUDEPATH	+= ./input/sdrplay
@@ -178,7 +178,7 @@ sdrplay {
 #	the AIRSPY
 #
 airspy {
-	TARGET		= sdr-j-fm-airspy
+	TARGET		= wfm-rpi-airspy
 	DEFINES		+= HAVE_AIRSPY
 	FORMS		+= ./input/airspy/airspy-widget.ui
 	DEPENDPATH	+= ./input/airspy

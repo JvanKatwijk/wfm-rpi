@@ -1,7 +1,6 @@
 #
 /*
- *
- *    Copyright (C) 2014
+ *    Copyright (C) 2015
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
  *    Lazy Chair Programming
  *
@@ -33,8 +32,8 @@
 #include	"fm-constants.h"
 #include	"gui.h"
 
-#define	DEFAULT_INI	".jsdr-fm-mini.ini"
-#define	STATION_LIST	".jsdr-fm-stations.bin"
+#define	DEFAULT_INI	".wfm-rpi.ini"
+#define	STATION_LIST	".wfm-rpi-stations.bin"
 
 int	main (int argc, char **argv) {
 int32_t		opt;

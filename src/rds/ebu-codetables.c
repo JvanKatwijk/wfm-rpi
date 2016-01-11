@@ -28,5 +28,3 @@ uint8_t rownibble	= character & 0x0F;
 	return EBU_E1 [rownibble][columnnibble - 2];
 }
 
-	
-

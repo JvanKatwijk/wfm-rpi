@@ -9,8 +9,6 @@ add_definitions (-Wall -flto -ffast-math)
 #       R E A D  T H I S
 #####################################################################
 #	adjust to your likings:
-#	if you want to use the SSE support on your machine, uncomment
-	set(NO_SSE_SUPPORT true)
 #
 #	if you want support for one of these devices, uncomment ONE of
 #	set(SDRPLAY true) 
@@ -22,17 +20,17 @@ add_definitions (-Wall -flto -ffast-math)
 #	set(DABSTICK-OSMO true)
 #	set(DABSTICK-NEW true)
 #	but do not uncomment more than one line
+	set(STREAMER true)
 
 	if (SDRPLAY)
-	   set (objectName sdr-j-fm-sdrplay)
+	   set (objectName wfm-rpi-sdrplay)
 	endif (SDRPLAY)
 	if (AIRSPY)
-	   set (objectName sdr-j-fm-airspy)
+	   set (objectName wfm-rpi-airspy)
 	endif (AIRSPY)
 	if (DABSTICK)
-	   set (objectName sdr-j-fm-dabstick)
+	   set (objectName wfm-rpi-dabstick)
 	endif (DABSTICK)
-	set(STREAMER true)
 ########################################################################
 	find_package (Qt5Widgets REQUIRED)
 	find_package (Qt5Declarative REQUIRED)

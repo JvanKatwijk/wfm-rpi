@@ -190,11 +190,11 @@ int32_t	startFreq;
 //
 //	Display the version
 #ifdef	HAVE_SDRPLAY
-	QString v = "sdrJ-FM-sdrplay";
+	QString v = "wfm-rpi-sdrplay";
 #elif	HAVE_AIRSPY
-	QString v = "sdrJ-FM-airspy";
+	QString v = "wfm-rpi-airspy";
 #else
-	QString v = "sdrJ-FM-dabstick";
+	QString v = "wfm-rpi-dabstick";
 #endif
 	
 //	v. append (CURRENT_VERSION);

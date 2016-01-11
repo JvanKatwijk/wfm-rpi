@@ -10,7 +10,8 @@
  *    and 
  *    FMSTACK software
  *    Technical University of Munich, Institute for Integrated Systems (LIS)
- *    FMSTACK Copyright (C) 2010 Michael Feilen
+ *    FMSTACK Copyright
+ *    (C) 2010 Michael Feilen
  * 
  *    This file is part of the SDR-J.
  *    Many of the ideas as implemented in SDR-J are derived from
@@ -139,7 +140,7 @@ void	rdsBlockSynchronizer::resetCRCErrorCounter 	(void) {
 
 uint32_t	rdsBlockSynchronizer::getSyndrome (uint32_t bits,
 	                                           uint32_t offsetWord) {
-uint32_t	syndrome	= bits >> 16;
+uint32_t	syndrome	= (bits >> 16) & 0x3FF;
 int16_t		i;
 
 	bits ^= offsetWord;
@@ -193,7 +194,7 @@ uint32_t	syndrome	= 0;
 }
 //
 //	error correction for the payload. The algorithm is described in
-//	the CuteSDR description of Moe Wheatley.
+//	the CuteSDR description of Moe Wheatley (doMeggit)
 //	If the msb of the syndrome is "1" and the 5 least significant bits
 //	of the syndrome are all zero, then the corresponding bit
 //	is corrected by inverting it.
