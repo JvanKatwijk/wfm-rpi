@@ -30,6 +30,7 @@
 
 #include	<QDialog>
 #include	<QInputDialog>
+#include	<QComboBox>
 #include	"ui_sdrgui.h"
 #include	<QTimer>
 #include	<QQueue>
@@ -95,6 +96,7 @@ private:
 	int32_t		fmBandwidth;
 	int32_t		fmFilterDegree;
 
+	QComboBox	*theCards;
 	void		restoreGUIsettings	(QSettings *);
 	void		setTuner		(int32_t);
 	void		Display			(int32_t);

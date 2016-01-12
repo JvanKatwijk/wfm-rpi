@@ -73,13 +73,6 @@ int32_t	virtualInput::getSamples	(DSPCOMPLEX *v, int32_t amount) {
 	return 0;
 }
 
-int32_t	virtualInput::getSamples	(DSPCOMPLEX *v, int32_t amount, uint8_t M) {
-	(void)M;
-	(void)v; 
-	(void)amount; 
-	return 0;
-}
-
 int32_t	virtualInput::Samples		(void) {
 	return 0;
 }

@@ -362,12 +362,6 @@ uint8_t	*tempBuffer = (uint8_t *)alloca (2 * size * sizeof (uint8_t));
 	return amount / 2;
 }
 
-int32_t	dabStick::getSamples 	(DSPCOMPLEX  *V,
-	                         int32_t size, uint8_t M) {
-	(void)M;
-	return getSamples (V, size);
-}
-
 int32_t	dabStick::Samples	(void) {
 	return _I_Buffer	-> GetRingBufferReadAvailable () / 2;
 }
@@ -528,7 +522,5 @@ int32_t	dabStick::getRate	(void) {
 void	dabStick::set_rateSelector (const QString &s) {
 int32_t v	= s. toInt ();
 	return;
-	setExternalRate (Khz (v));
-	set_changeRate (Khz (v));
 }
 

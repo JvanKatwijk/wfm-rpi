@@ -43,10 +43,6 @@
 #define	AIRSPY		0110
 #define	PMSDR		0111
 //
-//	in some cases we anly want to differentiate between sticks
-//	and non-sticks
-
-#define	someStick(x)	((x) & 03)
 
 /**
   *	\class virtualInput
@@ -59,25 +55,23 @@ Q_OBJECT
 public:
 			virtualInput 	(void);
 virtual			~virtualInput 	(void);
+virtual		uint8_t	myIdentity	(void);
 virtual		int32_t	getRate		(void);
 virtual		void	setVFOFrequency	(int32_t);
 virtual		int32_t	getVFOFrequency	(void);
-virtual		uint8_t	myIdentity	(void);
 virtual		bool	legalFrequency	(int32_t);
 virtual		int32_t	defaultFrequency (void);
+virtual		int16_t	bitDepth	(void);
+
 virtual		bool	restartReader	(void);
 virtual		void	stopReader	(void);
 virtual		int32_t	getSamples	(DSPCOMPLEX *, int32_t);
-virtual		int32_t	getSamples	(DSPCOMPLEX *, int32_t, uint8_t);
 virtual		int32_t	Samples		(void);
 virtual		void	resetBuffer	(void);
-virtual		int16_t	bitDepth	(void);
-	        int32_t	vfoOffset;
 //
 protected:
 		int32_t	lastFrequency;
-signals:
-		void	set_changeRate	(int);
+	        int32_t	vfoOffset;
 };
 #endif
 

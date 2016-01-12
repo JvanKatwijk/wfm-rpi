@@ -72,21 +72,20 @@ Q_OBJECT
 public:
 			dabStick	(QSettings *, bool, bool *);
 			~dabStick	(void);
+	uint8_t		myIdentity	(void);
+	int32_t		getRate		(void);
 	void		setVFOFrequency	(int32_t);
 	int32_t		getVFOFrequency	(void);
 	int32_t		setExternalRate	(int32_t);
 	int32_t		defaultFrequency	(void);
 	bool		legalFrequency	(int32_t);
-	uint8_t		myIdentity	(void);
 //	interface to the reader
 	bool		restartReader	(void);
 	void		stopReader	(void);
 	int32_t		getSamples	(DSPCOMPLEX *, int32_t);
-	int32_t		getSamples	(DSPCOMPLEX *, int32_t, uint8_t);
 	int32_t		Samples		(void);
 	void		resetBuffer	(void);
 	int16_t		bitDepth	(void);
-	int32_t		getRate		(void);
 //
 //	These need to be visible for the separate usb handling thread
 	RingBuffer<uint8_t>	*_I_Buffer;

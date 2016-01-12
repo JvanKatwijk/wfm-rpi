@@ -22,6 +22,10 @@ QMAKE_LFLAGS	+= -flto
 #CONFIG	+= sdrplay
 #CONFIG	+= dabstick-new
 CONFIG	+= dabstick-osmo
+#	Handle with care
+#CONFIG	+= extio
+#	Handle not at all
+#CONFIG	+= sw-elad-s1
 
 CONFIG	+= streamer
 DEPENDPATH += . \
@@ -106,7 +110,7 @@ SOURCES += ./src/main.cpp \
 #
 # for windows32 we use:
 win32 {
-DESTDIR	= ../../../windows-bin-dab
+DESTDIR	= ../../windows-bin-dab
 # includes in mingw differ from the includes in fedora linux
 INCLUDEPATH 	+= /usr/i686-w64-mingw32/sys-root/mingw/include
 INCLUDEPATH 	+= /usr/i686-w64-mingw32/sys-root/mingw/include/qt5/qwt
@@ -194,3 +198,34 @@ streamer	{
 	SOURCES		+= ./src/output/streamer.cpp
 	QT		+= network 
 }
+#
+#	the elad-s1
+#
+elad_s1 {
+	TARGET		= wfm-rpi-elad
+	DEFINES		+= HAVE_ELAD_S1
+	FORMS		+= ./input/sw-elad-s1/elad_widget.ui
+	DEPENDPATH	+= ./input/sw-elad-s1
+	INCLUDEPATH	+= ./input/sw-elad-s1 
+	HEADERS		+= ./input/sw-elad-s1/elad-s1.h \
+	                   ./input/sw-elad-s1/elad-worker.h \
+	                   ./input/sw-elad-s1/elad-loader.h
+	SOURCES		+= ./input/sw-elad-s1/elad-s1.cpp \
+	                   ./input/sw-elad-s1/elad-worker.cpp \
+	                   ./input/sw-elad-s1/elad-loader.cpp
+}
+#
+#	extio dependencies, windows only
+#
+extio {
+	TARGET		= wfm-rpi-extio
+	DEFINES		+= HAVE_EXTIO
+	INCLUDEPATH	+= ./input/extio-handler
+	HEADERS		+= ./input/extio-handler/extio-handler.h \
+	                   ./input/extio-handler/common-readers.h \
+	                   ./input/extio-handler/virtual-reader.h 
+	SOURCES		+= ./input/extio-handler/extio-handler.cpp \
+	                   ./input/extio-handler/common-readers.cpp \
+	                   ./input/extio-handler/virtual-reader.cpp 
+}
+

@@ -350,10 +350,8 @@ int result = my_airspy_open (&device);
 }
 
 void	airspyHandler::set_rateSelector (const QString &s) {
-int32_t v	= s. toInt ();
-
-	setExternalRate (Khz (v));
-	set_changeRate (Khz (v));
+	(void)s;
+	return;
 }
 
 
@@ -397,12 +395,6 @@ int32_t	airspyHandler::getRate (void) {
 
 int32_t	airspyHandler::getSamples (DSPCOMPLEX *v, int32_t size) {
 	return theBuffer	-> getDataFromBuffer (v, size);
-}
-
-int32_t	airspyHandler::getSamples	(DSPCOMPLEX  *V,
-	                         int32_t size, uint8_t M) {
-	(void)M;
-	return getSamples (V, size);
 }
 
 int32_t	airspyHandler::Samples	(void) {

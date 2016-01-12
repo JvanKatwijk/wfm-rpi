@@ -224,10 +224,6 @@ void	sdrplay::setExternalGain	(int newGain) {
 	currentGain = newGain;
 }
 
-int16_t	sdrplay::maxGain	(void) {
-	return 101;
-}
-
 int32_t	sdrplay::setExternalRate	(int32_t newRate) {
 	if (newRate < bandWidth)
 	   return inputRate;
@@ -284,11 +280,6 @@ int16_t	buf [2 * size];
 	return amount / 2;
 }
 
-int32_t	sdrplay::getSamples (DSPCOMPLEX *V, int32_t size, uint8_t M) {
-	(void)M;
-	return getSamples (V, size);
-}
-
 int32_t	sdrplay::Samples	(void) {
 	return _I_Buffer	-> GetRingBufferReadAvailable () / 2;
 }
@@ -318,18 +309,7 @@ int16_t	i;
 }
 
 void	sdrplay::set_rateSelector (const QString &s) {
-	return;
-	inputRate	= s == "1536" ? Khz (1536) : 
-	                  s == "2000" ? Khz (2000) : 
-	                  s == "2500" ? Khz (2500) :
-	                  s == "3000" ? Khz (3000) : 
-	                  s == "5000" ? Khz (5000) :
-	                  s == "6000" ? Khz (6000) :
-	                  Khz (8000);
-
-	this	-> bandWidth	= getBandwidth (inputRate);
-	stopReader ();
-	set_changeRate (inputRate);
+	(void)s;
 }
 
 //	vfoOffset is in Hz, we have two spinboxes influencing the

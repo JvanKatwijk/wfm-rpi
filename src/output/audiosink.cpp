@@ -33,14 +33,19 @@
  *	The class is the sink for the data generated
  */
 #ifdef	HAVE_STREAMER
-	audioSink::audioSink	(int32_t rate, streamerServer *str) {
+	audioSink::audioSink	(int32_t	rate,
+	                         int16_t	latency,
+	                         streamerServer *str) {
 	theStreamer	= str;
 #else
-	audioSink::audioSink	(int32_t rate) {
+	audioSink::audioSink	(int32_t	rate,
+	                         int16_t	latency) {
 #endif
 int32_t	i;
 
 	this	-> CardRate	= rate;
+	this	-> latency	= latency;
+
 	_O_Buffer		= new RingBuffer<float> (2 * rate);
 	portAudio		= false;
 	writerRunning		= false;
@@ -101,11 +106,11 @@ PaError err;
 	outputParameters. sampleFormat		= paFloat32;
 	outputParameters. suggestedLatency	= 
 	                             Pa_GetDeviceInfo (odev) ->
-	                                      defaultHighOutputLatency * 2;
+	                                      defaultHighOutputLatency * 4;
 	bufSize	= (int)((float)outputParameters. suggestedLatency * 
 	                                         (float)CardRate);
 
-//	bufSize	= 40 * 256;
+	bufSize	= this -> latency * 10 * 256;
 
 	outputParameters. hostApiSpecificStreamInfo = NULL;
 //

@@ -44,6 +44,10 @@
 #include	"airspy-handler.h"
 #elif	HAVE_DABSTICK
 #include	"dabstick.h"
+#elif	HAVE_EXTIO
+#include	"extio-handler.h"
+#elif	HAVE_SW_ELAD_S1
+#include	"sw-elad-s1.h"
 #endif
 #include	"audiosink.h"
 #ifdef	HAVE_STREAMER
@@ -86,6 +90,7 @@ QString h;
 int	k;
 bool	success;
 int32_t	startFreq;
+int16_t	latency		= 1;
 
 	setupUi (this);
 	fmSettings		= Si;
@@ -101,6 +106,10 @@ int32_t	startFreq;
 	myRig = new sdrplay	(fmSettings, false, &success);
 #elif	HAVE_AIRSPY
 	myRig = new airspyHandler (fmSettings, false, &success);
+#elif	HAVE_EXTIO
+	myRig		= new extioHandler (fmSettings, &success);
+#elif	HAVE_ELAD
+	myRig		= new eladHandler (fmSettings, false, &success);
 #endif
 	if (!success) {
 	   QMessageBox::warning (this, tr ("sdr"),
@@ -122,6 +131,8 @@ int32_t	startFreq;
 	                  inputRate < Khz (1300) ? inputRate / 4 :
 	                  inputRate < Khz (1900) ? inputRate / 6 :
 	                                           inputRate / 10;
+	latency			=
+	                     fmSettings -> value ("latency", 1). toInt ();
 	this	-> audioRate	=
 	                     fmSettings	-> value ("audioRate",
 	                                           48000). toInt ();
@@ -134,10 +145,10 @@ int32_t	startFreq;
 #ifdef	HAVE_STREAMER
 	theStreamer		= new streamerServer ();
 	audioRate		= 48000;
-	theSink			= new audioSink (this -> audioRate,
+	theSink			= new audioSink (this -> audioRate, latency,
 	                                         theStreamer);
 #else
-	theSink			= new audioSink (this -> audioRate);
+	theSink			= new audioSink (this -> audioRate, latency);
 #endif
 
 	audioSamples		= new RingBuffer<DSPCOMPLEX> (2 *
@@ -193,8 +204,14 @@ int32_t	startFreq;
 	QString v = "wfm-rpi-sdrplay";
 #elif	HAVE_AIRSPY
 	QString v = "wfm-rpi-airspy";
-#else
+#elif	HAVE_DABSTICK
 	QString v = "wfm-rpi-dabstick";
+#elif	HAVE_ELAD
+	QString v = "wfm-rpi-elad";
+#elif	HAVE_EXTIO
+	QString v = "wfm-rpi-extio";
+#else
+	QString v = "UNIDENTIFIED";
 #endif
 	
 //	v. append (CURRENT_VERSION);

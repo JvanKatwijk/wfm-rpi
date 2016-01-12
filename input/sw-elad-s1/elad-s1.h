@@ -22,57 +22,59 @@
  *    You should have received a copy of the GNU General Public License
  *    along with SDR-J; if not, write to the Free Software
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
  */
 
-#ifndef __SDRPLAY__
-#define	__SDRPLAY__
+#ifndef __ELAD_S1
+#define	__ELAD_S1
 
 #include	<QObject>
-#include	<QSettings>
 #include	<QFrame>
+#include	<QFileDialog>
 #include	"fm-constants.h"
-#include	"ringbuffer.h"
 #include	"virtual-input.h"
-#include	"ui_sdrplay-widget.h"
+#include	"ringbuffer.h"
+#include	"ui_elad_widget.h"
+#include	<libusb-1.0/libusb.h>
 
-class	sdrplayWorker;
-class	sdrplayLoader;
+class	QSettings;
+class	eladWorker;
+class	eladLoader;
+typedef	DSPCOMPLEX(*makeSampleP)(uint8_t *);
 
-class	sdrplay: public virtualInput, public Ui_sdrplayWidget {
+class	eladHandler: public virtualInput, public Ui_elad_widget {
 Q_OBJECT
 public:
-		sdrplay		(QSettings *, bool, bool *);
-		~sdrplay	(void);
-	uint8_t	myIdentity		(void);
-	int32_t	getRate			(void);
-	void	setVFOFrequency	(int32_t);
+		eladHandler		(QSettings *, bool, bool *);
+		~eladHandler		(void);
+	void	setVFOFrequency		(int32_t);
 	int32_t	getVFOFrequency		(void);
-	int32_t	setExternalRate		(int32_t);
 	bool	legalFrequency		(int32_t);
 	int32_t	defaultFrequency	(void);
+
 	bool	restartReader		(void);
 	void	stopReader		(void);
-	int32_t	getSamples		(DSPCOMPLEX *, int32_t);
+	int32_t	getSamples		(DSPCOMPLEX *, int32_t, uint8_t);
 	int32_t	Samples			(void);
-	void	resetBuffer		(void);
+	int32_t	getRate			(void);
 	int16_t	bitDepth		(void);
-private:
-	QSettings	*sdrplaySettings;
-	sdrplayLoader	*theLoader;
-	sdrplayWorker	*theWorker;
-	RingBuffer<int16_t>	*_I_Buffer;
-	int32_t		inputRate;
-	int32_t		bandWidth;
-	int32_t		vfoFrequency;
-	int16_t		currentGain;
-	int32_t		getBandwidth	(int32_t);
-	QFrame		*myFrame;
 private	slots:
-	void		setExternalGain (int);
-	void		set_rateSelector	(const QString &);
-	void		setKhzOffset	(int);
-	void		freqCorrection	(int);
+	void	setGainReduction	(void);
+	void	setOffset		(int);
+	void	setFilter		(void);
+private:
+	QSettings	*eladSettings;
+	bool		deviceOK;
+	eladLoader	*theLoader;
+	eladWorker	*theWorker;
+	RingBuffer<uint8_t>	*_I_Buffer;
+	int32_t		theRate;
+	QFrame		*myFrame;
+	int32_t		vfoFrequency;
+	int32_t		vfoOffset;
+	int		gainReduced;
+	int		localFilter;
+	uint8_t		conversionNumber;
+	int16_t		iqSize;
 };
 #endif
 
