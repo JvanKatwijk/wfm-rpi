@@ -16,20 +16,23 @@ add_definitions (-Wall -flto -ffast-math)
 #
 #	For the "standard" rtlsdr library (might be in your distribution
 #	choose DABSTICK-OSMO, for a more experimental one, i.e. 
-#	the one from Leif Albrink, choose DABSTICK-NEW
+#	the one from Leif Asbrink, choose DABSTICK-NEW
 #	set(DABSTICK-OSMO true)
 #	set(DABSTICK-NEW true)
 #	but do not uncomment more than one line
 	set(STREAMER true)
 
 	if (SDRPLAY)
-	   set (objectName wfm-rpi-sdrplay)
+	   set (objectName wfm-rpi-sdrplay-0.993)
 	endif (SDRPLAY)
 	if (AIRSPY)
-	   set (objectName wfm-rpi-airspy)
+	   set (objectName wfm-rpi-airspy-0.993)
 	endif (AIRSPY)
-	if (DABSTICK)
-	   set (objectName wfm-rpi-dabstick)
+	if (DABSTICK-OSMO)
+	   set (objectName wfm-rpi-dabstick-0.993)
+	endif (DABSTICK)
+	if (DABSTICK-NEW)
+	   set (objectName wfm-rpi-dabstick-0.993)
 	endif (DABSTICK)
 ########################################################################
 	find_package (Qt5Widgets REQUIRED)

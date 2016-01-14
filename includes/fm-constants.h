@@ -73,7 +73,7 @@ using namespace std;
 #define I_Only		0102
 #define	Q_Only		0104
 
-#define	CURRENT_VERSION	"0.992"
+#define	CURRENT_VERSION	"0.993"
 
 #define	MSECFORTIMER	10
 
@@ -81,7 +81,7 @@ using namespace std;
 #define	PILOTFILTER_SIZE	21
 #define	RDSLOWPASS_SIZE		11
 #define	HILBERT_SIZE		13
-#define	RDSBANDFILTER_SIZE	49
+#define	RDSBANDFILTER_SIZE	39
 #define	FFT_SIZE		256
 #define	PILOT_WIDTH		200
 #define	RDS_WIDTH		1500

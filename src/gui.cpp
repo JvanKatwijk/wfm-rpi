@@ -214,7 +214,8 @@ int16_t	latency		= 1;
 	QString v = "UNIDENTIFIED";
 #endif
 	
-//	v. append (CURRENT_VERSION);
+	v. append (CURRENT_VERSION);
+	
 	systemindicator	-> setText (v);
 
 	currentPIcode		= 0;
