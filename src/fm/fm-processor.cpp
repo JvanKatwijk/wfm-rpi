@@ -72,16 +72,17 @@
 }
 
 	fmProcessor::~fmProcessor (void) {
-	my_fmDecoder -> stop ();
 	if (running && isRunning ()) {
 	   running	= false;
 	   while (!isFinished ())
 	      usleep (100);
 	}
+	my_fmDecoder -> stop ();
 	fprintf (stderr, "fmprocessor is gestopt\n");
 	delete	decimatingFilter;
 	delete	my_rdsDecoder;
 	delete	my_fmDecoder;
+	fprintf (stderr, "end of delete fm processor\n");
 }
 
 //	We have a separate thread for the fm processing

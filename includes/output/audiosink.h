@@ -50,7 +50,7 @@ public:
 			~audioSink		(void);
 	int16_t		numberofDevices		(void);
 const	char		*outputChannelwithRate	(int16_t, int32_t);
-	void		stop			(void);
+	void		stopWriter		(void);
 	void		restart			(void);
 	int32_t		putSample		(DSPCOMPLEX);
 	int32_t		putSamples		(DSPCOMPLEX *, int32_t);

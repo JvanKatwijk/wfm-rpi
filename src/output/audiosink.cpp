@@ -82,6 +82,7 @@ int32_t	i;
 	   Pa_Terminate ();
 
 	delete	_O_Buffer;
+	fprintf (stderr, "audioSink is uit\n");
 }
 //
 bool	audioSink::selectDevice (int16_t odev) {
@@ -148,7 +149,7 @@ PaError err;
 	   writerRunning	= true;
 }
 
-void	audioSink::stop	(void) {
+void	audioSink::stopWriter	(void) {
 	if (Pa_IsStreamStopped (ostream))
 	   return;
 

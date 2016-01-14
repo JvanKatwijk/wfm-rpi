@@ -69,9 +69,8 @@ QString	stationList	= QDir::homePath ();
  */
 	fflush (stdout);
 	fflush (stderr);
-	qDebug ("It is done\n");
-	delete MyRadioInterface;
-	delete ISettings;
-	exit (1);
+	fprintf (stderr, "It is done\n");
+	MyRadioInterface -> ~RadioInterface ();;
+	ISettings	-> ~QSettings ();
 }
 

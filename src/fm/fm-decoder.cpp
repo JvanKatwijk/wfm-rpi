@@ -118,9 +118,12 @@
 }
 
 	fmDecoder::~fmDecoder (void) {
+	fprintf (stderr, "fm-decoder wordt deleted\n");
 	running = false;
 	while (!isFinished ())
 	   usleep (100);
+	fprintf (stderr, "fm-decoder is gestopt\n");
+	
 	delete	rdsBandFilter;
 	delete	rdsLowPassFilter;
 	delete	theHilbertFilter;
@@ -136,6 +139,7 @@ void	fmDecoder::stop	(void) {
 	running	= false;
 	while (!isFinished ())
 	   usleep (100);
+	fprintf (stderr, "fm-decoder is gestopt\n");
 }
 
 void	fmDecoder::doDecode (DSPCOMPLEX *v, int16_t size) {

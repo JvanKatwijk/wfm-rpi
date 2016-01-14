@@ -298,8 +298,7 @@ int16_t	latency		= 1;
 }
 
 	RadioInterface::~RadioInterface () {
-	delete	displayTimer;
-	delete	autoIncrementTimer;
+	fprintf (stderr, "delete radiointerface\n");
 }
 //
 //	When pressing the freqButton, a form will appear on
@@ -357,7 +356,7 @@ bool	r = 0;
 //
 //	always ensure that datastreams are stopped
 	myRig		-> stopReader ();
-	theSink 	-> stop ();
+	theSink 	-> stopWriter ();
 //
 	r = myRig		-> restartReader ();
 	qDebug ("Starting %d\n", r);
@@ -374,25 +373,37 @@ bool	r = 0;
 
 void	RadioInterface::TerminateProcess (void) {
 	runMode		= STOPPING;
+	usleep (10000);
 //
 //	It is pretty important that no one is attempting to
 //	set things within the FMprocessor when it is
 //	being deleted.
-	displayTimer	-> stop ();
-	myRig		-> stopReader ();
-	if (myFMprocessor != NULL) {
-	   delete myFMprocessor;
-	   myFMprocessor	= NULL;
-	}
-	dumpControlState (fmSettings);
-	myList	-> saveTable ();
-	runMode		= IDLE;
-	delete mykeyPad;
-	delete myRig;
-	delete myList;
+	displayTimer		-> stop ();
+	autoIncrementTimer	-> stop ();
+	myRig			-> stopReader ();
+	theSink			-> stopWriter ();
+	myList			-> saveTable ();
+
 	fprintf (stderr, "Termination started\n");
 	qDebug () <<  "Termination started";
+	usleep (10000);
 	accept ();
+	fprintf (stderr, "accepting\n");
+	if (myFMprocessor != NULL) 
+	   delete myFMprocessor;
+
+	if (theConverter != NULL)
+	   delete theConverter;
+
+	dumpControlState (fmSettings);
+	runMode		= IDLE;
+	delete		mykeyPad;
+	delete		myRig;
+	delete		myList;
+//	delete		theSink;
+#ifdef	HAVE_STREAMER
+	delete		theStreamer;
+#endif
 }
 
 void	RadioInterface::abortSystem (int d) {
@@ -646,7 +657,7 @@ int16_t	outputDevice;
 	if (!theSink -> isValidDevice (outputDevice)) 
 	   return;
 
-	theSink	-> stop	();
+	theSink	-> stopWriter	();
 	if (!theSink -> selectDevice (outputDevice)) {
 	   QMessageBox::warning (this, tr ("sdr"),
 	                               tr ("Selecting  output stream failed\n"));
@@ -665,7 +676,9 @@ int16_t	i, k;
 int32_t audioAmount;
 float	Re, Im;
 DSPCOMPLEX	out;
-	
+
+	if (runMode == STOPPING)
+	   return;
 	(void)n;
 	while (audioSamples -> GetRingBufferReadAvailable () > 512) {
 	   audioSamples -> getDataFromBuffer (buffer, 512);
@@ -694,6 +707,9 @@ DSPCOMPLEX	out;
 //	A final conversion is possible if/when the outputrate differs
 //	from 48000
 void    RadioInterface::sendSampletoOutput (DSPCOMPLEX s) {
+
+	if (runMode == STOPPING)
+	   return;
 
 	switch (channelSelector) {
 	   default:
