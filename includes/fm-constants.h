@@ -79,7 +79,7 @@ using namespace std;
 
 #define	RDS_DECIMATOR		8
 #define	PILOTFILTER_SIZE	21
-#define	RDSLOWPASS_SIZE		39
+#define	RDSLOWPASS_SIZE		11
 #define	HILBERT_SIZE		13
 #define	RDSBANDFILTER_SIZE	49
 #define	FFT_SIZE		256

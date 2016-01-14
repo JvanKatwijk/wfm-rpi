@@ -390,6 +390,7 @@ void	RadioInterface::TerminateProcess (void) {
 	delete mykeyPad;
 	delete myRig;
 	delete myList;
+	fprintf (stderr, "Termination started\n");
 	qDebug () <<  "Termination started";
 	accept ();
 }

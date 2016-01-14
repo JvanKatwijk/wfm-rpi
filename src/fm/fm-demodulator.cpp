@@ -50,7 +50,12 @@ int32_t	i;
 	
 	         this	-> max_freq_deviation =
 	                                        0.95 * (0.5 * rateIn);
-	         myfm_pll		= new pll (0, 1.1, mySinCos);
+	         myfm_pll		= new pllC (rateIn,
+	                                            0,
+	                                            -max_freq_deviation,
+	                                            max_freq_deviation,
+	                                            0.85 * rateIn,
+	                                            mySinCos);
 	         ArcsineSize		= 4 * 8192;
 	         Arcsine		= new DSPFLOAT [ArcsineSize];
 	         for (i = 0; i < ArcsineSize; i ++)
@@ -115,7 +120,7 @@ DSPFLOAT	I, Q;
 	      break;
 
 	   case FM2DECODER:
-	      res	= arg (z * DSPCOMPLEX (Imin1, - Qmin1));
+	      res	= arg (z * conj (DSPCOMPLEX (Imin1, Qmin1)));
 	      fm_afc	= (1 - DCAlpha) * fm_afc + DCAlpha * res;
 	      res	= (res - fm_afc) * fm_cvt;
 	      res	/= K_FM;
@@ -130,8 +135,7 @@ DSPFLOAT	I, Q;
 	      break;
 //
 	   case FM4DECODER:
-	      myfm_pll	-> getPilotPhase (z);
-//	      myfm_pll	-> do_pll (z);
+	      myfm_pll	-> do_pll (z);
 //	lowpass the NCO frequency term to get a DC offset
 	      fm_afc	= (1 - DCAlpha) * fm_afc +
 	                   DCAlpha * myfm_pll -> getPhaseIncr ();

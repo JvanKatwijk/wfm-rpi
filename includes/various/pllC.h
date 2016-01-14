@@ -4,7 +4,7 @@
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
  *    Lazy Chair Programming
  *
- *    This file is part of the SDR-J
+ *    This file is part of the SDR-J.
  *    Many of the ideas as implemented in SDR-J are derived from
  *    other work, made available through the GNU general Public License. 
  *    All copyrights of the original authors are recognized.
@@ -23,39 +23,43 @@
  *    along with SDR-J; if not, write to the Free Software
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef	SIMPLE_PLL
-#define	SIMPLE_PLL
-
-#include	"fm-constants.h"
+#ifndef	__PLL_CH
+#define	__PLL_CH
+/*
+ *	This pll was found to give reasonable results.
+ *	source DTTSP, all rights acknowledged
+ */
+//#include	"jff-include.h"
 #include	"sincos.h"
 #include	"Xtan2.h"
 
-
-class	pll {
-public:
-		pll	(float	omega,
-	                 float	gain,
-	                 SinCos	*mySinCos,
-	                 float	width	= 1.0);
-	        ~pll	(void);
-	bool	isLocked	(void);
-	float	getPilotPhase	(DSPCOMPLEX pilot);
-	float	getPhaseError	(void);
-	float	getPhaseIncr	(void);
-	DSPCOMPLEX getDelay	(void);
+class	pllC {
 private:
-	float		pilot_OscillatorPhase;
-	DSPCOMPLEX	pilot_oldValue;
-	float		omega;
-	float		gain;
-	float		width;
 	SinCos		*mySinCos;
-	DSPCOMPLEX	pll_delay;
-	float		phaseIncr;
-	float		avgError;
-	bool		pll_isLocked;
-	float		pll_phaseError;
+	DSPFLOAT	NcoPhase;
+	DSPFLOAT	NcoPhaseIncr;
+	DSPFLOAT	NcoHLimit;
+	DSPFLOAT	NcoLLimit;
+	DSPFLOAT	pll_Alpha;
+	DSPFLOAT	pll_Beta;
+	DSPCOMPLEX	pll_Delay;
+	DSPFLOAT	phzError;
 	compAtan	myAtan;
+	bool		locked;
+public:
+			pllC (int32_t	rate,
+	                DSPFLOAT freq, DSPFLOAT lofreq, DSPFLOAT hifreq,
+	                DSPFLOAT bandwidth,
+	                SinCos *Table	= NULL);
+
+		        ~pllC (void);
+
+	void		do_pll 		(DSPCOMPLEX signal);
+	DSPCOMPLEX	getDelay	(void);
+	DSPFLOAT	getPhaseIncr	(void);
+	DSPFLOAT	getNco		(void);
+	DSPFLOAT	getPhaseError	(void);
+	bool		isLocked	(void);
 };
 
 #endif

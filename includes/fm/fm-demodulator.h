@@ -31,7 +31,7 @@
 #include	<QObject>
 #include	"fm-constants.h"
 #include	"sincos.h"
-#include	"pll.h"
+#include	"pllC.h"
 #include	"Xtan2.h"
 
 
@@ -56,7 +56,7 @@ private:
 	DSPFLOAT	fm_afc;
 	DSPFLOAT	fm_cvt;
 	DSPFLOAT	K_FM;
-	pll		*myfm_pll;
+	pllC		*myfm_pll;
 	SinCos		*mySinCos;
 	int32_t		ArcsineSize;
 	DSPFLOAT	*Arcsine;

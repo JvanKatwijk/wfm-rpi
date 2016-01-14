@@ -31,7 +31,7 @@
 #include	"fft-filters.h"
 #include	"fir-filters.h"
 #include	"rds-decoder.h"
-#include	"pll.h"
+#include	"pllC.h"
 
 #define	PILOT_FREQUENCY		19000
 #define	LRDIFF_FREQUENCY	(2 * PILOT_FREQUENCY)
@@ -101,13 +101,19 @@
 	rdsBandFilter		-> setBand (RDS_FREQUENCY - RDS_WIDTH / 2,
 	                                    RDS_FREQUENCY + RDS_WIDTH / 2,
 	                                    currentRate);
-	rds_plldecoder		= new pll (OMEGA_RDS,
-	                                   1500 * OMEGA_DEMOD,
-	                                   mySinCos);
-	pilotRecover		= new pll (OMEGA_PILOT,
-	                                   6 * OMEGA_DEMOD,
-	                                   mySinCos,
-	                                   6 * OMEGA_DEMOD);
+	rds_plldecoder		= new pllC (currentRate,
+	                                    0,
+	                                    0 - 100,
+	                                    0 + 100,
+	                                    100,
+	                                    mySinCos);
+	pilotRecover		= new pllC (currentRate,
+	                                    PILOT_FREQUENCY,
+	                                    PILOT_FREQUENCY - 100,
+	                                    PILOT_FREQUENCY + 100,
+	                                    5,
+	                                    mySinCos);
+	current_rdsPhase	= 0;
 	start ();
 }
 
@@ -227,8 +233,8 @@ int32_t		totalAmount	= 0;
 //
 //	Processor for Mono
 void	fmDecoder::do_mono (DSPCOMPLEX		in,
-	                      DSPCOMPLEX	*audioOut,
-	                      float		*rdsValue) {
+	                    DSPCOMPLEX		*audioOut,
+	                    float		*rdsValue) {
 DSPCOMPLEX	rdsBase;
 DSPFLOAT	demod	= theDemodulator -> demodulate (in);
 
@@ -240,9 +246,14 @@ DSPFLOAT	demod	= theDemodulator -> demodulate (in);
 
 	rdsBase = theHilbertFilter -> Pass (5 * demod, 5 * demod);
 	rdsBase	= rdsBandFilter -> Pass (rdsBase);
-	rds_plldecoder -> getPilotPhase (rdsBase);
-	DSPFLOAT rdsDelay = imag (rds_plldecoder -> getDelay ());
-	*rdsValue = rdsLowPassFilter -> Pass (5 * rdsDelay);
+	rdsBase	*= mySinCos -> getComplex (current_rdsPhase);
+	current_rdsPhase	-= OMEGA_RDS;
+	if (current_rdsPhase < 0)
+	   current_rdsPhase += 2 * M_PI;
+
+	rds_plldecoder -> do_pll (rdsBase);
+	*rdsValue = 5 * imag (rds_plldecoder -> getDelay ());
+	*rdsValue	= rdsLowPassFilter -> Pass (*rdsValue);
 }
 
 void	fmDecoder::do_stereo (DSPCOMPLEX	in,
@@ -252,7 +263,7 @@ void	fmDecoder::do_stereo (DSPCOMPLEX	in,
 float	LRPlus	= 0;
 DSPCOMPLEX	LRDiff;
 DSPCOMPLEX	pilot;
-DSPCOMPLEX	rds;
+DSPCOMPLEX	rdsBase;
 float		currentPilotPhase;
 
 static float previous	= 0;
@@ -264,15 +275,16 @@ static int count	= 0;
 	DSPFLOAT demod		= theDemodulator  -> demodulate (in);
 
 	LRPlus			= demod;
-	rds	=
+	rdsBase	=
 	pilot	=
 	LRDiff	= theHilbertFilter	-> Pass (demod, demod);
 /*
  *	get the phase for the "carrier to be inserted" right
  */
-	pilot		= pilotBandFilter -> Pass (pilot);
-	currentPilotPhase = pilotRecover -> getPilotPhase (pilot);
-	previous = currentPilotPhase;
+	pilot			= pilotBandFilter -> Pass (pilot);
+	pilotRecover		-> do_pll (pilot);
+	currentPilotPhase	= pilotRecover -> getNco ();
+	previous 		= currentPilotPhase;
 
 //	for the actual phase we should take into account
 //	the delay caused by the FIR bandfilter
@@ -285,11 +297,11 @@ static int count	= 0;
 //	.... and for the LplusR as well
 	LRPlus			= lrplusFilter	-> Pass (LRPlus);
 	float v			= imag (LRDiff) - real (LRDiff);
-	*audioOut		= DSPCOMPLEX (LRPlus, 4 * v);
+	*audioOut		= DSPCOMPLEX (LRPlus, 2 * v);
 //
 //	shift the rds signal to baseband and filter it
-	rds	=  rds * mySinCos -> getConjunct (3 * currentPilotPhase);
-	*rdsValue = 10 * real (rdsLowPassFilter -> Pass (rds));
+	rdsBase	*= mySinCos -> getConjunct (3 * currentPilotPhase);
+	*rdsValue = 10 * imag (rdsLowPassFilter -> Pass (rdsBase));
 }
 
 bool	fmDecoder::isLocked (void) {

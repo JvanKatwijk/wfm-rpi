@@ -37,7 +37,7 @@ class	lowpassFIR;
 class	fftFilter;
 class	HilbertFilter;
 class	fm_Demodulator;
-class	pll;
+class	pllC;
 
 class fmDecoder: public QThread  {
 Q_OBJECT
@@ -69,14 +69,15 @@ private:
 	lowpassFIR	*lrdiffFilter;
 	lowpassFIR	*lrplusFilter;
 	HilbertFilter	*theHilbertFilter;
-	pll		*rds_plldecoder;
-	pll		*pilotRecover;
+	pllC		*rds_plldecoder;
+	pllC		*pilotRecover;
 	fm_Demodulator	*theDemodulator;
 	SinCos		*mySinCos;
 	uint8_t		fmModus;
 	bool		rdsModus;
 	float		K_FM;
 	uint8_t		newDemodulator;
+	float		current_rdsPhase;
 signals:
 	void	audiosamplesAvailable	(int);
 	void	showLocked		(bool, float);

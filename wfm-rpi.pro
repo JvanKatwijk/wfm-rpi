@@ -18,10 +18,10 @@ QMAKE_LFLAGS	+= -flto
 #
 #	choose ONE device
 #
-#CONFIG	+= airspy
+CONFIG	+= airspy
 #CONFIG	+= sdrplay
 #CONFIG	+= dabstick-new
-CONFIG	+= dabstick-osmo
+#CONFIG	+= dabstick-osmo
 #	Handle with care
 #CONFIG	+= extio
 #	Handle not at all
@@ -60,7 +60,8 @@ HEADERS += ./includes/gui.h \
            ./includes/various/fft.h \
 	   ./includes/various/oscillator.h \
            ./includes/various/ringbuffer.h \
-	   ./includes/various/pll.h \
+#	   ./includes/various/pll.h \
+	   ./includes/various/pllC.h \
 	   ./includes/various/Xtan2.h \
 	   ./includes/various/sincos.h \
 	   ./includes/various/resampler.h \
@@ -88,7 +89,8 @@ SOURCES += ./src/main.cpp \
 	   ./src/popup-keypad.cpp \
            ./src/various/fft.cpp \
 	   ./src/various/oscillator.cpp \
-	   ./src/various/pll.cpp \
+#	   ./src/various/pll.cpp \
+	   ./src/various/pllC.cpp \
 	   ./src/various/Xtan2.cpp \
 	   ./src/various/sincos.cpp \
 	   ./src/various/resampler.cpp \
