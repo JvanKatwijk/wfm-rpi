@@ -111,6 +111,7 @@ PaError err;
 	bufSize	= (int)((float)outputParameters. suggestedLatency * 
 	                                         (float)CardRate);
 
+	fprintf (stderr, "latency = %d\n", latency);
 	bufSize	= this -> latency * 10 * 256;
 
 	outputParameters. hostApiSpecificStreamInfo = NULL;

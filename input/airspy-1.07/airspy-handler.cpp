@@ -50,13 +50,12 @@ int	k;
 
 //	On the small fm we only accept 2500000
 	airspySettings	-> beginGroup ("airspyHandler");
-	vgaGain			= airspySettings -> value ("vga", 5).toInt ();
-	vgaSlider		-> setValue (vgaGain);
-	mixerGain		= airspySettings -> value ("mixer", 10). toInt ();
-	mixerSlider		-> setValue (mixerGain);
-	mixer_agc		= false;
-	lnaGain			= airspySettings -> value ("lna", 5). toInt ();
-	lnaSlider		-> setValue (lnaGain);
+	int16_t temp 		= airspySettings -> value ("linearity", 10).
+	                                                          toInt ();
+	linearitySlider		-> setValue (temp);
+	temp			= airspySettings -> value ("sensitivity", 10).
+	                                                          toInt ();
+	sensitivitySlider	-> setValue (temp);
 	mixer_agc		= false;
 	lna_agc			= false;
 	rf_bias			= false;
@@ -117,12 +116,10 @@ int	k;
 	   return;
 	}
 	theBuffer		= new RingBuffer<DSPCOMPLEX> (1024 *1024);
-	connect (lnaSlider, SIGNAL (valueChanged (int)),
-	         this, SLOT (set_lna_gain (int)));
-	connect (vgaSlider, SIGNAL (valueChanged (int)),
-	         this, SLOT (set_vga_gain (int)));
-	connect (mixerSlider, SIGNAL (valueChanged (int)),
-	         this, SLOT (set_mixer_gain (int)));
+	connect (linearitySlider, SIGNAL (valueChanged (int)),
+	         this, SLOT (set_linearity (int)));
+	connect (sensitivitySlider, SIGNAL (valueChanged (int)),
+	         this, SLOT (set_sensitivity (int)));
 	connect (lnaButton, SIGNAL (clicked (void)),
 	         this, SLOT (set_lna_agc (void)));
 	connect (mixerButton, SIGNAL (clicked (void)),
@@ -150,9 +147,8 @@ err:
 
 	airspyHandler::~airspyHandler (void) {
 	airspySettings	-> beginGroup ("airspyHandler");
-	airspySettings -> setValue ("vga", vgaGain);
-	airspySettings -> setValue ("mixer", mixerGain);
-	airspySettings -> setValue ("lna", lnaGain);
+	airspySettings -> setValue ("linearity", linearitySlider -> value ());
+	airspySettings -> setValue ("sensitivity", sensitivitySlider -> value ());
 	airspySettings	-> endGroup ();
 	myFrame	-> hide ();
 	if (Handle == NULL)
@@ -221,9 +217,8 @@ int32_t	bufSize	= EXTIO_NS * EXTIO_BASE_TYPE_SIZE * 2;
 	}
 	
 	setExternalRate (inputRate);
-	set_vga_gain	(vgaGain);
-	set_mixer_gain	(mixerGain);
-	set_lna_gain	(lnaGain);
+	set_linearity	(linearitySlider -> value ());
+	set_sensitivity	(sensitivitySlider -> value ());
 	
 	result = my_airspy_start_rx (device,
 	            (airspy_sample_block_cb_fn)callback, this);
@@ -410,43 +405,28 @@ uint8_t	airspyHandler::myIdentity		(void) {
 	return AIRSPY;
 }
 //
-
-/* Parameter value shall be between 0 and 15 */
-void	airspyHandler::set_lna_gain (int value) {
-int result = my_airspy_set_lna_gain (device, lnaGain = value);
+void	airspyHandler::set_linearity (int value) {
+int result = my_airspy_set_linearity_gain (device, value);
 
 	if (result != AIRSPY_SUCCESS) {
 	   printf ("airspy_set_lna_gain () failed: %s (%d)\n",
-	          my_airspy_error_name((airspy_error)result), result);
+	            my_airspy_error_name ((airspy_error)result), result);
 	}
 	else
 	   lnaDisplay	-> display (value);
 }
 
-/* Parameter value shall be between 0 and 15 */
-void	airspyHandler::set_mixer_gain (int value) {
-int result = my_airspy_set_mixer_gain(device, mixerGain = value);
+void	airspyHandler::set_sensitivity (int value) {
+int result = my_airspy_set_mixer_gain (device, value);
 
 	if (result != AIRSPY_SUCCESS) {
-	   printf("airspy_set_mixer_gain() failed: %s (%d)\n",
-	         my_airspy_error_name((airspy_error)result), result);
+	   printf ("airspy_set_mixer_gain() failed: %s (%d)\n",
+	            my_airspy_error_name ((airspy_error)result), result);
 	}
 	else
 	   mixerDisplay	-> display (value);
 }
 
-/* Parameter value shall be between 0 and 15 */
-void	airspyHandler::set_vga_gain (int value) {
-int result = my_airspy_set_vga_gain(device, vgaGain = value);
-
-	if (result != AIRSPY_SUCCESS) {
-	   printf ("airspy_set_vga_gain () failed: %s (%d)\n",
-	          my_airspy_error_name ((airspy_error)result), result);
-	}
-	else
-	   vgaDisplay	-> display (value);
-}
-//
 //
 //	agc's
 /* Parameter value:
