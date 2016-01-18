@@ -102,7 +102,7 @@ int	k;
 	this	-> myFrame	-> show ();
 
 	dabSettings	-> beginGroup ("dabstick");
-	h	= dabSettings	-> value ("dabRate", 1920). toString ();
+	h	= dabSettings	-> value ("dabRate", 960). toString ();
 	k	= rateSelector -> findText (h);
 	if (k != -1)
 	   rateSelector -> setCurrentIndex (k);
