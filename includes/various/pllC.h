@@ -26,24 +26,24 @@
 #ifndef	__PLL_CH
 #define	__PLL_CH
 /*
- *	This pll was found to give reasonable results.
- *	source DTTSP, all rights acknowledged
  */
 //#include	"jff-include.h"
 #include	"sincos.h"
 #include	"Xtan2.h"
 
+
 class	pllC {
 private:
 	SinCos		*mySinCos;
-	DSPFLOAT	NcoPhase;
-	DSPFLOAT	NcoPhaseIncr;
-	DSPFLOAT	NcoHLimit;
-	DSPFLOAT	NcoLLimit;
-	DSPFLOAT	pll_Alpha;
-	DSPFLOAT	pll_Beta;
 	DSPCOMPLEX	pll_Delay;
-	DSPFLOAT	phzError;
+	int32_t		rate;
+	double		NcoPhase;
+	double		phaseIncr;
+	double		NcoHLimit;
+	double		NcoLLimit;
+	double		pll_Alpha;
+	double		pll_Beta;
+	double		phaseError;
 	compAtan	myAtan;
 	bool		locked;
 public:

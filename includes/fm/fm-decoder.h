@@ -78,6 +78,9 @@ private:
 	float		K_FM;
 	uint8_t		newDemodulator;
 	float		current_rdsPhase;
+	DSPCOMPLEX	*localTable;
+	int32_t		localPhase_1;
+	int32_t		localPhase_2;
 signals:
 	void	audiosamplesAvailable	(int);
 	void	showLocked		(bool, float);

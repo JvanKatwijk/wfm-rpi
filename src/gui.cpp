@@ -384,7 +384,7 @@ void	RadioInterface::TerminateProcess (void) {
 	myRig			-> stopReader ();
 	theSink			-> stopWriter ();
 	myList			-> saveTable ();
-
+	audioSamples		-> reset ();
 	fprintf (stderr, "Termination started\n");
 	qDebug () <<  "Termination started";
 	usleep (10000);
@@ -401,7 +401,7 @@ void	RadioInterface::TerminateProcess (void) {
 	delete		mykeyPad;
 	delete		myRig;
 	delete		myList;
-//	delete		theSink;
+	delete		theSink;
 #ifdef	HAVE_STREAMER
 	delete		theStreamer;
 #endif
@@ -678,7 +678,7 @@ int32_t audioAmount;
 float	Re, Im;
 DSPCOMPLEX	out;
 
-	if (runMode == STOPPING)
+	if ((runMode == STOPPING) || (runMode == IDLE))
 	   return;
 	(void)n;
 	while (audioSamples -> GetRingBufferReadAvailable () > 512) {

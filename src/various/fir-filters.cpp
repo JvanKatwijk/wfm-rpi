@@ -432,13 +432,6 @@ int16_t		index;
 	   tmp 	+= Buffer [index] * filterKernel [i];
 	}
 
-//	for (i = 0; i < filterSize; i ++) {
-//	   int16_t index = ip -1 - i;
-//	   if (index < 0)
-//	      index += filterSize;
-//	   tmp		+= Buffer [index] * filterKernel [i];
-//	}
-//
 	ip = (ip + 1) % filterSize;
 	*z_out = tmp;
 	return true;

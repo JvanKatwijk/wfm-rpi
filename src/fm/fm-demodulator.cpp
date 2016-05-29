@@ -25,9 +25,11 @@
  */
 
 #include	"fm-demodulator.h"
-#include	"Xtan2.h"
 #include	"gui.h"
 
+#include	"the-decoders.h"
+
+#define	DCAlpha	0.0001
 //
 //	Just to play around a little, I implemented 5 common 
 //	fm decoders. The main source of inspiration is found in
@@ -44,120 +46,51 @@ int32_t	i;
 	         this	-> mySinCos	= mySinCos;
 	         this	-> K_FM		= K_FM;
 
+	         theDecoder		= new decoderBase ();
 	         connect (this, SIGNAL (showDecoder (const QString &)),
 	                  mr, SLOT (showDecoder (const QString &)));
 	         setDecoder (FM4DECODER);
-	
-	         this	-> max_freq_deviation =
-	                                        0.95 * (0.5 * rateIn);
-	         myfm_pll		= new pllC (rateIn,
-	                                            0,
-	                                            -max_freq_deviation,
-	                                            max_freq_deviation,
-	                                            0.85 * rateIn,
-	                                            mySinCos);
-	         ArcsineSize		= 4 * 8192;
-	         Arcsine		= new DSPFLOAT [ArcsineSize];
-	         for (i = 0; i < ArcsineSize; i ++)
-	            Arcsine [i] = asin (2.0 * i / ArcsineSize - 1.0) / 2.0;
-	         Imin1			= 1;
-	         Qmin1			= 1;
-	         Imin2			= 1;
-	         Qmin2			= 1;
-	         oldZ			= DSPCOMPLEX (0, 0);
+
 	         fm_afc			= 0;
-	         fm_cvt			= 1.0;
-		 fm_cvt			= 0.50 * (rateIn / (M_PI * 150000));
+		 fm_cvt			= 0.90 * (rateIn / (M_PI * 150000));
 }
 
 		fm_Demodulator::~fm_Demodulator (void) {
-	delete	Arcsine;
-	delete	myfm_pll;
+	delete theDecoder;
 }
 
 void		fm_Demodulator::setDecoder	(int8_t nc) {
 QString	s;
 	this	-> selectedDecoder = nc;
+	delete theDecoder;
+
 	switch (selectedDecoder) {
 	   default:
 	   case FM1DECODER:
+	      theDecoder	= new decoder_1 ();
 	      s =	QString ("Difference based"); break;
 	   case FM2DECODER:
+	      theDecoder	= new decoder_2 ();
 	      s =	QString ("Complex Baseband Delay"); break;
 	   case FM3DECODER:
+	      theDecoder	= new decoder_3 ();
 	      s =	QString ("Mixed Demodulator"); break;
 	   case FM4DECODER:
+	      theDecoder	= new decoder_4 (rateIn, mySinCos);
 	      s = 	QString ("Pll decoder"); break;
 	   case FM5DECODER:
+	      theDecoder	= new decoder_5 ();
 	      s	= 	QString ("Real Baseband Delay"); break;
 	}
 	showDecoder (s);
 }
 
 DSPFLOAT	fm_Demodulator::demodulate (DSPCOMPLEX z) {
-DSPFLOAT	res;
-DSPFLOAT	I, Q;
-#define	DCAlpha	0.0001
-//#define	DCAlpha	0.000001
-	if (jan_abs (z) <= 0.001)
-	   I = Q = 0.001;	// do not make these 0 too often
-	else { 
-	   I = real (z) / abs (z);
-	   Q = imag (z) / abs (z);
-	}
+float	res = theDecoder -> decode (z);
 
-	z	= DSPCOMPLEX (I, Q);
-	switch (selectedDecoder) {
-	   default:
-	   case FM1DECODER:
-	      res	= Imin1 * (Q - Qmin2) - Qmin1 * (I - Imin2);
-	      res	/= Imin1 * Imin1 + Qmin1 * Qmin1;
-	      Imin2	= Imin1;
-	      Qmin2	= Qmin1;
-	      fm_afc	= (1 - DCAlpha) * fm_afc + DCAlpha * res;
-	      res	= (res - fm_afc) * fm_cvt;
-	      res	/= K_FM;
-	      break;
-
-	   case FM2DECODER:
-	      res	= arg (z * conj (DSPCOMPLEX (Imin1, Qmin1)));
-	      fm_afc	= (1 - DCAlpha) * fm_afc + DCAlpha * res;
-	      res	= (res - fm_afc) * fm_cvt;
-	      res	/= K_FM;
-	      break;
-
-	   case FM3DECODER:
-	      res	= myAtan. atan2 (Q * Imin1- I * Qmin1,
-	                                 I * Imin1 + Q * Qmin1);
-	      fm_afc	= (1 - DCAlpha) * fm_afc + DCAlpha * res;
-	      res	= (res - fm_afc) * fm_cvt;
-	      res	/= K_FM;
-	      break;
-//
-	   case FM4DECODER:
-	      myfm_pll	-> do_pll (z);
-//	lowpass the NCO frequency term to get a DC offset
-	      fm_afc	= (1 - DCAlpha) * fm_afc +
-	                   DCAlpha * myfm_pll -> getPhaseIncr ();
-	      res	= (myfm_pll -> getPhaseIncr () - fm_afc) * fm_cvt;
-	      res	/= K_FM;
-	      break;
-
-	   case FM5DECODER:
-	      res	= (Imin1 * Q - Qmin1 * I + 1.0) / 2.0;
-	      res	= Arcsine [(int)(res * ArcsineSize)];
-	      fm_afc	= (1 - DCAlpha) * fm_afc + DCAlpha * res;
-	      res	= (res - fm_afc) * fm_cvt;
-	      res	/= K_FM;
-	      break;
-	}
-//
-//	and shift ...
-	Imin2	= Imin1;
-	Qmin2	= Qmin2;
-	Imin1	= I;
-	Qmin1	= Q;
-	oldZ	= z;
+	fm_afc	= (1 - DCAlpha) * fm_afc + DCAlpha * res;
+	res	= (res - fm_afc) * fm_cvt;
+	res	/= K_FM;
 	return res;
 }
 

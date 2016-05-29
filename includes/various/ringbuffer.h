@@ -146,6 +146,10 @@ public:
 	bigMask		= (elementCount * 2) - 1;
 }
 
+void	reset	(void) {
+	writeIndex = readIndex = 0;
+}
+
 	~RingBuffer () {
 	   delete[]	 buffer;
 }

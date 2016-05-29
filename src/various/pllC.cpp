@@ -1,7 +1,16 @@
 #
 /*
  *
- *    Copyright (C) 2008, 2009, 2010
+ *	Copyright (C) 2004, 2005, 2006, 2007 by
+ *	Frank Brickle, AB2KT and Bob McGwier, N4HY
+ *	The authors can be reached by email at
+ *	ab2kt@arrl.net or rwmcgwier@comcast.net
+ *	or by paper mail at
+ *	The DTTS Microwave Society
+ *	6 Kathleen Place
+ *	Bridgewater, NJ 08807
+ *
+ *	Adapted for the SDR-J fm receiver
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
  *    Lazy Chair programming
  *
@@ -24,10 +33,6 @@
  *    along with SDR-J; if not, write to the Free Software
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- *	This pll was found to give reasonable results.
- *	source DTTSP, all rights acknowledged
- *
- *	This is the version for complex values
  */
 #include	"pllC.h"
 //
@@ -36,23 +41,25 @@
 //	kept in between,
 //	"bandwidth" the bandwidth of the signal to be received
 
-		pllC::pllC (int32_t rate,
-	                    DSPFLOAT freq,
-	                    DSPFLOAT lofreq, DSPFLOAT hifreq,
-	                    DSPFLOAT bandwidth,
-	                    SinCos *Table) {
+		pllC::pllC (int32_t	rate,
+	                    DSPFLOAT	freq,
+	                    DSPFLOAT	lofreq,
+	                    DSPFLOAT	hifreq,
+	                    DSPFLOAT	bandwidth,
+	                    SinCos	*Table) {
 DSPFLOAT	omega	= 2.0 * M_PI / rate;
-float	eta		= 0.1;
+float		eta	= 0.2f;
 
-	NcoPhaseIncr	= freq * omega;		// this will change during runs
+	this	-> rate	= rate;
+	phaseIncr	= freq * omega;		// this will change during runs
 	NcoLLimit	= lofreq * omega;	// boundary for changes
 	NcoHLimit	= hifreq * omega;
-
-	pll_Alpha	= 2 * eta * bandwidth * omega;	// pll bandwidth
-	pll_Beta	= (pll_Alpha * pll_Alpha) / 1.0; // second order term
-	NcoPhase	= 0;
+	pll_Alpha	= eta * bandwidth * omega; // pll bandwidth
+	pll_Beta	= (pll_Alpha * pll_Alpha) / 2.0; // 2nd order term
 	this	-> mySinCos	= Table;
-	phzError	= 0;
+	NcoPhase	= 0;
+	phaseError	= 0;
+	locked		= false;
 }
 //
 		pllC::~pllC (void) {
@@ -62,27 +69,25 @@ float	eta		= 0.1;
 //	to time an infinite value for signal. Still have
 //	to constrain this value
 void		pllC::do_pll (DSPCOMPLEX signal) {
-DSPCOMPLEX	NcoSignal;
-DSPCOMPLEX	quadRef;
+DSPCOMPLEX	refSignal;
 
-	NcoSignal 	= mySinCos -> getComplex (NcoPhase);
-	    
-	pll_Delay	= NcoSignal * signal;
-	phzError	= - myAtan. atan2 (imag (pll_Delay), real (pll_Delay));
-	NcoPhaseIncr	+= pll_Beta * phzError;
-	locked		= false;
-	if (NcoPhaseIncr < NcoLLimit)
-	   NcoPhaseIncr = NcoLLimit;
-	else
-	if (NcoPhaseIncr > NcoHLimit)
-	   NcoPhaseIncr = NcoHLimit;
-	else
-	   locked	= true;
+	locked		= false;	// unless proven otherwise
+	pll_Delay	= signal * mySinCos -> getConjunct (NcoPhase);
+	phaseError	= myAtan. atan2 (imag (pll_Delay), real (pll_Delay));
 
-	NcoPhase	+= NcoPhaseIncr + pll_Alpha * phzError;
-	if (NcoPhase >= 2 * M_PI)
-	   NcoPhase = fmod (NcoPhase, 2 * M_PI);
-	while (NcoPhase < 0)
+	phaseIncr	+= pll_Beta * phaseError;
+	if (phaseIncr < NcoLLimit)
+	   phaseIncr = NcoLLimit;
+	else
+	if (phaseIncr > NcoHLimit) 
+	   phaseIncr = NcoHLimit;
+	else
+	   locked = true;
+
+	NcoPhase	+= phaseIncr + pll_Alpha * phaseError;
+	while (NcoPhase >= 2 * M_PI)
+	   NcoPhase -= 2 * M_PI;
+	while (NcoPhase < 0) 
 	   NcoPhase += 2 * M_PI;
 }
 
@@ -91,7 +96,7 @@ DSPCOMPLEX	pllC::getDelay (void) {
 }
 
 DSPFLOAT	pllC::getPhaseIncr(void) {
-	return NcoPhaseIncr;
+	return	phaseIncr;
 }
 
 DSPFLOAT	pllC::getNco (void) {
@@ -99,9 +104,10 @@ DSPFLOAT	pllC::getNco (void) {
 }
 
 DSPFLOAT	pllC::getPhaseError (void) {
-	return phzError;
+	return phaseError;
 }
 
 bool		pllC::isLocked	(void) {
 	return locked;
 }
+

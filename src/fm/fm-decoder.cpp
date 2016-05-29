@@ -53,7 +53,7 @@
 	                      RingBuffer<DSPCOMPLEX> *audioBuffer,
 	                      int32_t		currentRate,
 	                      rdsDecoder	*myRdsDecoder) {
-
+int	i;
 	connect (this, SIGNAL (audiosamplesAvailable (int)),
 	         mr, SLOT (audiosamplesAvailable (int)));
 	connect (this,  SIGNAL (showLocked (bool, float)),
@@ -105,13 +105,13 @@
 	                                    0,
 	                                    0 - 100,
 	                                    0 + 100,
-	                                    100,
+	                                    50,
 	                                    mySinCos);
 	pilotRecover		= new pllC (currentRate,
 	                                    PILOT_FREQUENCY,
 	                                    PILOT_FREQUENCY - 100,
 	                                    PILOT_FREQUENCY + 100,
-	                                    5,
+	                                    10,
 	                                    mySinCos);
 	current_rdsPhase	= 0;
 	start ();
@@ -270,8 +270,6 @@ DSPCOMPLEX	pilot;
 DSPCOMPLEX	rdsBase;
 float		currentPilotPhase;
 
-static float previous	= 0;
-static int count	= 0;
 
 //	first step: get the demodulated signal
 //
@@ -288,14 +286,14 @@ static int count	= 0;
 	pilot			= pilotBandFilter -> Pass (pilot);
 	pilotRecover		-> do_pll (pilot);
 	currentPilotPhase	= pilotRecover -> getNco ();
-	previous 		= currentPilotPhase;
 
 //	for the actual phase we should take into account
 //	the delay caused by the FIR bandfilter
 	currentPilotPhase	+= PILOT_DELAY;
 //
-//	shift the LRDiff signal down to baseband
+//	shift the LRDiff signal down to baseband	38Khz
 	LRDiff  *= mySinCos -> getConjunct (2 * currentPilotPhase); 
+
 //	get rid of junk
 	LRDiff			= lrdiffFilter	-> Pass (LRDiff);
 //	.... and for the LplusR as well
@@ -303,7 +301,7 @@ static int count	= 0;
 	float v			= imag (LRDiff) - real (LRDiff);
 	*audioOut		= DSPCOMPLEX (LRPlus, 2 * v);
 //
-//	shift the rds signal to baseband and filter it
+//	shift the rds signal to baseband and filter it 57 Khz
 	rdsBase	*= mySinCos -> getConjunct (3 * currentPilotPhase);
 	*rdsValue = 10 * imag (rdsLowPassFilter -> Pass (rdsBase));
 }

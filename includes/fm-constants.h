@@ -78,12 +78,12 @@ using namespace std;
 #define	MSECFORTIMER	10
 
 #define	RDS_DECIMATOR		8
-#define	PILOTFILTER_SIZE	21
+#define	PILOTFILTER_SIZE	35
 #define	RDSLOWPASS_SIZE		11
-#define	HILBERT_SIZE		13
-#define	RDSBANDFILTER_SIZE	39
-#define	FFT_SIZE		256
-#define	PILOT_WIDTH		200
+#define	HILBERT_SIZE		9
+#define	RDSBANDFILTER_SIZE	35
+#define	FFT_SIZE		512
+#define	PILOT_WIDTH		100
 #define	RDS_WIDTH		1500
 #define	LEVEL_SIZE		512
 #define	LEVEL_FREQ		3

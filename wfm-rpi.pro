@@ -18,7 +18,7 @@ QMAKE_LFLAGS	+= -flto
 #
 #	choose ONE device
 #
-CONFIG	+= airspy
+#CONFIG	+= airspy
 #CONFIG	+= sdrplay
 #CONFIG	+= dabstick-new
 #CONFIG	+= dabstick-osmo
@@ -178,7 +178,6 @@ sdrplay {
 	SOURCES		+= ./input/sdrplay/sdrplay.cpp \
 	                   ./input/sdrplay/sdrplay-loader.cpp \
 	                   ./input/sdrplay/sdrplay-worker.cpp 
-	DEFINES		+= SDRPLAY_LIBRARY_NEW
 }
 #
 #	the AIRSPY

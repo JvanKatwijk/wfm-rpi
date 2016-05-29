@@ -31,13 +31,11 @@
 #include	<QObject>
 #include	"fm-constants.h"
 #include	"sincos.h"
-#include	"pllC.h"
-#include	"Xtan2.h"
 
-
-#define	PLL_PILOT_GAIN	3000
 
 class	RadioInterface;
+class	decoderBase;
+
 class	fm_Demodulator: public QObject {
 Q_OBJECT
 public:
@@ -50,22 +48,13 @@ public:
 	   FM6DECODER	= 0006
 	};
 private:
-	int8_t		selectedDecoder;
-	DSPFLOAT	max_freq_deviation;
 	int32_t		rateIn;
+	SinCos		*mySinCos;
+	int8_t		selectedDecoder;
+	decoderBase	*theDecoder;
 	DSPFLOAT	fm_afc;
 	DSPFLOAT	fm_cvt;
 	DSPFLOAT	K_FM;
-	pllC		*myfm_pll;
-	SinCos		*mySinCos;
-	int32_t		ArcsineSize;
-	DSPFLOAT	*Arcsine;
-	compAtan	myAtan;
-	DSPFLOAT	Imin1;
-	DSPFLOAT	Qmin1;
-	DSPFLOAT	Imin2;
-	DSPFLOAT	Qmin2;
-	DSPCOMPLEX	oldZ;
 public:
 		fm_Demodulator	(RadioInterface	*mr,
 	                         int32_t	Rate_in,

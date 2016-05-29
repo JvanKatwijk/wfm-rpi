@@ -71,7 +71,7 @@ DSPFLOAT	SinCos::getCos (DSPFLOAT Phase) {
 	if (Phase >= 0)
 	   return real (Table [(int32_t (Phase * C)) % Rate]);
 	else
-	   return real (Table [Rate - (int32_t ( - Phase * C)) % Rate]);
+	   return real (Table [(int32_t (-Phase * C)) % Rate]);
 }
 
 DSPCOMPLEX	SinCos::getComplex (DSPFLOAT Phase) {
@@ -82,10 +82,18 @@ DSPCOMPLEX	SinCos::getComplex (DSPFLOAT Phase) {
 }
 
 DSPCOMPLEX	SinCos::getConjunct (DSPFLOAT Phase) {
+int32_t	temp	= Phase * C;
+
 	if (Phase >= 0)
-	   return conj (Table [(int32_t (Phase * C)) % Rate]);
-	else
-	   return conj (Table [Rate - (int32_t ( - Phase * C)) % Rate]);
+	   if (temp >= Rate)
+	      return conj (Table [temp % Rate]);
+	   else
+	      return conj (Table [temp]);
+	else			// Phase < 0
+	   if (temp > -Rate)
+	      return conj (Table [Rate + temp]);
+	   else
+	   return conj (Table [(Rate + temp) % Rate]);
 }
 
 
