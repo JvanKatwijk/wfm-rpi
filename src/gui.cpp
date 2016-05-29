@@ -49,9 +49,10 @@
 #elif	HAVE_SW_ELAD_S1
 #include	"sw-elad-s1.h"
 #endif
-#include	"audiosink.h"
 #ifdef	HAVE_STREAMER
-#include	"streamer.h"
+#include	"tcp-streamer.h"
+#else
+#include	"audiosink.h"
 #endif
 
 #ifdef __MINGW32__
@@ -142,15 +143,24 @@ int16_t	latency		= 1;
 	this	-> audioOut		=
 	                         new DSPCOMPLEX [audioDecimator -> getOutputsize ()];
 
+/**
+  *	The current setup of the audio output is that
+  *	you have a choice, take one of (soundcard, tcp streamer or rtp streamer)
+  */
+	audioBuffer		= new RingBuffer<int16_t>(2 * 32768);
+//
+//	In this version, the default is sending the resulting PCM samples to the
+//	soundcard. However, defining either TCP_STREAMER will
+//	cause the PCM samples to be send through a different medium
 #ifdef	HAVE_STREAMER
-	theStreamer		= new streamerServer ();
-	audioRate		= 48000;
-	theSink			= new audioSink (this -> audioRate, latency,
-	                                         theStreamer);
-#else
-	theSink			= new audioSink (this -> audioRate, latency);
+	soundOut		= new tcpStreamer	(audioBuffer,
+	                                                 20040);
+	streamOutSelector	-> hide ();
+#else			// just sound out
+	soundOut		= new audioSink		(latency,
+	                                                 streamOutSelector,
+	                                                 audioBuffer);
 #endif
-
 	audioSamples		= new RingBuffer<DSPCOMPLEX> (2 *
 	                                                   this -> audioRate);
 	mySquelch		= new squelch (1,
@@ -164,32 +174,12 @@ int16_t	latency		= 1;
            theConverter = new newConverter (workingRate, audioRate,
                                             workingRate / 20, dummy);
 
-	outTable		= new int16_t
-	                             [theSink -> numberofDevices () + 1];
-	for (i = 0; i < theSink -> numberofDevices (); i ++)
-	   outTable [i] = -1;
-
-	if (!setupSoundOut (streamOutSelector,
-	                    theSink,
-	                    this -> audioRate,
-	                    outTable)) {
-	   fprintf (stderr, "Cannot open any output device\n");
-	   abortSystem (33);
-	}
-
 	myFMprocessor		= NULL;
 	startFreq		= myRig	-> defaultFrequency	();
 	startFreq		= fmSettings -> value ("frequency",
 	                                                startFreq). toInt ();
 	setTuner (startFreq);
 	Display (myRig -> getVFOFrequency ());
-	h	= fmSettings -> value ("streamOutSelector",
-	                                    "default"). toString ();
-	k	= streamOutSelector -> findText (h);
-	if (k != -1) {
-	   streamOutSelector -> setCurrentIndex (k);
-	   setStreamOutSelector (k);
-	}
 
 	fmFilterDegree	= 3;
 	fmBandwidth	= fmSettings -> value ("audiowidth", 12000). toInt ();
@@ -357,7 +347,7 @@ bool	r = 0;
 //
 //	always ensure that datastreams are stopped
 	myRig		-> stopReader ();
-	theSink 	-> stopWriter ();
+	soundOut 	-> stop ();
 //
 	r = myRig		-> restartReader ();
 	qDebug ("Starting %d\n", r);
@@ -367,7 +357,7 @@ bool	r = 0;
 	   return;
 	}
 
-	theSink	-> restart ();
+	soundOut	-> restart ();
 	myFMprocessor	-> start ();
 	runMode	= RUNNING;
 }
@@ -382,7 +372,7 @@ void	RadioInterface::TerminateProcess (void) {
 	displayTimer		-> stop ();
 	autoIncrementTimer	-> stop ();
 	myRig			-> stopReader ();
-	theSink			-> stopWriter ();
+	soundOut		-> stop ();
 	myList			-> saveTable ();
 	audioSamples		-> reset ();
 	fprintf (stderr, "Termination started\n");
@@ -401,10 +391,7 @@ void	RadioInterface::TerminateProcess (void) {
 	delete		mykeyPad;
 	delete		myRig;
 	delete		myList;
-	delete		theSink;
-#ifdef	HAVE_STREAMER
-	delete		theStreamer;
-#endif
+	delete		soundOut;
 }
 
 void	RadioInterface::abortSystem (int d) {
@@ -437,8 +424,6 @@ void	RadioInterface::localConnects (void) {
 	              this, SLOT (setStart ()));
 	connect (quitButton, SIGNAL (clicked ()),
 	              this, SLOT (TerminateProcess (void)));
-	connect (streamOutSelector, SIGNAL (activated (int)),
-	              this, SLOT (setStreamOutSelector (int)));
 	connect (squelchButton , SIGNAL (clicked (void)),
                       this, SLOT (set_squelchMode (void)));
         connect (squelchSlider, SIGNAL (valueChanged (int)),
@@ -622,50 +607,6 @@ void	RadioInterface::showLocked (bool locked, float the_dcComponent) {
 	dc_component	-> display (the_dcComponent);
 }
 //
-//	do not forget that ocnt starts with 1, due
-//	to Qt list conventions
-bool	RadioInterface::setupSoundOut (QComboBox	*streamOutSelector,
-	                               audioSink	*our_audioSink,
-	                               int32_t		cardRate,
-	                               int16_t		*table) {
-uint16_t	ocnt	= 1;
-uint16_t	i;
-
-	for (i = 0; i < our_audioSink -> numberofDevices (); i ++) {
-	   const char *so =
-	             our_audioSink -> outputChannelwithRate (i, cardRate);
-	   qDebug ("Investigating Device %d\n", i);
-
-	   if (so != NULL) {
-	      streamOutSelector -> insertItem (ocnt, so, QVariant (i));
-	      table [ocnt] = i;
-	      qDebug (" (output):item %d wordt stream %d\n", ocnt , i);
-	      ocnt ++;
-	   }
-	}
-
-	qDebug () << "added items to combobox";
-	return ocnt > 1;
-}
-
-void	RadioInterface::setStreamOutSelector (int idx) {
-int16_t	outputDevice;
-
-	if (idx == 0)
-	   return;
-
-	outputDevice = outTable [idx];
-	if (!theSink -> isValidDevice (outputDevice)) 
-	   return;
-
-	theSink	-> stopWriter	();
-	if (!theSink -> selectDevice (outputDevice)) {
-	   QMessageBox::warning (this, tr ("sdr"),
-	                               tr ("Selecting  output stream failed\n"));
-	   return;
-	}
-}
-//
 //	handling of audio is now done here
 //	we apply successively
 //	- deemphasis
@@ -738,17 +679,27 @@ void    RadioInterface::sendSampletoOutput (DSPCOMPLEX s) {
 	         break;
 	}
 
-        if (audioRate == workingRate)
-           theSink      -> putSample (s);
+	
+        if (audioRate == workingRate) {
+	   int16_t t [2];
+	   t [0] = real (s) * 32768;
+	   t [1] = imag (s) * 32768;
+	   audioBuffer	-> putDataIntoBuffer (t, 2);
+	}
         else {
            DSPCOMPLEX out [theConverter -> getOutputsize ()];
            int32_t amount;
            if (theConverter -> convert (s, out, &amount)) {
               int16_t i;
-              for (i = 0; i < amount; i ++)
-                 theSink -> putSample (out [i]);
-           }
+              for (i = 0; i < amount; i ++) {
+	         int16_t t [2];
+	         t [0] = real (s) * 32768;
+	         t [1] = imag (s) * 32768;
+	         audioBuffer	-> putDataIntoBuffer (t, 2);
+	      }
+	   }
         }
+	soundOut	-> audioOut (audioRate);
 }
 
 void	RadioInterface::set_squelchMode	(void) {

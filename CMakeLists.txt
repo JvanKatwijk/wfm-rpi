@@ -12,14 +12,16 @@ add_definitions (-Wall -flto -ffast-math)
 #
 #	if you want support for one of these devices, uncomment ONE of
 #	set(SDRPLAY true) 
-	set(AIRSPY true)
+#	set(AIRSPY true)
 #
 #	For the "standard" rtlsdr library (might be in your distribution
 #	choose DABSTICK-OSMO, for a more experimental one, i.e. 
 #	the one from Leif Asbrink, choose DABSTICK-NEW
-#	set(DABSTICK-OSMO true)
+	set(DABSTICK-OSMO true)
 #	set(DABSTICK-NEW true)
 #	but do not uncomment more than one line
+#	if you want to have the PCM samples sent to port 20040
+#	rather than to the local soundcard, uncomment
 	set(STREAMER true)
 
 	if (SDRPLAY)
@@ -30,10 +32,10 @@ add_definitions (-Wall -flto -ffast-math)
 	endif (AIRSPY)
 	if (DABSTICK-OSMO)
 	   set (objectName wfm-rpi-dabstick-0.993)
-	endif (DABSTICK)
+	endif (DABSTICK-OSMO)
 	if (DABSTICK-NEW)
 	   set (objectName wfm-rpi-dabstick-0.993)
-	endif (DABSTICK)
+	endif (DABSTICK-NEW)
 ########################################################################
 	find_package (Qt5Widgets REQUIRED)
 	find_package (Qt5Declarative REQUIRED)
@@ -147,6 +149,7 @@ add_definitions (-Wall -flto -ffast-math)
 	      ./includes/various/iir-filters.h
 	      ./includes/various/Xtan2.h
 	      ./includes/various/program-list.h
+	      ./includes/output/audio-base.h
 	      ./includes/output/audiosink.h
 	      ./includes/fm/fm-demodulator.h
 	      ./includes/fm/fm-processor.h
@@ -173,6 +176,7 @@ add_definitions (-Wall -flto -ffast-math)
 	      ./src/various/iir-filters.cpp
 	      ./src/various/Xtan2.cpp
 	      ./src/various/program-list.cpp
+	      ./src/output/audio-base.cpp
 	      ./src/output/audiosink.cpp
 	      ./src/fm/fm-demodulator.cpp
 	      ./src/fm/fm-processor.cpp
@@ -200,12 +204,12 @@ add_definitions (-Wall -flto -ffast-math)
 
 	   set ($(objectName)_HDRS
 	        ${${objectName}_HDRS}
-	        ./includes/output/streamer.h)
+	        ./includes/output/tcp-streamer.h)
 	   set (${objectName}_SRCS
 	        ${${objectName}_SRCS}
-	        ./src/output/streamer.cpp)
+	        ./src/output/tcp-streamer.cpp)
 
-	   set (${objectName}_MOCS ./includes/output/streamer.h)
+	   set (${objectName}_MOCS ./includes/output/tcp-streamer.h)
 	   set (NETWORK_LIB Qt5::Network)
 	endif(STREAMER)
 
@@ -402,6 +406,8 @@ add_definitions (-Wall -flto -ffast-math)
 	      ./includes/fm/fm-decoder.h
 	      ./includes/fm/fm-demodulator.h
 	      ./includes/various/program-list.h
+	      ./includes/output/audio-base.h
+	      ./includes/output/audiosink.h
 	)
 
 	QT5_WRAP_CPP (MOCS ${${objectName}_MOCS})

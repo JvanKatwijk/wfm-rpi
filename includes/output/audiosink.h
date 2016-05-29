@@ -4,8 +4,8 @@
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
  *    Lazy Chair Programming
  *
- *    This file is part of the SDR-J
- *    Many of the ideas as implemented in SDR-J are derived from
+ *    This file is part of the SDR-J.
+ *    Many of the ideas as implemented in ESDR are derived from
  *    other work, made available through the GNU general Public License. 
  *    All copyrights of the original authors are recognized.
  *
@@ -22,56 +22,45 @@
  *    You should have received a copy of the GNU General Public License
  *    along with SDR-J; if not, write to the Free Software
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
  */
 
 #ifndef __AUDIO_SINK
 #define	__AUDIO_SINK
+#include	<QString>
 #include	"fm-constants.h"
-#include	<sndfile.h>
 #include	<portaudio.h>
+#include	<stdio.h>
+#include	"audio-base.h"
 #include	"ringbuffer.h"
+#include	<QComboBox>
 
-#define		LOWLATENCY	0100
-#define		HIGHLATENCY	0200
-#define		VERYHIGHLATENCY	0300
-
-#ifdef	HAVE_STREAMER
-class	streamerServer;
-#endif
-
-class	audioSink  {
+class	audioSink  : public audioBase {
+Q_OBJECT
 public:
-#ifdef	HAVE_STREAMER
-			audioSink		(int32_t, int16_t,
-	                                         streamerServer *);
-#else
-			audioSink		(int32_t, int16_t);
-#endif
+	                audioSink		(int16_t,
+	                                         QComboBox *,
+	                                         RingBuffer<int16_t> *);
 			~audioSink		(void);
-	int16_t		numberofDevices		(void);
-const	char		*outputChannelwithRate	(int16_t, int32_t);
-	void		stopWriter		(void);
+	void		stop			(void);
 	void		restart			(void);
-	int32_t		putSample		(DSPCOMPLEX);
-	int32_t		putSamples		(DSPCOMPLEX *, int32_t);
+public slots:
+	bool		set_streamSelector	(int);
+private:
+	int16_t		numberofDevices		(void);
+	QString		outputChannelwithRate	(int16_t, int32_t);
 	int16_t		invalidDevice		(void);
 	bool		isValidDevice		(int16_t);
-
-	int32_t		capacity		(void);
 	bool		selectDefaultDevice	(void);
 	bool		selectDevice		(int16_t);
-	void		startDumping		(SNDFILE *);
-	void		stopDumping		(void);
-	int32_t		getSelectedRate		(void);
-private:
-#ifdef	HAVE_STREAMER
-	streamerServer	*theStreamer;
-#endif
-	int16_t		latency;
+	int32_t		cardRate		(void);
+
 	bool		OutputrateIsSupported	(int16_t, int32_t);
+	void		audioOutput		(float *, int32_t);
+	bool		setupChannels		(QComboBox *);
 	int32_t		CardRate;
+	int16_t		latency;
 	int32_t		size;
-	uint8_t		Latency;
 	bool		portAudio;
 	bool		writerRunning;
 	int16_t		numofDevices;
@@ -81,6 +70,9 @@ private:
 	SNDFILE		*dumpFile;
 	RingBuffer<float>	*_O_Buffer;
 	PaStreamParameters	outputParameters;
+
+	int16_t		*outTable;
+	QComboBox	*streamSelector;
 protected:
 static	int		paCallback_o	(const void	*input,
 	                                 void		*output,

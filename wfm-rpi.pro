@@ -20,13 +20,15 @@ QMAKE_LFLAGS	+= -flto
 #
 #CONFIG	+= airspy
 #CONFIG	+= sdrplay
-#CONFIG	+= dabstick-new
+CONFIG	+= dabstick-new
 #CONFIG	+= dabstick-osmo
 #	Handle with care
 #CONFIG	+= extio
 #	Handle not at all
 #CONFIG	+= sw-elad-s1
-
+#
+#	Note that if you use "streamer", sound is not send
+#	to the local soundcard
 CONFIG	+= streamer
 DEPENDPATH += . \
 	      ./src \
@@ -70,6 +72,7 @@ HEADERS += ./includes/gui.h \
 	   ./includes/various/fft-filters.h \
 	   ./includes/various/iir-filters.h \
 	   ./includes/various/program-list.h \
+	   ./includes/output/audio-base.h \
 	   ./includes/output/audiosink.h \
 	   ./includes/fm/fm-demodulator.h \
 	   ./includes/fm/fm-processor.h \
@@ -98,6 +101,7 @@ SOURCES += ./src/main.cpp \
 	   ./src/various/fft-filters.cpp \
 	   ./src/various/iir-filters.cpp \
 	   ./src/various/program-list.cpp \
+	   ./src/output/audio-base.cpp \
 	   ./src/output/audiosink.cpp \
 	   ./src/fm/fm-demodulator.cpp \
 	   ./src/fm/fm-processor.cpp \
@@ -195,8 +199,8 @@ airspy {
 #
 streamer	{
 	DEFINES		+= HAVE_STREAMER
-	HEADERS		+= ./includes/output/streamer.h
-	SOURCES		+= ./src/output/streamer.cpp
+	HEADERS		+= ./includes/output/tcp-streamer.h
+	SOURCES		+= ./src/output/tcp-streamer.cpp
 	QT		+= network 
 }
 #

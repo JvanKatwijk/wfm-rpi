@@ -22,34 +22,27 @@
  *    You should have received a copy of the GNU General Public License
  *    along with SDR-J; if not, write to the Free Software
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
  */
 
 #include	"audiosink.h"
+#include	<stdio.h>
 #include	<QDebug>
-#ifdef	HAVE_STREAMER
-#include	"streamer.h"
-#endif
+#include	<QMessageBox>
 /*
- *	The class is the sink for the data generated
  */
-#ifdef	HAVE_STREAMER
-	audioSink::audioSink	(int32_t	rate,
-	                         int16_t	latency,
-	                         streamerServer *str) {
-	theStreamer	= str;
-#else
-	audioSink::audioSink	(int32_t	rate,
-	                         int16_t	latency) {
-#endif
+	audioSink::audioSink	(int16_t latency,
+	                         QComboBox *s,
+	                         RingBuffer<int16_t> *b): audioBase (b) {
 int32_t	i;
-
-	this	-> CardRate	= rate;
 	this	-> latency	= latency;
+	this	-> streamSelector	= s;
 
-	_O_Buffer		= new RingBuffer<float> (2 * rate);
+	this	-> CardRate	= 48000;
+	this	-> latency	= latency;
+	_O_Buffer		= new RingBuffer<float>(2 * 32768);
 	portAudio		= false;
 	writerRunning		= false;
-
 	if (Pa_Initialize () != paNoError) {
 	   fprintf (stderr, "Initializing Pa for output failed\n");
 	   return;
@@ -62,8 +55,16 @@ int32_t	i;
 	   qDebug ("Api %d is %s\n", i, Pa_GetHostApiInfo (i) -> name);
 
 	numofDevices	= Pa_GetDeviceCount ();
+	outTable	= new int16_t [numofDevices + 1];
+	for (i = 0; i < numofDevices; i ++)
+	   outTable [i] = -1;
 	ostream		= NULL;
-	dumpFile	= NULL;
+	setupChannels (streamSelector);
+	connect (streamSelector, SIGNAL (activated (int)),
+	         this,  SLOT (set_streamSelector (int)));
+	streamSelector	-> show ();
+	selectDefaultDevice ();
+	
 }
 
 	audioSink::~audioSink	(void) {
@@ -82,12 +83,14 @@ int32_t	i;
 	   Pa_Terminate ();
 
 	delete	_O_Buffer;
-	fprintf (stderr, "audioSink is uit\n");
+	delete[] outTable;
+	streamSelector	-> hide ();
 }
+
 //
 bool	audioSink::selectDevice (int16_t odev) {
 PaError err;
-
+	fprintf (stderr, "select device with %d\n", odev);
 	if (!isValidDevice (odev))
 	   return false;
 
@@ -106,13 +109,13 @@ PaError err;
 	outputParameters. channelCount		= 2;
 	outputParameters. sampleFormat		= paFloat32;
 	outputParameters. suggestedLatency	= 
-	                             Pa_GetDeviceInfo (odev) ->
+	                          Pa_GetDeviceInfo (odev) ->
 	                                      defaultHighOutputLatency * 4;
-	bufSize	= (int)((float)outputParameters. suggestedLatency * 
-	                                         (float)CardRate);
+//	bufSize	= (int)((float)outputParameters. suggestedLatency);
+	bufSize	= latency * 10 * 256;
 
-	fprintf (stderr, "latency = %d\n", latency);
-	bufSize	= this -> latency * 10 * 256;
+//	if (bufSize < 0 || bufSize > 17300)
+//	   bufSize = 16384;
 
 	outputParameters. hostApiSpecificStreamInfo = NULL;
 //
@@ -132,8 +135,14 @@ PaError err;
 	   qDebug ("Open ostream error\n");
 	   return false;
 	}
+	fprintf (stderr, "stream opened\n");
 	paCallbackReturn = paContinue;
 	err = Pa_StartStream (ostream);
+	if (err != paNoError) {
+	   qDebug ("Open startstream error\n");
+	   return false;
+	}
+	fprintf (stderr, "stream started\n");
 	writerRunning	= true;
 	return true;
 }
@@ -144,13 +153,14 @@ PaError err;
 	if (!Pa_IsStreamStopped (ostream))
 	   return;
 
+	_O_Buffer	-> FlushRingBuffer ();
 	paCallbackReturn = paContinue;
 	err = Pa_StartStream (ostream);
 	if (err == paNoError)
 	   writerRunning	= true;
 }
 
-void	audioSink::stopWriter	(void) {
+void	audioSink::stop	(void) {
 	if (Pa_IsStreamStopped (ostream))
 	   return;
 
@@ -160,7 +170,6 @@ void	audioSink::stopWriter	(void) {
 	   Pa_Sleep (1);
 	writerRunning		= false;
 }
-
 //
 //	helper
 bool	audioSink::OutputrateIsSupported (int16_t device, int32_t Rate) {
@@ -191,17 +200,11 @@ float	*outp		= (float *)outputBuffer;
 audioSink *ud		= reinterpret_cast <audioSink *>(userData);
 uint32_t	actualSize;
 uint32_t	i;
-
 	(void)statusFlags;
 	(void)inputBuffer;
 	(void)timeInfo;
-	if (statusFlags & (paOutputUnderflow|paOutputOverflow)) {
-	    const std::string runtype (statusFlags&paOutputUnderflow ? "Under" : "Over");
-	    qDebug("%srun flag in PA callback", runtype.c_str());
-	}
-
 	if (ud -> paCallbackReturn == paContinue) {
-	   outB = (reinterpret_cast <audioSink *>(userData)) -> _O_Buffer;
+	   outB = (reinterpret_cast <audioSink *> (userData)) -> _O_Buffer;
 	   actualSize = outB -> getDataFromBuffer (outp, 2 * framesPerBuffer);
 	   for (i = actualSize; i < 2 * framesPerBuffer; i ++)
 	      outp [i] = 0;
@@ -210,50 +213,13 @@ uint32_t	i;
 	return ud -> paCallbackReturn;
 }
 
-static inline
-int32_t	minimum (int32_t a, int32_t b) {
-	return a > b ? b : a;
-}
-//
-//	Just for my own curiosity I want to know to what degree
-//	the buffer is filled
-int32_t	audioSink::capacity	(void) {
-	return _O_Buffer -> GetRingBufferWriteAvailable () / 2;
-}
-//
-
-int32_t	audioSink::putSample	(DSPCOMPLEX v) {
-	return putSamples (&v, 1);
+void	audioSink::audioOutput	(float *b, int32_t amount) {
+	_O_Buffer	-> putDataIntoBuffer (b, 2 * amount);
 }
 
-int32_t	audioSink::putSamples		(DSPCOMPLEX *V, int32_t n) {
-float	*buffer = (float *)alloca (2 * n * sizeof (float));
-int32_t	i;
-int32_t	available = _O_Buffer -> GetRingBufferWriteAvailable ();
-
-	if (2 * n > available)
-	   n = (available / 2) & ~01;
-	for (i = 0; i < n; i ++) {
-	   buffer [2 * i] = real (V [i]);
-	   buffer [2 * i + 1] = imag (V [i]);
-	}
-
-	if (dumpFile != NULL)
-	   sf_writef_float (dumpFile, buffer, n);
-	_O_Buffer	-> putDataIntoBuffer (buffer, 2 * n);
-#ifdef	HAVE_STREAMER
-	theStreamer	-> addSamples (buffer, 2 * n);
-#endif
-	return n;
-}
-
-int16_t	audioSink::numberofDevices	(void) {
-	return numofDevices;
-}
-
-const char	*audioSink::outputChannelwithRate (int16_t ch, int32_t rate) {
+QString audioSink::outputChannelwithRate (int16_t ch, int32_t rate) {
 const PaDeviceInfo *deviceInfo;
-const	char	*name	= NULL;
+QString name = QString ("");
 
 	if ((ch < 0) || (ch >= numofDevices))
 	   return name;
@@ -265,7 +231,7 @@ const	char	*name	= NULL;
 	   return name;
 
 	if (OutputrateIsSupported (ch, rate))
-	   name = deviceInfo -> name;
+	   name = QString (deviceInfo -> name);
 	return name;
 }
 
@@ -281,15 +247,55 @@ bool	audioSink::selectDefaultDevice (void) {
 	return selectDevice (Pa_GetDefaultOutputDevice ());
 }
 
-void	audioSink::startDumping	(SNDFILE *f) {
-	dumpFile	= f;
+int32_t	audioSink::cardRate	(void) {
+	return 48000;
 }
 
-void	audioSink::stopDumping	(void) {
-	dumpFile	= NULL;
+bool	audioSink::setupChannels (QComboBox *streamOutSelector) {
+uint16_t	ocnt	= 1;
+uint16_t	i;
+
+	for (i = 0; i <  numofDevices; i ++) {
+	   const QString so = 
+	             outputChannelwithRate (i, CardRate);
+	   qDebug ("Investigating Device %d\n", i);
+
+	   if (so != QString ("")) {
+	      streamOutSelector -> insertItem (ocnt, so, QVariant (i));
+	      outTable [ocnt] = i;
+	      qDebug (" (output):item %d wordt stream %d (%s)\n", ocnt , i,
+	                      so. toLatin1 ().data ());
+	      ocnt ++;
+	   }
+	}
+
+	qDebug () << "added items to combobox";
+	return ocnt > 1;
 }
 
-int32_t	audioSink::getSelectedRate	(void) {
-	return CardRate;
+bool	audioSink::set_streamSelector (int idx) {
+int16_t	outputDevice;
+
+	if (idx == 0)
+	   return false;
+
+	outputDevice = outTable [idx];
+	if (!isValidDevice (outputDevice)) {
+	   return false;
+	}
+
+	stop	();
+	if (!selectDevice (outputDevice)) {
+	   fprintf (stderr, "error selecting device\n");
+	   selectDefaultDevice ();
+	   return false;
+	}
+
+	qWarning () << "selected output device " << idx << outputDevice;
+	return true;
+}
+//
+int16_t	audioSink::numberofDevices	(void) {
+	return numofDevices;
 }
 

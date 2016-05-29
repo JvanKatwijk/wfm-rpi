@@ -42,7 +42,7 @@ class	keyPad;
 
 class	QSettings;
 class	fmProcessor;
-class	audioSink;
+class	audioBase;
 class	virtualInput;
 class	lowpassFIR;
 class	squelch;
@@ -67,13 +67,11 @@ public:
 		~RadioInterface		();
 
 private:
-#ifdef	HAVE_STREAMER
-	streamerServer	*theStreamer;
-#endif
 	void		localConnects		(void);
 	void		dumpControlState	(QSettings *);
 
 	RingBuffer<DSPCOMPLEX>	*audioSamples;
+	RingBuffer<int16_t>	*audioBuffer;
 	newConverter	*theConverter;
 	reSampler	*audioDecimator;
 	DSPCOMPLEX	*audioOut;
@@ -83,7 +81,7 @@ private:
 	int32_t		fmRate;
 	int32_t		workingRate;
 	int32_t		audioRate;
-	audioSink	*theSink;
+	audioBase	*soundOut;
 	virtualInput	*myRig;
 	int16_t		*outTable;
 	int16_t		numberofDevices;
@@ -148,7 +146,6 @@ private slots:
 	void	updateTimeDisplay	(void);
 
 	void	handle_freqButton	(void);
-	void	setStreamOutSelector	(int);
 	void	abortSystem		(int);
 	void	TerminateProcess	(void);
 
@@ -157,10 +154,6 @@ private slots:
 	void	setfmDecoder		(const QString &);
 	void	setfmDeemphasis		(const QString &);
 	void	setfmLFcutoff		(const QString &);
-	void	setAudioChannelSelect	(const QString &);
-
-	bool	setupSoundOut		(QComboBox *, audioSink *,
-	                                 int32_t, int16_t *);
 	void	set_squelchValue	(int);
 	void	set_squelchMode		(void);
 
@@ -175,6 +168,7 @@ private slots:
 	void	set_freqSave		(void);
 	void	handle_myLine		(void);
 public slots:
+	void	setAudioChannelSelect	(const QString &);
 	void	setCRCErrors		(int);
 	void	setSyncErrors		(int);
 	void	setbitErrorRate		(double);
