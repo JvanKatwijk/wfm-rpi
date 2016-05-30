@@ -46,7 +46,7 @@
 	                    DSPFLOAT	lofreq,
 	                    DSPFLOAT	hifreq,
 	                    DSPFLOAT	bandwidth,
-	                    SinCos	*Table) {
+	                    DSPCOMPLEX	*Table) {
 DSPFLOAT	omega	= 2.0 * M_PI / rate;
 float		eta	= 0.2f;
 
@@ -56,7 +56,7 @@ float		eta	= 0.2f;
 	NcoHLimit	= hifreq * omega;
 	pll_Alpha	= eta * bandwidth * omega; // pll bandwidth
 	pll_Beta	= (pll_Alpha * pll_Alpha) / 2.0; // 2nd order term
-	this	-> mySinCos	= Table;
+	this	-> Table	= Table;
 	NcoPhase	= 0;
 	phaseError	= 0;
 	locked		= false;
@@ -72,7 +72,8 @@ void		pllC::do_pll (DSPCOMPLEX signal) {
 DSPCOMPLEX	refSignal;
 
 	locked		= false;	// unless proven otherwise
-	pll_Delay	= signal * mySinCos -> getConjunct (NcoPhase);
+	refSignal	= conj (Table [int (NcoPhase / (2 * M_PI) * rate)]);
+	pll_Delay	= signal * refSignal;
 	phaseError	= myAtan. atan2 (imag (pll_Delay), real (pll_Delay));
 
 	phaseIncr	+= pll_Beta * phaseError;

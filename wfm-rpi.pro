@@ -18,9 +18,9 @@ QMAKE_LFLAGS	+= -flto
 #
 #	choose ONE device
 #
-#CONFIG	+= airspy
+CONFIG	+= airspy
 #CONFIG	+= sdrplay
-CONFIG	+= dabstick-new
+#CONFIG	+= dabstick-new
 #CONFIG	+= dabstick-osmo
 #	Handle with care
 #CONFIG	+= extio
@@ -29,7 +29,7 @@ CONFIG	+= dabstick-new
 #
 #	Note that if you use "streamer", sound is not send
 #	to the local soundcard
-CONFIG	+= streamer
+#CONFIG	+= streamer
 DEPENDPATH += . \
 	      ./src \
 	      ./includes \

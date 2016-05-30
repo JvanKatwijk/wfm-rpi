@@ -72,7 +72,7 @@ private:
 	pllC		*rds_plldecoder;
 	pllC		*pilotRecover;
 	fm_Demodulator	*theDemodulator;
-	SinCos		*mySinCos;
+	DSPCOMPLEX	*Table;
 	uint8_t		fmModus;
 	bool		rdsModus;
 	float		K_FM;

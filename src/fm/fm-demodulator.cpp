@@ -38,12 +38,12 @@
 //	chapter 3.
 	fm_Demodulator::fm_Demodulator (RadioInterface	*mr,
 	                                int32_t	rateIn,
-	                                SinCos	*mySinCos,
+	                                DSPCOMPLEX	*Table,
 	                                DSPFLOAT K_FM) {
 int32_t	i;
 
 	         this	-> rateIn	= rateIn;
-	         this	-> mySinCos	= mySinCos;
+	         this	-> Table	= Table;
 	         this	-> K_FM		= K_FM;
 
 	         theDecoder		= new decoderBase ();
@@ -76,7 +76,7 @@ QString	s;
 	      theDecoder	= new decoder_3 ();
 	      s =	QString ("Mixed Demodulator"); break;
 	   case FM4DECODER:
-	      theDecoder	= new decoder_4 (rateIn, mySinCos);
+	      theDecoder	= new decoder_4 (rateIn, Table);
 	      s = 	QString ("Pll decoder"); break;
 	   case FM5DECODER:
 	      theDecoder	= new decoder_5 ();

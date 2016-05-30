@@ -67,7 +67,10 @@ int	i;
 	fmModus			= FM_STEREO;	// default
 	sampleBuffer		= new RingBuffer<DSPCOMPLEX> (8 * 32768);
 	newDemodulator		= 0;
-	mySinCos		= new SinCos (currentRate);
+	Table			= new DSPCOMPLEX [currentRate];
+	for (i = 0; i < currentRate; i ++)
+	   Table [i] = DSPCOMPLEX (cos (2 * M_PI * i / currentRate),
+	                           sin (2 * M_PI * i / currentRate));
 	pilotBandFilter		= new fftFilter  (FFT_SIZE,
 	                                          PILOTFILTER_SIZE);
 	pilotBandFilter		-> setBand (PILOT_FREQUENCY - PILOT_WIDTH / 2,
@@ -90,7 +93,7 @@ int	i;
 
 	theDemodulator		= new fm_Demodulator (mr,
 	                                              currentRate,
-	                                              mySinCos,
+	                                              Table,
 	                                              K_FM);
 
 	theHilbertFilter	= new HilbertFilter (HILBERT_SIZE,
@@ -106,13 +109,13 @@ int	i;
 	                                    0 - 100,
 	                                    0 + 100,
 	                                    50,
-	                                    mySinCos);
+	                                    Table);
 	pilotRecover		= new pllC (currentRate,
 	                                    PILOT_FREQUENCY,
 	                                    PILOT_FREQUENCY - 100,
 	                                    PILOT_FREQUENCY + 100,
 	                                    10,
-	                                    mySinCos);
+	                                    Table);
 	current_rdsPhase	= 0;
 	start ();
 }
@@ -132,7 +135,7 @@ int	i;
 	delete	sampleBuffer;
 	delete	pilotBandFilter;
 	delete	pilotRecover;
-	delete	mySinCos;
+	delete[] Table;
 }
 
 void	fmDecoder::stop	(void) {
@@ -174,7 +177,7 @@ int32_t		totalAmount	= 0;
 	   while (running) {
 	      while (running &&
 	         sampleBuffer -> GetRingBufferReadAvailable () < SIZE)
-	         usleep (2000);
+	         usleep (20000);
 	      if (!running)
 	        throw (22);
 //
@@ -250,7 +253,8 @@ DSPFLOAT	demod	= theDemodulator -> demodulate (in);
 
 	rdsBase = theHilbertFilter -> Pass (5 * demod, 5 * demod);
 	rdsBase	= rdsBandFilter -> Pass (rdsBase);
-	rdsBase	*= mySinCos -> getComplex (current_rdsPhase);
+	int32_t thePhase = current_rdsPhase / (2 * M_PI) * currentRate;
+	rdsBase	*= Table [thePhase];
 	current_rdsPhase	-= OMEGA_RDS;
 	if (current_rdsPhase < 0)
 	   current_rdsPhase += 2 * M_PI;
@@ -292,7 +296,8 @@ float		currentPilotPhase;
 	currentPilotPhase	+= PILOT_DELAY;
 //
 //	shift the LRDiff signal down to baseband	38Khz
-	LRDiff  *= mySinCos -> getConjunct (2 * currentPilotPhase); 
+	int32_t thePhase	= currentPilotPhase / (2 * M_PI) * currentRate;
+	LRDiff  *= conj (Table [(2 * thePhase) % currentRate]);
 
 //	get rid of junk
 	LRDiff			= lrdiffFilter	-> Pass (LRDiff);
@@ -302,7 +307,7 @@ float		currentPilotPhase;
 	*audioOut		= DSPCOMPLEX (LRPlus, 2 * v);
 //
 //	shift the rds signal to baseband and filter it 57 Khz
-	rdsBase	*= mySinCos -> getConjunct (3 * currentPilotPhase);
+	rdsBase	*= conj (Table [(3 * thePhase) % currentRate]);
 	*rdsValue = 10 * imag (rdsLowPassFilter -> Pass (rdsBase));
 }
 

@@ -49,7 +49,7 @@ public:
 	};
 private:
 	int32_t		rateIn;
-	SinCos		*mySinCos;
+	DSPCOMPLEX	*Table;
 	int8_t		selectedDecoder;
 	decoderBase	*theDecoder;
 	DSPFLOAT	fm_afc;
@@ -58,7 +58,7 @@ private:
 public:
 		fm_Demodulator	(RadioInterface	*mr,
 	                         int32_t	Rate_in,
-	                         SinCos		*mySinCos,
+	                         DSPCOMPLEX	*Table,
 	                         DSPFLOAT	K_FM);
 		~fm_Demodulator	(void);
 	void	setDecoder	(int8_t);

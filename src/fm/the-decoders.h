@@ -60,7 +60,7 @@ float	I, Q;
 //
 //	Complex baseband delay demodulator
 
-class	decoder_2:public decoderBase {
+class	decoder_2: public decoderBase {
 private:
 	float		Imin1;
 	float		Qmin1;
@@ -131,13 +131,13 @@ private:
 	pllC	myfm_pll;
 public:
 		decoder_4 	(int32_t rateIn,
-	                         SinCos	*mySinCos):
+	                         DSPCOMPLEX *Table):
 	                              myfm_pll (rateIn,
 	                                        0, 
 	                            -0.95 * (0.5 * rateIn),
 	                             0.95 * (0.5 * rateIn),
 	                             0.85 * rateIn,
-	                             mySinCos) {
+	                             Table) {
 }
 
 		~decoder_4	(void) {

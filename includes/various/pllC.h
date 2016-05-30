@@ -28,13 +28,12 @@
 /*
  */
 //#include	"jff-include.h"
-#include	"sincos.h"
 #include	"Xtan2.h"
 
 
 class	pllC {
 private:
-	SinCos		*mySinCos;
+	DSPCOMPLEX	*Table;
 	DSPCOMPLEX	pll_Delay;
 	int32_t		rate;
 	double		NcoPhase;
@@ -50,7 +49,7 @@ public:
 			pllC (int32_t	rate,
 	                DSPFLOAT freq, DSPFLOAT lofreq, DSPFLOAT hifreq,
 	                DSPFLOAT bandwidth,
-	                SinCos *Table	= NULL);
+	                DSPCOMPLEX *Table);
 
 		        ~pllC (void);
 
