@@ -59,7 +59,7 @@
 //	cycles when entering with high rates)
 //	So, what we do here is reduce the speed and delegate the
 //	hard word to others
-	decimatingFilter	= new DecimatingFIR (11,
+	decimatingFilter	= new DecimatingFIR (9,
 	                                             fmRate / 2,
 	                                             inputRate,
 	                                             decimatingScale);

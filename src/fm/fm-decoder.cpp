@@ -253,6 +253,8 @@ DSPFLOAT	demod	= theDemodulator -> demodulate (in);
 
 	rdsBase = theHilbertFilter -> Pass (5 * demod, 5 * demod);
 	rdsBase	= rdsBandFilter -> Pass (rdsBase);
+//
+//	from 0 .. 2 * M_PI to 0 .. currentRate
 	int32_t thePhase = current_rdsPhase / (2 * M_PI) * currentRate;
 	rdsBase	*= Table [thePhase];
 	current_rdsPhase	-= OMEGA_RDS;

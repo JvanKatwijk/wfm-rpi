@@ -18,7 +18,7 @@ QMAKE_LFLAGS	+= -flto
 #
 #	choose ONE device
 #
-CONFIG	+= airspy
+#CONFIG	+= airspy
 #CONFIG	+= sdrplay
 #CONFIG	+= dabstick-new
 #CONFIG	+= dabstick-osmo
@@ -27,7 +27,7 @@ CONFIG	+= airspy
 #	Handle not at all
 #CONFIG	+= sw-elad-s1
 #
-#	Note that if you use "streamer", sound is not send
+#	Note that if you use "streamer", sound will not be send
 #	to the local soundcard
 #CONFIG	+= streamer
 DEPENDPATH += . \
@@ -62,7 +62,6 @@ HEADERS += ./includes/gui.h \
            ./includes/various/fft.h \
 	   ./includes/various/oscillator.h \
            ./includes/various/ringbuffer.h \
-#	   ./includes/various/pll.h \
 	   ./includes/various/pllC.h \
 	   ./includes/various/Xtan2.h \
 	   ./includes/various/sincos.h \
@@ -92,7 +91,6 @@ SOURCES += ./src/main.cpp \
 	   ./src/popup-keypad.cpp \
            ./src/various/fft.cpp \
 	   ./src/various/oscillator.cpp \
-#	   ./src/various/pll.cpp \
 	   ./src/various/pllC.cpp \
 	   ./src/various/Xtan2.cpp \
 	   ./src/various/sincos.cpp \

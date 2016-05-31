@@ -65,9 +65,7 @@ float		eta	= 0.2f;
 		pllC::~pllC (void) {
 }
 //
-//	It turned out that under Fedora we had from time
-//	to time an infinite value for signal. Still have
-//	to constrain this value
+
 void		pllC::do_pll (DSPCOMPLEX signal) {
 DSPCOMPLEX	refSignal;
 
@@ -86,10 +84,17 @@ DSPCOMPLEX	refSignal;
 	   locked = true;
 
 	NcoPhase	+= phaseIncr + pll_Alpha * phaseError;
-	while (NcoPhase >= 2 * M_PI)
-	   NcoPhase -= 2 * M_PI;
-	while (NcoPhase < 0) 
+	if (NcoPhase >= 2 * M_PI) {
+	   NcoPhase = fmod (NcoPhase, 2 * M_PI);
+	   return;
+	}
+	if (NcoPhase > 0)
+	   return;
+
+	if (NcoPhase > - 2 * M_PI) 
 	   NcoPhase += 2 * M_PI;
+	else
+	   NcoPhase = 2 * M_PI - fmod (-NcoPhase, 2 * M_PI);
 }
 
 DSPCOMPLEX	pllC::getDelay (void) {

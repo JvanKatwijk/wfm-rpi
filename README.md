@@ -5,6 +5,11 @@ A simple FM receiver for use on the Raspberry PI 2
 The FM receiver will operate with one of AIRSPY, SDRplay and DABsticks,
 depending on the configuration.
 
+Note that the load of processing FM at a rate of 192000 or higher
+is heavy. It turns out that by selecting the lto option for the
+compiler (gcc), the load is manageable and restricted to app 50-60
+percent of all 4 cores of the RPI 2.
+
 Note that the use of the AIRSPY will cause a rather high load due
 to the non-integer rate conversions that have to be done.
 
@@ -28,8 +33,8 @@ Use qmake to build the listener, which is the same as for the DAB-RPI
 
 #######################################################################
 Since I was bored selecting the frequency of the stations I wanted
-to listen to, the 0.993 version contains - quite experimental - a
-station list.
+to listen to, the 0.993 and up version contains  a
+station list mechanims.
 
 One can add a station to the list by selecting the frequency and
 pushing the "FS" button.
