@@ -12,12 +12,12 @@ add_definitions (-Wall -flto -ffast-math)
 #
 #	if you want support for one of these devices, uncomment ONE of
 #	set(SDRPLAY true) 
-#	set(AIRSPY true)
+	set(AIRSPY true)
 #
 #	For the "standard" rtlsdr library (might be in your distribution
 #	choose DABSTICK-OSMO, for a more experimental one, i.e. 
 #	the one from Leif Asbrink, choose DABSTICK-NEW
-	set(DABSTICK-OSMO true)
+#	set(DABSTICK-OSMO true)
 #	set(DABSTICK-NEW true)
 #	but do not uncomment more than one line
 #	if you want to have the PCM samples sent to port 20040
