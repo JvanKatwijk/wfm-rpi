@@ -18,9 +18,8 @@ QMAKE_LFLAGS	+= -flto
 #
 #	choose ONE device
 #
-#CONFIG	+= airspy
+CONFIG	+= airspy
 #CONFIG	+= sdrplay
-#CONFIG	+= dabstick-new
 #CONFIG	+= dabstick-osmo
 #	Handle with care
 #CONFIG	+= extio
@@ -141,7 +140,7 @@ LIBS		+= -lsamplerate
 #	the devices:
 #	for a "special" rtlsdr library use
 dabstick-new {
-	TARGET		= wfm-rpi-dabstick-0.993
+	TARGET		= wfm-rpi-dabstick-0.996
 	DEFINES		+= HAVE_DABSTICK
 	FORMS		+= ./input/dabstick-new/dabstick-widget.ui
 	INCLUDEPATH	+= ./input/dabstick-new
@@ -155,7 +154,7 @@ dabstick-new {
 #	the devices
 #	for the "standard" rtlsdr library use:
 dabstick-osmo {
-	TARGET		= wfm-rpi-dabstick-0.993
+	TARGET		= wfm-rpi-dabstick-0.996
 	DEFINES		+= HAVE_DABSTICK
 	FORMS		+= ./input/dabstick-osmo/dabstick-widget.ui
 	INCLUDEPATH	+= ./input/dabstick-osmo
@@ -170,7 +169,7 @@ dabstick-osmo {
 #	the SDRplay
 #
 sdrplay {
-	TARGET		= wfm-rpi-sdrplay-0.993
+	TARGET		= wfm-rpi-sdrplay-0.996
 	DEFINES		+= HAVE_SDRPLAY
 	FORMS		+= ./input/sdrplay/sdrplay-widget.ui
 	INCLUDEPATH	+= ./input/sdrplay
@@ -185,7 +184,7 @@ sdrplay {
 #	the AIRSPY
 #
 airspy {
-	TARGET		= wfm-rpi-airspy-0.993
+	TARGET		= wfm-rpi-airspy-0.996
 	DEFINES		+= HAVE_AIRSPY
 	FORMS		+= ./input/airspy/airspy-widget.ui
 	DEPENDPATH	+= ./input/airspy
@@ -205,7 +204,7 @@ streamer	{
 #	the elad-s1
 #
 elad_s1 {
-	TARGET		= wfm-rpi-elad-0.993
+	TARGET		= wfm-rpi-elad-0.996
 	DEFINES		+= HAVE_ELAD_S1
 	FORMS		+= ./input/sw-elad-s1/elad_widget.ui
 	DEPENDPATH	+= ./input/sw-elad-s1
@@ -221,7 +220,7 @@ elad_s1 {
 #	extio dependencies, windows only
 #
 extio {
-	TARGET		= wfm-rpi-extio-0.993
+	TARGET		= wfm-rpi-extio-0.996
 	DEFINES		+= HAVE_EXTIO
 	INCLUDEPATH	+= ./input/extio-handler
 	HEADERS		+= ./input/extio-handler/extio-handler.h \

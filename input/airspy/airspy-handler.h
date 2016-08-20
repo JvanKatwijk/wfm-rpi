@@ -135,6 +135,7 @@ private:
 	QFrame		*myFrame;
 	bool		success;
 	bool		running;
+	bool		deviceOK;
 	bool		lna_agc;
 	bool		mixer_agc;
 	bool		rf_bias;
@@ -144,10 +145,11 @@ const	char*		board_id_name (void);
 	int16_t		mixerGain;
 	int16_t		lnaGain;
 	
-	DSPCOMPLEX	convBuffer [2 * 625 + 1];
+	DSPCOMPLEX	*convBuffer;
 	int16_t		convIndex;
-	int16_t		mapTable_int   [2 * 480];
-	float		mapTable_float   [2 * 480];
+	int16_t		convBufferSize;
+	int16_t		mapTable_int   [1920];
+	float		mapTable_float   [1920];
 	QSettings	*airspySettings;
 	RingBuffer<DSPCOMPLEX> *theBuffer;
 	int32_t		inputRate;
@@ -163,8 +165,6 @@ static
 	int		data_available (void *buf, int buf_size);
 const	char *		getSerial (void);
 	int	open (void);
-private slots:
-	void		set_rateSelector	(const QString &);
 };
 
 #endif
