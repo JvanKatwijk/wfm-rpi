@@ -18,8 +18,8 @@ QMAKE_LFLAGS	+= -flto
 #
 #	choose ONE device
 #
-CONFIG	+= airspy
-#CONFIG	+= sdrplay
+#CONFIG	+= airspy
+CONFIG	+= sdrplay
 #CONFIG	+= dabstick-osmo
 #	Handle with care
 #CONFIG	+= extio
@@ -171,7 +171,6 @@ dabstick-osmo {
 sdrplay {
 	TARGET		= wfm-rpi-sdrplay-0.996
 	DEFINES		+= HAVE_SDRPLAY
-	FORMS		+= ./input/sdrplay/sdrplay-widget.ui
 	INCLUDEPATH	+= ./input/sdrplay
 	HEADERS		+= ./input/sdrplay/sdrplay.h \
 	                   ./input/sdrplay/sdrplay-loader.h \
@@ -179,6 +178,7 @@ sdrplay {
 	SOURCES		+= ./input/sdrplay/sdrplay.cpp \
 	                   ./input/sdrplay/sdrplay-loader.cpp \
 	                   ./input/sdrplay/sdrplay-worker.cpp 
+	FORMS		+= ./input/sdrplay/sdrplay-widget.ui
 }
 #
 #	the AIRSPY

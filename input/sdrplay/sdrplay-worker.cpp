@@ -50,7 +50,6 @@ int	err;
 	this	-> deviceRate	= float(deviceRate) / MHz (1);
 	this	-> bandWidth	= bandWidth / MHz (1);
 	this	-> defaultFreq	= float(defaultFreq) / MHz (1);
-	this	-> defaultFreq	= float(Khz (97600)) / MHz (1);
 	this	-> functions	= f;
 	_I_Buffer		= buf;
 	*OK			= false;	// just the default
@@ -74,7 +73,7 @@ int	err;
 	                                            mir_sdr_IF_Zero,
 	                                            &sps);
 	if (err != 0) {
-	   fprintf (stderr, "Probleem init %d\n", err);
+	   fprintf (stderr, "Probleem init\n");
 	   return;
 	}
 
@@ -108,9 +107,10 @@ void	sdrplayWorker::stop	(void) {
 //	and passing the values on
 //
 void	sdrplayWorker:: run (void) {
-int16_t	localBuf [2 * sps];
-int16_t		xi [sps];
-int16_t		xq [sps];
+int16_t		*localBuf 	=
+	                      (int16_t *)alloca (2 * sps * sizeof (int16_t));
+int16_t		*xi		= (int16_t *)alloca (sps * sizeof (int16_t));
+int16_t		*xq		= (int16_t *)alloca (sps * sizeof (int16_t));
 uint32_t	fs;
 int16_t		i;
 int32_t		grc, rfc, fsc;
@@ -118,9 +118,6 @@ int	err;
 
 	functions -> my_mir_sdr_SetSyncUpdatePeriod ((int)(deviceRate * MHz (1) / 2));
 	functions -> my_mir_sdr_SetSyncUpdateSampleNum (sps);
-	functions	-> my_mir_sdr_SetParam	(102, 1);	// DC corr
-	functions	-> my_mir_sdr_SetParam	(105, 0);	// IQ corr
-	
 	while (runnable) {
 	   err =  functions ->
 	       my_mir_sdr_ReadPacket (&xi [0], & xq [0], &fs, &grc, &rfc, &fsc);
@@ -133,9 +130,9 @@ int	err;
 	   }
 	   _I_Buffer	-> putDataIntoBuffer (localBuf, 2 * sps);
 
-	if (fsc != 0 || rfc != 0 ||grc != 0)
-	   fprintf (stderr, "fsc = %d, rfc = %d, grc = %d\n",
-	                     fsc, rfc, grc);
+	   if (fsc != 0 || rfc != 0 ||grc != 0)
+	      fprintf (stderr, "fsc = %d, rfc = %d, grc = %d\n",
+	                                        fsc, rfc, grc);
 //	OK, data is now stored, now checking for updates
 	   while (anyChange != NO_CHANGE) {
 	      if (anyChange & FREQ_CHANGE) {

@@ -27,18 +27,17 @@
 #ifndef __SDRPLAY_WORKER
 #define	__SDRPLAY_WORKER
 
-#include	<QThread>
 #include	<stdlib.h>
 #include	<stdio.h>
 #include	<math.h>
 #include	<string.h>
 #include	<unistd.h>
 #include	<stdint.h>
+#include	<QThread>
 #include	"ringbuffer.h"
 #include	"sdrplay-loader.h"
 
 class	sdrplayWorker: public QThread {
-Q_OBJECT
 public:
 			sdrplayWorker	(int32_t,
 	                                 int32_t,

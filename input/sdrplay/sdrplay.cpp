@@ -29,40 +29,28 @@
 #include	<QHBoxLayout>
 #include	<QLabel>
 
-#include	"sdrplay.h"		// our header
+#include	"mirsdrapi-rsp.h"
+#include	"sdrplay.h"	// our header
 #include	"sdrplay-worker.h"	// the worker
 #include	"sdrplay-loader.h"	// funtion loader
 //
 #define	DEFAULT_GAIN	25
 
-	sdrplay::sdrplay  (QSettings *s, bool full, bool *success) {
+	sdrplay::sdrplay  (QSettings *s, bool *success) {
+int	err;
 float	ver;
-QString	h;
-int	k;
 
 	sdrplaySettings		= s;
 	this	-> myFrame	= new QFrame (NULL);
 	setupUi (this -> myFrame);
 	this	-> myFrame	-> show ();
+	this	-> inputRate	= Khz (2048);
+	this	-> bandWidth	= Khz (1536);
 
-	sdrplaySettings	-> beginGroup ("sdrplay");
-	h	= sdrplaySettings	-> value ("sdrplayRate", 960). toString ();
-	k	=  rateSelector -> findText (h);
-	if (k != -1)
-	   rateSelector	-> setCurrentIndex (k);
-	inputRate	=  Khz (rateSelector -> currentText (). toInt ());
-	sdrplaySettings	-> endGroup ();
-
-	if (!full) {
-	   while (rateSelector -> count () > 0)
-	      rateSelector -> removeItem (rateSelector -> currentIndex ());
-	   rateSelector	-> addItem (QString::number (inputRate / Khz (1)));
-	}
-	this	-> bandWidth	= getBandwidth (inputRate);
-	
 	*success		= false;
 	_I_Buffer	= NULL;
 	theLoader	= NULL;
+	theWorker	= NULL;
 
 	theLoader	= new sdrplayLoader (success);
 	if (!(*success)) {
@@ -72,9 +60,9 @@ int	k;
 	   return;
 	}
 
-	(void)theLoader -> my_mir_sdr_ApiVersion (&ver);
+	err			= theLoader -> my_mir_sdr_ApiVersion (&ver);
 	if (ver != MIR_SDR_API_VERSION) {
-	   fprintf (stderr, "Foute API: %f, %f\n", ver, MIR_SDR_API_VERSION);
+	   fprintf (stderr, "Foute API: %f, %d\n", ver, err);
 	   statusLabel	-> setText ("mirics error");
 	}
 
@@ -83,24 +71,22 @@ int	k;
 	vfoFrequency	= Khz (94700);
 	currentGain	= DEFAULT_GAIN;
 	vfoOffset	= 0;
-	theWorker	= NULL;
-	connect (externalGain, SIGNAL (valueChanged (int)),
-	         this, SLOT (setExternalGain (int)));
-	connect (f_correction, SIGNAL (valueChanged (int)),
-	         this, SLOT (freqCorrection  (int)));
-	connect (rateSelector, SIGNAL (activated (const QString &)),
-	         this, SLOT (set_rateSelector (const QString &)));
-	connect (KhzOffset, SIGNAL (valueChanged (int)),
-	         this, SLOT (setKhzOffset (int)));
-	sdrplaySettings	-> beginGroup ("sdrplay");
-	externalGain -> setValue (sdrplaySettings -> value ("externalGain", 10). toInt ());
-	f_correction -> setValue (sdrplaySettings -> value ("f_correction", 0). toInt ());
-	KhzOffset	-> setValue (sdrplaySettings -> value ("KhzOffset", 0). toInt ());
+
+	sdrplaySettings		-> beginGroup ("sdrplaySettings");
+	gainSlider 		-> setValue (
+	            sdrplaySettings -> value ("externalGain", 10). toInt ());
 	sdrplaySettings	-> endGroup ();
+
+	setExternalGain	(gainSlider	-> value ());
+	connect (gainSlider, SIGNAL (valueChanged (int)),
+	         this, SLOT (setExternalGain (int)));
 	*success	= true;
 }
 
 	sdrplay::~sdrplay	(void) {
+	sdrplaySettings	-> beginGroup ("sdrplaySettings");
+	sdrplaySettings	-> setValue ("externalGain", gainSlider -> value ());
+	sdrplaySettings	-> endGroup ();
 	stopReader ();
 	if (_I_Buffer != NULL)
 	   delete _I_Buffer;
@@ -108,20 +94,13 @@ int	k;
 	   delete theLoader;
 	if (theWorker != NULL)
 	   delete theWorker;
-	sdrplaySettings	-> beginGroup ("sdrplay");
-	sdrplaySettings	-> setValue ("externalGain", externalGain -> value ());
-	sdrplaySettings	-> setValue ("f_correction", f_correction -> value ());
-	sdrplaySettings	-> setValue ("KhzOffset", KhzOffset -> value ());
-	sdrplaySettings	-> setValue ("sdrplayRate", 
-	                              rateSelector -> currentText (). toLatin1 (). data ());
-	sdrplaySettings	-> endGroup ();
-	delete myFrame;
+	delete	myFrame;
 }
 //
 //	The filter bank for the dongle is the first
 //	one
 static inline
-int16_t	bankFor_dongle (int32_t freq) {
+int16_t	bankFor (int32_t freq) {
 	if (freq < 60 * MHz (1))
 	   return -1;
 	if (freq < 120 * MHz (1))
@@ -137,47 +116,24 @@ int16_t	bankFor_dongle (int32_t freq) {
 //
 //	But for the sdrplay we use the second one
 static inline
-int16_t bankFor_sdr (int32_t freq) {
-	if (freq < 100 * Khz (1))
-	   return -1;
-	if (MIR_SDR_API_VERSION > 1.5) {
-	   if (freq < 12 * Mhz (1))
-	      return 1;
-	   if (freq < 30 * Mhz (1))
-	      return 2;
-	   if (freq < 60 * Mhz (1))
-	      return 3;
-	   if (freq < 120 * Mhz (1))
-	      return 4;
-	   if (freq < 250 * Mhz (1))
-	      return 5;
-	   if (freq < 420 * Mhz (1))
-	      return 6;
-	   if (freq < 1000 * Mhz (1))
-	      return 7;
-	   if (freq < 2000 * Mhz (1))
-	      return 8;
-	   return - 1;
-	}
-	else {   // old API
-	   if (freq < 12 * MHz (1))
-	      return 1;
-	   if (freq < 30 * MHz (1))
-	      return 2;
-	   if (freq < 60 * MHz (1))
-	      return 3;
-	   if (freq < 120 * MHz (1))
-	      return 4;
-	   if (freq < 250 * MHz (1))
-	      return 5;
-	   if (freq < 380 * MHz (1))
-	      return 6;
-	   if (freq < 420 * MHz (1))
-	      return -1;
-	   if (freq < 1000 * MHz (1))
-	      return 7;
-	   return -1;
-	}
+int16_t	bankFor_sdr (int32_t freq) {
+	if (freq < 12 * MHz (1))
+	   return 1;
+	if (freq < 30 * MHz (1))
+	   return 2;
+	if (freq < 60 * MHz (1))
+	   return 3;
+	if (freq < 120 * MHz (1))
+	   return 4;
+	if (freq < 250 * MHz (1))
+	   return 5;
+	if (freq < 420 * MHz (1))
+	   return 6;
+	if (freq < 1000 * MHz (1))
+	   return 7;
+	if (freq < 2000 * MHz (1))
+	   return 8;
+	return -1;
 }
 
 bool	sdrplay::legalFrequency (int32_t f) {
@@ -218,24 +174,14 @@ void	sdrplay::setExternalGain	(int newGain) {
 	if (newGain < 0 || newGain > 102)
 	   return;
 
-	fprintf (stderr, "gain is nu %d\n", newGain);
 	if (theWorker != NULL)
 	   theWorker -> setExternalGain (newGain);
 	currentGain = newGain;
+	return;
 }
 
-int32_t	sdrplay::setExternalRate	(int32_t newRate) {
-	if (newRate < bandWidth)
-	   return inputRate;
-
-	if (theWorker != NULL)
-	   theWorker -> setExternalRate (newRate);
-	inputRate	= newRate;
-	return inputRate;
-}
-
-int32_t	sdrplay::getRate	(void) {
-	return inputRate;
+int16_t	sdrplay::maxGain	(void) {
+	return 101;
 }
 
 bool	sdrplay::restartReader	(void) {
@@ -243,7 +189,6 @@ bool	success;
 
 	if (theWorker != NULL)
 	   return true;
-	_I_Buffer	-> FlushRingBuffer ();
 
 	theWorker = new sdrplayWorker (inputRate,
 	                               bandWidth,
@@ -251,6 +196,7 @@ bool	success;
 	                               theLoader,
 	                               _I_Buffer,
 	                               &success);
+	_I_Buffer	-> FlushRingBuffer ();
 	if (success)
 	   theWorker -> setExternalGain (currentGain);
 	return success;
@@ -266,17 +212,17 @@ void	sdrplay::stopReader	(void) {
 	theWorker = NULL;
 }
 //
-//	The brave old getSamples. 
-//	we get the size in I/Q pairs
+//	The brave old getSamples. For the mirics stick, we get
+//	size still in I/Q pairs
 //	Note that the sdrPlay returns 10 bit values
 int32_t	sdrplay::getSamples (DSPCOMPLEX *V, int32_t size) { 
 int32_t	amount, i;
-int16_t	buf [2 * size];
+int16_t	*buf  = (int16_t *)alloca (2 * size * sizeof (int16_t));
 //
 	amount = _I_Buffer	-> getDataFromBuffer (buf, 2 * size);
 	for (i = 0; i < amount / 2; i ++)  
-	   V [i] = DSPCOMPLEX (buf [2 * i] / 1024.0,
-	                       buf [2 * i + 1] / 1024.0);
+	   V [i] = DSPCOMPLEX (buf [2 * i] / 2048.0,
+	                       buf [2 * i + 1] / 2048.0);
 	return amount / 2;
 }
 
@@ -293,34 +239,6 @@ void	sdrplay::resetBuffer	(void) {
 }
 
 int16_t	sdrplay::bitDepth	(void) {
-	return 10;
-}
-
-int32_t	sdrplay::getBandwidth	(int32_t rate) {
-static int validWidths [] = {200, 300, 600, 1536, 5000, 6000, 7000, 8000, -1};
-int16_t	i;
-	for (i = 1; validWidths [i] != -1; i ++)
-	   if (rate / Khz (1) < validWidths [i] &&
-	       rate / Khz (1) >= validWidths [i - 1])
-	      return validWidths [i - 1] * Khz (1);
-	if (rate / Khz (1) == 8000)
-	   return rate;
-	return 1536 * Khz (1);	// default
-}
-
-void	sdrplay::set_rateSelector (const QString &s) {
-	(void)s;
-}
-
-//	vfoOffset is in Hz, we have two spinboxes influencing the
-//	settings
-void	sdrplay::setKhzOffset	(int k) {
-int32_t	realFreq	= getVFOFrequency ();
-	vfoOffset	= Khz (k);
-	setVFOFrequency (realFreq);
-}
-
-void	sdrplay::freqCorrection	(int f) {
-	(void)f;
+	return 14;
 }
 

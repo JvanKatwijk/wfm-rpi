@@ -31,15 +31,11 @@
 //	We use a straightforward class "sdrplayLoader"  both as
 //	loader and as container	for the dll functions.
 
-
 #ifndef	__SDRPLAY_LOADER
 #define	__SDRPLAY_LOADER
 #include	"fm-constants.h"
-#ifndef	__MINGW32__
 #include	"mirsdrapi-rsp.h"
-#else
-#include	"mir_sdr.h"
-#endif
+
 //	The naming of functions for accessing shared libraries
 //	differ between Linux and Windows
 #ifdef __MINGW32__
@@ -62,7 +58,6 @@ typedef mir_sdr_ErrT (*pfn_mir_sdr_SetSyncUpdateSampleNum)(unsigned int sampleNu
 typedef mir_sdr_ErrT (*pfn_mir_sdr_SetSyncUpdatePeriod)(unsigned int period);
 typedef mir_sdr_ErrT (*pfn_mir_sdr_ApiVersion)(float *version);   
 typedef mir_sdr_ErrT (*pfn_mir_sdr_ResetUpdateFlags)(int resetGainUpdate, int resetRfUpdate, int resetFsUpdate);   
-typedef mir_sdr_ErrT (*pfn_mir_sdr_SetParam)(int, int);
 
 class	sdrplayLoader {
 public:
@@ -84,8 +79,6 @@ public:
 	pfn_mir_sdr_ApiVersion	my_mir_sdr_ApiVersion;
 	pfn_mir_sdr_ResetUpdateFlags
 	                        my_mir_sdr_ResetUpdateFlags;
-	pfn_mir_sdr_SetParam	xx_mir_sdr_SetParam;
-	void			my_mir_sdr_SetParam (int, int);
 private:
 	HINSTANCE	Handle;
 	bool		libraryLoaded;

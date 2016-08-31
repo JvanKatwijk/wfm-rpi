@@ -51,8 +51,8 @@ ULONG APIkeyValue_length = 255;
 	                 (LPBYTE)&APIkeyValue,
 	                 (LPDWORD)&APIkeyValue_length);
 //	Ok, make explicit it is in the 64 bits section
-//	wchar_t *x = wcscat (APIkeyValue, (wchar_t *)L"\\x64\\mir_sdr_api.dll");
 	wchar_t *x = wcscat (APIkeyValue, (wchar_t *)L"\\x86\\mir_sdr_api.dll");
+//	wchar_t *x = wcscat (APIkeyValue, (wchar_t *)L"\\x64\\mir_sdr_api.dll");
 //	fprintf (stderr, "Length of APIkeyValue = %d\n", APIkeyValue_length);
 //	wprintf (L"API registry entry: %s\n", APIkeyValue);
 	RegCloseKey(APIkey);
@@ -67,9 +67,6 @@ ULONG APIkeyValue_length = 255;
 //	able to find the libusb. That is why we explicity load it here
 	Handle		= dlopen ("libusb-1.0.so", RTLD_NOW | RTLD_GLOBAL);
 	Handle		= dlopen ("libmirsdrapi-rsp.so", RTLD_NOW);
-	if (Handle == NULL)
-	   Handle	= dlopen ("libmir_sdr.so", RTLD_NOW);
-
 	if (Handle == NULL) {
 	   fprintf (stderr, "error report %s\n", dlerror ());
 	   return;
@@ -156,9 +153,6 @@ ULONG APIkeyValue_length = 255;
 //	   return;
 //	}
 
-	xx_mir_sdr_SetParam	= (pfn_mir_sdr_SetParam)
-	                GETPROCADDRESS (Handle, "mir_sdr_SetParam");
-
 	fprintf (stderr, "Functions seem to be loaded\n");
 	*success	= true;
 //
@@ -192,11 +186,5 @@ ULONG APIkeyValue_length = 255;
 #else
 	dlclose (Handle);
 #endif
-}
-
-void	sdrplayLoader::my_mir_sdr_SetParam	(int p, int v) {
-	if (xx_mir_sdr_SetParam == NULL)
-	   return;
-	(void)xx_mir_sdr_SetParam (p, v);
 }
 

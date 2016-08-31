@@ -104,7 +104,7 @@ int16_t	latency		= 1;
 #ifdef	HAVE_DABSTICK
 	myRig = new dabStick	(fmSettings, false, &success);
 #elif	HAVE_SDRPLAY
-	myRig = new sdrplay	(fmSettings, false, &success);
+	myRig = new sdrplay	(fmSettings, &success);
 #elif	HAVE_AIRSPY
 	myRig = new airspyHandler (fmSettings, false, &success);
 #elif	HAVE_EXTIO

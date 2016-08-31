@@ -214,51 +214,43 @@ add_definitions (-Wall -flto -ffast-math)
 	endif(STREAMER)
 
 	if (SDRPLAY)
-	   find_library (SDRPLAYLIB libmirsdrapi-rsp.so)
-	   if (NOT(SDRPLAYLIB))
-	      message (FATAL_ERROR "please install sdrplay library")
-	   else (NOT(SDRPLAYLIB))
-	      set (extraLibs ${extraLibs} ${SDRPLAYLIB})
-	   endif()
 	   find_path (SDRPLAYLIB_INCLUDE_DIR
-	              NAMES mirsdrapi-rsp.h
-	              PATHS
-	              /usr/local/include/
-	   )
-	   include_directories (${SDRPLAYLIB_INCLUDE_DIR})
-
+                      NAMES mirsdrapi-rsp.h
+                      PATHS
+                      /usr/local/include/
+           include_directories (${SDRPLAYLIB_INCLUDE_DI
 	   set (${objectName}_UIS
 	        ${${objectName}_UIS}
-	        ./input/sdrplay/sdrplay-widget.ui 
+	        ./src/input/sdrplay/sdrplay-widget.ui 
 	   )
 
 	   set (${objectName}_MOCS
 	        ${${objectName}_MOCS}
-	        ./input/sdrplay/sdrplay.h
-	        ./input/sdrplay/sdrplay-worker.h
+	        ./src/input/sdrplay/sdrplay.h
+	        ./src/input/sdrplay/sdrplay-worker.h
 	   )
 
 	   include_directories (
-	     ./input/sdrplay
+	     ./src/input/sdrplay
 	   )
 
 	   set ($(objectName)_HDRS
 	        ${${objectName}_HDRS}
-	        ./input/sdrplay/sdrplay.h
-	        ./input/sdrplay/sdrplay-loader.h
-	        ./input/sdrplay/sdrplay-worker.h
-	   )
+	        ./src/input/sdrplay/sdrplay.h
+	        ./src/input/sdrplay/sdrplay-loader.h
+                ./src/input/sdrplay/sdrplay-worker.h
+           )
 
 	   set (${objectName}_SRCS
 	        ${${objectName}_SRCS}
-	        ./input/sdrplay/sdrplay.cpp
-	        ./input/sdrplay/sdrplay-worker.cpp
-	        ./input/sdrplay/sdrplay-loader.cpp
+	        ./src/input/sdrplay/sdrplay.cpp
+	        ./src/input/sdrplay/sdrplay-worker.cpp
+                ./src/input/sdrplay/sdrplay-loader.cpp
 	   )
 
 	   add_definitions (-DHAVE_SDRPLAY)
-	   add_definitions (-DSDRPLAY_LIBRARY_NEW)
 	endif (SDRPLAY)
+ 
 
 	if (AIRSPY)
 	   find_library (AIRSPY_LIB airspy)
