@@ -171,12 +171,11 @@ int32_t	sdrplay::defaultFrequency	(void) {
 }
 
 void	sdrplay::setVFOFrequency	(int32_t newFrequency) {
-int32_t	realFreq = newFrequency;
 int	gRdBSystem;
 int	samplesPerPacket;
 mir_sdr_ErrT	err;
 
-	if (bankFor_sdr (realFreq) == -1)
+	if (bankFor_sdr (newFrequency) == -1)
 	   return;
 
 	if (!running) {
@@ -184,20 +183,23 @@ mir_sdr_ErrT	err;
 	   return;
 	}
 
-	err = my_mir_sdr_Reinit (&currentGain,
-	                         double (inputRate) / Mhz (1),
-	                         double (realFreq) / Mhz (1),
-	                         mir_sdr_BW_0_300,
-	                         mir_sdr_IF_Zero,
-	                         mir_sdr_LO_Undefined,	// LOMode
-	                         0,	// LNA enable
-	                         &gRdBSystem,
-	                         agcMode,	
-	                         &samplesPerPacket,
-	                         mir_sdr_CHANGE_RF_FREQ);
+	if (bankFor_sdr (newFrequency) == bankFor_sdr (vfoFrequency))
+	    err	= my_mir_sdr_SetRf (double (vfoFrequency), 1, 0);
+	else
+	   err = my_mir_sdr_Reinit (&currentGain,
+	                            double (inputRate) / Mhz (1),
+	                            double (newFrequency) / Mhz (1),
+	                            mir_sdr_BW_0_300,
+	                            mir_sdr_IF_Zero,
+	                            mir_sdr_LO_Undefined,	// LOMode
+	                            0,	// LNA enable
+	                            &gRdBSystem,
+	                            agcMode,	
+	                            &samplesPerPacket,
+	                            mir_sdr_CHANGE_RF_FREQ);
 	if (err != 0)
 	   fprintf (stderr, "Error %d\n", err);
-	vfoFrequency = realFreq;
+	vfoFrequency = newFrequency;
 }
 
 int32_t	sdrplay::getVFOFrequency	(void) {
@@ -280,7 +282,7 @@ mir_sdr_ErrT	err;
 //
 	my_mir_sdr_SetSyncUpdatePeriod ((int)(inputRate / 2));
 	my_mir_sdr_SetSyncUpdateSampleNum (samplesPerPacket);
-	my_mir_sdr_AgcControl (1, -30, 0, 0, 0, 0, 0);
+//	my_mir_sdr_AgcControl (1, -30, 0, 0, 0, 0, 0);
 	my_mir_sdr_DCoffsetIQimbalanceControl (0, 1);
 	running 	= true;
 	return true;
@@ -290,7 +292,7 @@ void	sdrplay::stopReader	(void) {
 	if (!running)
 	   return;
 
-	my_mir_sdr_Uninit	();
+	my_mir_sdr_StreamUninit	();
 	running		= false;
 }
 
@@ -329,11 +331,11 @@ bool	sdrplay::loadFunctions	(void) {
 	   return false;
 	}
 
-	my_mir_sdr_Uninit	= (pfn_mir_sdr_Uninit)
+	my_mir_sdr_StreamUninit	= (pfn_mir_sdr_StreamUninit)
 	                    GETPROCADDRESS (this -> Handle,
-	                                    "mir_sdr_Uninit");
-	if (my_mir_sdr_Uninit == NULL) {
-	   fprintf (stderr, "Could not find mir_sdr_Uninit\n");
+	                                    "mir_sdr_StreamUninit");
+	if (my_mir_sdr_StreamUninit == NULL) {
+	   fprintf (stderr, "Could not find mir_sdr_StreamUninit\n");
 	   return false;
 	}
 
@@ -440,6 +442,9 @@ bool	sdrplay::loadFunctions	(void) {
 
 void	sdrplay::agcControl_toggled (int agcMode) {
 	this	-> agcMode	= agcControl -> isChecked ();
+	my_mir_sdr_AgcControl (this -> agcMode, -currentGain, 0, 0, 0, 1, 0);
+        if (agcMode == 0)
+           my_mir_sdr_SetGr (gainSlider -> value (), 1, 0);
 }
 
 int32_t	sdrplay::getRate	(void) {
@@ -450,5 +455,6 @@ void	sdrplay::set_ppmCorrection (int corr) {
 	ppmCorrection_factor	= corr;
 	if (running)
 	   my_mir_sdr_SetPpm ((double)corr);
+	   my_mir_sdr_SetRf ((double)vfoFrequency, 1, 0);
 }
 

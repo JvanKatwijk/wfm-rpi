@@ -43,7 +43,7 @@ public:
 virtual			~audioBase		(void);
 virtual	void		stop			(void);
 virtual	void		restart			(void);
-	void		audioOut		(int);
+	void		audioOut		(uint32_t);
 	void		startDumping		(SNDFILE *);
 	void		stopDumping		(void);
 private:

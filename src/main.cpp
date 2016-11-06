@@ -36,10 +36,6 @@
 #define	STATION_LIST	".wfm-rpi-stations.bin"
 
 int	main (int argc, char **argv) {
-int32_t		opt;
-/*
- *	The default values
- */
 QSettings	*ISettings;		/* .ini file	*/
 RadioInterface	*MyRadioInterface;
 QString iniFile = QDir::homePath ();
@@ -70,7 +66,6 @@ QString	stationList	= QDir::homePath ();
 	fflush (stdout);
 	fflush (stderr);
 	fprintf (stderr, "It is done\n");
-	MyRadioInterface -> ~RadioInterface ();;
-	ISettings	-> ~QSettings ();
+	exit (1);
 }
 

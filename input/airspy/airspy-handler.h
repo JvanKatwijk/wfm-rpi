@@ -76,7 +76,7 @@ typedef int (*pfn_airspy_set_sensitivity_gain)(struct airspy_device* device, uin
 class airspyHandler: public virtualInput, public Ui_airspyWidget {
 Q_OBJECT
 public:
-			airspyHandler	(QSettings *, bool, bool *);
+			airspyHandler	(QSettings *, bool *);
 			~airspyHandler	(void);
 	void		setVFOFrequency (int32_t nf);
 	int32_t		getVFOFrequency (void);
@@ -152,7 +152,7 @@ const	char*		board_id_name (void);
 	float		mapTable_float   [1920];
 	QSettings	*airspySettings;
 	RingBuffer<DSPCOMPLEX> *theBuffer;
-	int32_t		inputRate;
+	uint32_t	inputRate;
 	struct airspy_device* device;
 	uint64_t 	serialNumber;
 	char		serial[128];

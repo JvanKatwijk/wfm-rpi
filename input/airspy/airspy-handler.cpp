@@ -28,12 +28,12 @@ const	int	EXTIO_NS	=  8192;
 static
 const	int	EXTIO_BASE_TYPE_SIZE = sizeof (float);
 
-	airspyHandler::airspyHandler (QSettings *s, bool full, bool *success) {
-int	result, i;
+	airspyHandler::airspyHandler (QSettings *s, bool *success) {
+int	result;
 QString	h;
-int	k;
 uint32_t buffer [20];
 uint	nr_rates;
+uint16_t	i;
 
 	this	-> airspySettings	= s;
 	*success		= false;
@@ -141,7 +141,7 @@ uint	nr_rates;
 	   return;
 	} 
 
-	airspy_Rate	-> display (inputRate);
+	airspy_Rate	-> display ((int)inputRate);
 //	To make our life easier we just convert the inputRate / 1000 to
 //	a multiple of 1920, i.e. 1920.
 	for (i = 0; i < 1920; i ++) {

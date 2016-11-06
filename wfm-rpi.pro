@@ -18,8 +18,8 @@ QMAKE_LFLAGS	+= -flto
 #
 #	choose ONE device
 #
-#CONFIG	+= airspy
-CONFIG	+= sdrplay
+CONFIG	+= airspy
+#CONFIG	+= sdrplay-exp
 #CONFIG	+= dabstick-osmo
 #	Handle with care
 #CONFIG	+= extio
@@ -138,20 +138,6 @@ LIBS		+= -lsamplerate
 }
 
 #	the devices:
-#	for a "special" rtlsdr library use
-dabstick-new {
-	TARGET		= wfm-rpi-dabstick-0.996
-	DEFINES		+= HAVE_DABSTICK
-	FORMS		+= ./input/dabstick-new/dabstick-widget.ui
-	INCLUDEPATH	+= ./input/dabstick-new
-	DEPENDPATH	+= ./input/dabstick-new
-	HEADERS		+= ./input/dabstick-new/dabstick.h \
-	                   ./input/dabstick-new/dongleselect.h
-	SOURCES		+= ./input/dabstick-new/dabstick.cpp \
-	                   ./input/dabstick-new/dongleselect.cpp
-	LIBS		+= -lrtlsdr
-}
-#	the devices
 #	for the "standard" rtlsdr library use:
 dabstick-osmo {
 	TARGET		= wfm-rpi-dabstick-0.996
@@ -179,6 +165,15 @@ sdrplay {
 	                   ./input/sdrplay/sdrplay-loader.cpp \
 	                   ./input/sdrplay/sdrplay-worker.cpp 
 	FORMS		+= ./input/sdrplay/sdrplay-widget.ui
+}
+#
+sdrplay-exp {
+	TARGET		= wfm-rpi-sdrplay-0.996
+	DEFINES		+= HAVE_SDRPLAY
+	INCLUDEPATH	+= ./input/sdrplay-exp
+	HEADERS		+= ./input/sdrplay-exp/sdrplay.h 
+	SOURCES		+= ./input/sdrplay-exp/sdrplay.cpp 
+	FORMS		+= ./input/sdrplay-exp/sdrplay-widget.ui
 }
 #
 #	the AIRSPY

@@ -40,7 +40,6 @@
 	                                int32_t	rateIn,
 	                                DSPCOMPLEX	*Table,
 	                                DSPFLOAT K_FM) {
-int32_t	i;
 
 	         this	-> rateIn	= rateIn;
 	         this	-> Table	= Table;

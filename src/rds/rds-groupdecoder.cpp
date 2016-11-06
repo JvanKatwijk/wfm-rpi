@@ -207,7 +207,6 @@ uint32_t charsforStationName	= grp -> getBlock_D () & 0xFFFF;
 
 void	rdsGroupDecoder::addtoStationLabel (uint32_t index,
 	                                    uint32_t name) {
-int16_t	i;
 	stationLabel [2 * index] = (char)(name >> 8);
 	stationLabel [2 * index + 1] = (char)(name & 0xFF);
 	setStationLabel (prepareText (stationLabel, STATION_LABEL_LENGTH));

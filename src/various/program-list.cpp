@@ -66,7 +66,6 @@ void	programList::hide	(void) {
 }
 
 void	programList::addRow (const QString &name, const QString &freq) {
-int16_t currentRow;
 int16_t	row	= tableWidget -> rowCount ();
 
 	tableWidget	-> insertRow (row);
@@ -90,6 +89,7 @@ int16_t	row	= tableWidget -> rowCount ();
 void	programList::tableSelect (int row, int column) {
 QTableWidgetItem* theItem = tableWidget  -> item (row, 1);
 
+	(void)column;
 	QString theFreq	= theItem -> text ();
 	int32_t	freq	= theFreq. toInt ();
 	emit newFrequency (Khz (freq));

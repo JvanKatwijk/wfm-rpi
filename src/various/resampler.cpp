@@ -150,12 +150,11 @@ int32_t	IDecimator::getOutputsize (void) {
 //	a fractional part using the sinc-converter defined elsewhere
 	FDecimator::FDecimator (int32_t inRate,
 	                        int32_t outRate, int32_t insize) {
+	(void)insize;
 	intRatio	= inRate / outRate;
 	inCount		= inRate / outRate;
-int32_t	tempRate	= inRate / (intRatio);
 	fracDecimator_C	=
 	         new newConverter ((float)inRate, outRate, (float)inRate / 20, 6);
-//	         new newConverter (tempRate, outRate, insize / intRatio, 6);
 }
 
 	FDecimator::~FDecimator (void) {

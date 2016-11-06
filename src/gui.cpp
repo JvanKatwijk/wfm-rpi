@@ -86,9 +86,7 @@ int16_t	delayTable [] = {1, 3, 5, 7, 9, 10, 15};
 	RadioInterface::RadioInterface (QSettings	*Si,
 	                                QString		stationList,
 	                                QWidget		*parent): QDialog (parent) {
-int16_t	i;
 QString h;
-int	k;
 bool	success;
 int32_t	startFreq;
 int16_t	latency		= 1;
@@ -102,11 +100,11 @@ int16_t	latency		= 1;
 	runMode			= IDLE;
 //
 #ifdef	HAVE_DABSTICK
-	myRig = new dabStick	(fmSettings, false, &success);
+	myRig		= new dabStick	(fmSettings, false, &success);
 #elif	HAVE_SDRPLAY
-	myRig = new sdrplay	(fmSettings, &success);
+	myRig		= new sdrplay	(fmSettings, &success);
 #elif	HAVE_AIRSPY
-	myRig = new airspyHandler (fmSettings, false, &success);
+	myRig		= new airspyHandler (fmSettings, &success);
 #elif	HAVE_EXTIO
 	myRig		= new extioHandler (fmSettings, &success);
 #elif	HAVE_ELAD
@@ -137,16 +135,12 @@ int16_t	latency		= 1;
 	this	-> audioRate	=
 	                     fmSettings	-> value ("audioRate",
 	                                           48000). toInt ();
-	this	-> workingRate	= 48000;
+	this	-> workingRate		= 48000;
 	this	-> audioDecimator	=
 	                         new reSampler (fmRate, workingRate, 8192);
 	this	-> audioOut		=
 	                         new DSPCOMPLEX [audioDecimator -> getOutputsize ()];
 
-/**
-  *	The current setup of the audio output is that
-  *	you have a choice, take one of (soundcard, tcp streamer or rtp streamer)
-  */
 	audioBuffer		= new RingBuffer<int16_t>(2 * 32768);
 //
 //	In this version, the default is sending the resulting PCM samples to the
@@ -374,19 +368,18 @@ void	RadioInterface::TerminateProcess (void) {
 	myRig			-> stopReader ();
 	soundOut		-> stop ();
 	myList			-> saveTable ();
+	dumpControlState (fmSettings);
 	audioSamples		-> reset ();
-	fprintf (stderr, "Termination started\n");
+	fmSettings		-> sync ();
 	qDebug () <<  "Termination started";
 	usleep (10000);
 	accept ();
-	fprintf (stderr, "accepting\n");
 	if (myFMprocessor != NULL) 
 	   delete myFMprocessor;
 
 	if (theConverter != NULL)
 	   delete theConverter;
 
-	dumpControlState (fmSettings);
 	runMode		= IDLE;
 	delete		mykeyPad;
 	delete		myRig;
