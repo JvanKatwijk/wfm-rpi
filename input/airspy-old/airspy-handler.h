@@ -93,18 +93,16 @@ public:
 	bool		status		(void);
 	int		setExternalRate (int nsr);
 	int32_t		getRate		(void);
-	int16_t		currentTab;
 
 private slots:
-	void		set_linearity	(int value);
-	void		set_sensitivity (int value);
-	void		set_lna_gain	(int value);
-	void		set_mixer_gain	(int value);
-	void		set_vga_gain	(int value);
-	void		set_lna_agc	(void);
-	void		set_mixer_agc	(void);
-	void		set_rf_bias	(void);
-	void		show_tab	(int);
+//	void		set_linearity (int value);
+//	void		set_sensitivity (int value);
+	void		set_lna_gain (int value);
+	void		set_mixer_gain (int value);
+	void		set_vga_gain (int value);
+	void		set_lna_agc (void);
+	void		set_mixer_agc (void);
+	void		set_rf_bias (void);
 private:
 	bool		load_airspyFunctions	(void);
 //	The functions to be extracted from the dll/.so file

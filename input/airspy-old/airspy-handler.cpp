@@ -132,7 +132,7 @@ uint16_t	i;
 	   Handle		= NULL;
 	   return;
 	}
-	show_tab (0);
+
 //
 	result = my_airspy_set_samplerate (device, inputRate);
 	if (result != AIRSPY_SUCCESS) {
@@ -141,7 +141,7 @@ uint16_t	i;
 	   return;
 	} 
 
-	airspy_rate	-> display ((int)inputRate);
+	airspy_Rate	-> display ((int)inputRate);
 //	To make our life easier we just convert the inputRate / 1000 to
 //	a multiple of 1920, i.e. 1920.
 	for (i = 0; i < 1920; i ++) {
@@ -154,11 +154,6 @@ uint16_t	i;
 	convBuffer	= new DSPCOMPLEX [convBufferSize + 1];
 	fprintf (stderr, "convBuffersize = %d\n", convBufferSize);
 	theBuffer		= new RingBuffer<DSPCOMPLEX> (1024 *1024);
-	tabWidget	-> setCurrentIndex (0);
-	connect (linearitySlider, SIGNAL (valueChanged (int)),
-                 this, SLOT (set_linearity (int)));
-        connect (sensitivitySlider, SIGNAL (valueChanged (int)),
-                 this, SLOT (set_sensitivity (int)));
 
 	connect (lnaSlider, SIGNAL (valueChanged (int)),
 	         this, SLOT (set_lna_gain (int)));
@@ -259,18 +254,7 @@ int32_t	bufSize	= EXTIO_NS * EXTIO_BASE_TYPE_SIZE * 2;
 	   return true;
 
 	theBuffer	-> FlushRingBuffer ();
-
-	if (currentTab == 0)
-           set_sensitivity      (sensitivitySlider -> value ());
-        else
-        if (currentTab == 1)
-           set_linearity        (linearitySlider -> value ());
-        else {
-           set_vga_gain         (vgaGain);
-           set_mixer_gain       (mixerGain);
-           set_lna_gain         (lnaGain);
-        }
-
+	
 	set_vga_gain	(vgaGain);
 	set_mixer_gain	(mixerGain);
 	set_lna_gain	(lnaGain);
@@ -683,62 +667,5 @@ bool	airspyHandler::load_airspyFunctions (void) {
 	}
 
 	return true;
-}
-
-#define GAIN_COUNT (22)
-
-uint8_t airspy_linearity_vga_gains[GAIN_COUNT] = { 13, 12, 11, 11, 11, 11, 11, 10, 10, 10, 10, 10, 10, 10, 10, 10, 9, 8, 7, 6, 5, 4 };
-uint8_t airspy_linearity_mixer_gains[GAIN_COUNT] = { 12, 12, 11, 9, 8, 7, 6, 6, 5, 0, 0, 1, 0, 0, 2, 2, 1, 1, 1, 1, 0, 0 };
-uint8_t airspy_linearity_lna_gains[GAIN_COUNT] = { 14, 14, 14, 13, 12, 10, 9, 9, 8, 9, 8, 6, 5, 3, 1, 0, 0, 0, 0, 0, 0, 0 };
-uint8_t airspy_sensitivity_vga_gains[GAIN_COUNT] = { 13, 12, 11, 10, 9, 8, 7, 6, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4 };
-uint8_t airspy_sensitivity_mixer_gains[GAIN_COUNT] = { 12, 12, 12, 12, 11, 10, 10, 9, 9, 8, 7, 4, 4, 4, 3, 2, 2, 1, 0, 0, 0, 0 };
-uint8_t airspy_sensitivity_lna_gains[GAIN_COUNT] = { 14, 14, 14, 14, 14, 14, 14, 14, 14, 13, 12, 12, 9, 9, 8, 7, 6, 5, 3, 2, 1, 0 };
-
-void	airspyHandler::set_linearity (int value) {
-int	result = my_airspy_set_linearity_gain (device, value);
-int	temp;
-	if (result != AIRSPY_SUCCESS) {
-	   printf ("airspy_set_lna_gain () failed: %s (%d)\n",
-	            my_airspy_error_name ((airspy_error)result), result);
-	   return;
-	}
-	linearityDisplay	-> display (value);
-	temp	= airspy_linearity_lna_gains [GAIN_COUNT - 1 - value];
-	linearity_lnaDisplay	-> display (temp);
-	temp	= airspy_linearity_mixer_gains [GAIN_COUNT - 1 - value];
-	linearity_mixerDisplay	-> display (temp);
-	temp	= airspy_linearity_vga_gains [GAIN_COUNT - 1 - value];
-	linearity_vgaDisplay	-> display (temp);
-}
-
-void	airspyHandler::set_sensitivity (int value) {
-int	result = my_airspy_set_sensitivity_gain (device, value);
-int	temp;
-	if (result != AIRSPY_SUCCESS) {
-	   printf ("airspy_set_mixer_gain() failed: %s (%d)\n",
-	            my_airspy_error_name ((airspy_error)result), result);
-	   return;
-	}
-	sensitivityDisplay	-> display (value);
-	temp	= airspy_sensitivity_lna_gains [GAIN_COUNT - 1 - value];
-	sensitivity_lnaDisplay	-> display (temp);
-	temp	= airspy_sensitivity_mixer_gains [GAIN_COUNT - 1 - value];
-	sensitivity_mixerDisplay	-> display (temp);
-	temp	= airspy_sensitivity_vga_gains [GAIN_COUNT - 1 - value];
-	sensitivity_vgaDisplay	-> display (temp);
-}
-
-void	airspyHandler::show_tab (int t) {
-	if (t == 0)		// sensitivity
-	   set_sensitivity	(sensitivitySlider -> value ());
-	else
-	if (t == 1)		// linearity
-	   set_linearity	(linearitySlider -> value ());
-	else {			// classic view
-	   set_vga_gain		(vgaGain);
-	   set_mixer_gain	(mixerGain);
-	   set_lna_gain		(lnaGain);
-	}
-	currentTab	= t;
 }
 

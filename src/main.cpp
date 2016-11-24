@@ -57,6 +57,9 @@ QString	stationList	= QDir::homePath ();
  *	instantiate
  */
 	QApplication a (argc, argv);
+#if QT_VERSION >= 0x050600
+	QGuiApplication::setAttribute (Qt::AA_EnableHighDpiScaling);
+#endif
 	MyRadioInterface = new RadioInterface (ISettings, stationList);
 	MyRadioInterface -> show ();
 	a. exec ();
