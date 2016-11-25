@@ -195,6 +195,9 @@
      <bold>true</bold>
     </font>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;Tuned Frequency&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="autoFillBackground">
     <bool>false</bool>
    </property>
@@ -227,6 +230,9 @@
     <font>
      <pointsize>10</pointsize>
     </font>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Display the version number&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="frameShape">
     <enum>QFrame::Panel</enum>
@@ -314,6 +320,9 @@
      </disabled>
     </palette>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sample rate of the FM handling.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="autoFillBackground">
     <bool>false</bool>
    </property>
@@ -350,6 +359,9 @@
      <bold>false</bold>
     </font>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-style:normal;&quot;&gt;Select the audio output device. The list of devices is generated on program startup and depends on the computer configuration.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <item>
     <property name="text">
      <string>select output</string>
@@ -364,6 +376,9 @@
      <width>181</width>
      <height>31</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Display the current time.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="frameShape">
     <enum>QFrame::Panel</enum>
@@ -429,6 +444,9 @@
      <weight>75</weight>
      <bold>true</bold>
     </font>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Quit button. halt the program.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="autoFillBackground">
     <bool>true</bool>
@@ -510,6 +528,9 @@
      </disabled>
     </palette>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sample rate of the audio output.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="autoFillBackground">
     <bool>false</bool>
    </property>
@@ -535,6 +556,9 @@
      <height>41</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Scan upwards, take the step size as specified.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="text">
     <string>fc+</string>
    </property>
@@ -547,6 +571,9 @@
      <width>71</width>
      <height>41</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Scan downwards, take steps as in the step size.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="text">
     <string>fc-</string>
@@ -580,6 +607,9 @@
      <height>41</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Single step downward. Decrease the frequency with the step value.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="text">
     <string>f-</string>
    </property>
@@ -593,6 +623,9 @@
      <height>41</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Step up  with the selected step size.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="text">
     <string>f+</string>
    </property>
@@ -605,6 +638,9 @@
      <width>71</width>
      <height>41</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Increment step when scanning, expressed in kHz.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="maximum">
     <number>1000</number>
@@ -630,6 +666,9 @@
      <pointsize>9</pointsize>
     </font>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Lowerboud for scanning, expressed in mHz.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="buttonSymbols">
     <enum>QAbstractSpinBox::UpDownArrows</enum>
    </property>
@@ -653,6 +692,9 @@
     <font>
      <pointsize>9</pointsize>
     </font>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Upperbound for scanning, expressed in mhz.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="maximum">
     <number>1700</number>
@@ -734,6 +776,9 @@
      </disabled>
     </palette>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sample rate of the device.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="autoFillBackground">
     <bool>false</bool>
    </property>
@@ -759,6 +804,9 @@
      <height>20</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If the squelch is on, set the level where squelch will be active.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="sliderPosition">
     <number>50</number>
    </property>
@@ -774,6 +822,9 @@
      <width>91</width>
      <height>31</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch the squelch on or off.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="text">
     <string>squelchOff</string>
@@ -794,6 +845,9 @@
      <bold>true</bold>
     </font>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Start button. Once started the button will have no effect.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="autoFillBackground">
     <bool>true</bool>
    </property>
@@ -809,6 +863,9 @@
      <width>141</width>
      <height>31</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Demodulator selector. One may choose among 5 different implementation of the demodulator that will make the FM encoded signal into an audio signal.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <item>
     <property name="text">
@@ -850,6 +907,9 @@
      <pointsize>9</pointsize>
     </font>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;The name of the selected demodulator will show here.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="frameShape">
     <enum>QFrame::Panel</enum>
    </property>
@@ -872,6 +932,9 @@
      <height>31</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show the RDS messages here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="frameShape">
     <enum>QFrame::Panel</enum>
    </property>
@@ -890,6 +953,9 @@
      <width>171</width>
      <height>31</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;show station label.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="frameShape">
     <enum>QFrame::Panel</enum>
@@ -913,6 +979,9 @@
      <height>31</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the FM mode (stereo or mono).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <item>
     <property name="text">
      <string>stereo</string>
@@ -932,6 +1001,9 @@
      <width>91</width>
      <height>31</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose how the audio output is put on the output channels.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <item>
     <property name="text">
@@ -968,6 +1040,9 @@
      <height>31</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the deemphasis filter.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <item>
     <property name="text">
      <string>50</string>
@@ -993,6 +1068,9 @@
      <height>31</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;RDS selector. Put RDS decoding on or off.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <item>
     <property name="text">
      <string>no rds</string>
@@ -1012,6 +1090,9 @@
      <width>41</width>
      <height>31</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;RDS sync label. If RDS decoding is on, green suggests the software is able to extract RDS data from the signal.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="frameShape">
     <enum>QFrame::Panel</enum>
@@ -1056,6 +1137,9 @@
      <width>51</width>
      <height>31</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Pilot indicator. Green suggests there is a pilot signal availble.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="frameShape">
     <enum>QFrame::Panel</enum>
@@ -1155,6 +1239,9 @@
       </colorrole>
      </disabled>
     </palette>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Afternate Frequency&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="autoFillBackground">
     <bool>false</bool>
@@ -1338,6 +1425,9 @@
      </disabled>
     </palette>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;DC component in the decoded signal, is an indication on the accuracy of tuning.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="autoFillBackground">
     <bool>false</bool>
    </property>
@@ -1357,6 +1447,9 @@
      <height>41</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select a frequency. Pushing this button will cause a separate keyboard to appear on the screen on which a frequency can be typed in (in kHz or mHz). Terminate the row of digits with either Khz or Mhz to activate the selection.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="text">
     <string>Freq</string>
    </property>
@@ -1369,6 +1462,9 @@
      <width>81</width>
      <height>31</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Low pass filter cut off frequency.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <item>
     <property name="text">
@@ -1394,6 +1490,9 @@
      <width>51</width>
      <height>41</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select the current frequency and give it a name. Pushing this button will show a widget in which the name of the program on the current frequency can be typed in. The combination (name, frequency) will show up in the list of maintained programs and kept between program invocations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="text">
     <string>FS</string>
