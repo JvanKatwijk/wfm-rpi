@@ -46,8 +46,8 @@
 #include	"dabstick.h"
 #elif	HAVE_EXTIO
 #include	"extio-handler.h"
-#elif	HAVE_SW_ELAD_S1
-#include	"sw-elad-s1.h"
+#elif	HAVE_ELAD_S1
+#include	"elad-s1.h"
 #endif
 #ifdef	HAVE_STREAMER
 #include	"tcp-streamer.h"
@@ -107,7 +107,7 @@ int16_t	latency		= 1;
 	myRig		= new airspyHandler (fmSettings, &success);
 #elif	HAVE_EXTIO
 	myRig		= new extioHandler (fmSettings, &success);
-#elif	HAVE_ELAD
+#elif	HAVE_ELAD_S1
 	myRig		= new eladHandler (fmSettings, false, &success);
 #endif
 	if (!success) {
@@ -190,7 +190,7 @@ int16_t	latency		= 1;
 	QString v = "wfm-rpi-airspy";
 #elif	HAVE_DABSTICK
 	QString v = "wfm-rpi-dabstick";
-#elif	HAVE_ELAD
+#elif	HAVE_ELAD_S1
 	QString v = "wfm-rpi-elad";
 #elif	HAVE_EXTIO
 	QString v = "wfm-rpi-extio";

@@ -22,9 +22,9 @@ QMAKE_LFLAGS	+= -flto
 #CONFIG	+= sdrplay-exp
 #CONFIG	+= dabstick-osmo
 #	Handle with care
-CONFIG	+= extio
+#CONFIG	+= extio
 #	Handle not at all
-#CONFIG	+= sw-elad-s1
+CONFIG	+= elad-s1
 #
 #	Note that if you use "streamer", sound will not be send
 #	to the local soundcard
@@ -198,7 +198,7 @@ streamer	{
 #
 #	the elad-s1
 #
-elad_s1 {
+elad-s1 {
 	TARGET		= wfm-rpi-elad-0.996
 	DEFINES		+= HAVE_ELAD_S1
 	FORMS		+= ./input/sw-elad-s1/elad_widget.ui
