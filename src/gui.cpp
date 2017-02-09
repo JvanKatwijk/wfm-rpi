@@ -629,7 +629,7 @@ DSPCOMPLEX	out;
 	         for (k = 0; k < audioAmount; k ++) {
 	            DSPCOMPLEX pcmSample;
 	            if (squelchOn)
-	               pcmSample = mySquelch -> doSquelch (audioOut [k]);
+	               pcmSample = mySquelch -> do_squelch (audioOut [k]);
 	            else
 	               pcmSample = audioOut [k];
 	            sendSampletoOutput (pcmSample);

@@ -19,12 +19,12 @@ QMAKE_LFLAGS	+= -flto
 #	choose ONE device
 #
 #CONFIG	+= airspy
-#CONFIG	+= sdrplay-exp
-#CONFIG	+= dabstick-osmo
+#CONFIG	+= sdrplay
+#CONFIG	+= dabstick
 #	Handle with care
 #CONFIG	+= extio
 #	Handle not at all
-CONFIG	+= elad-s1
+#CONFIG	+= elad-s1
 #
 #	Note that if you use "streamer", sound will not be send
 #	to the local soundcard
@@ -139,41 +139,28 @@ LIBS		+= -lsamplerate
 
 #	the devices:
 #	for the "standard" rtlsdr library use:
-dabstick-osmo {
+dabstick {
 	TARGET		= wfm-rpi-dabstick-0.996
 	DEFINES		+= HAVE_DABSTICK
-	FORMS		+= ./input/dabstick-osmo/dabstick-widget.ui
-	INCLUDEPATH	+= ./input/dabstick-osmo
-	DEPENDPATH	+= ./input/dabstick-osmo
-	HEADERS		+= ./input/dabstick-osmo/dabstick.h \
-	                   ./input/dabstick-osmo/dongleselect.h
-	SOURCES		+= ./input/dabstick-osmo/dabstick.cpp \
-	                   ./input/dabstick-osmo/dongleselect.cpp
+	FORMS		+= ./input/dabstick/dabstick-widget.ui
+	INCLUDEPATH	+= ./input/dabstick
+	DEPENDPATH	+= ./input/dabstick
+	HEADERS		+= ./input/dabstick/dabstick.h \
+	                   ./input/dabstick/dongleselect.h
+	SOURCES		+= ./input/dabstick/dabstick.cpp \
+	                   ./input/dabstick/dongleselect.cpp
 #	LIBS		+= -lrtlsdr
 }
 #
 #	the SDRplay
 #
-sdrplay {
-	TARGET		= wfm-rpi-sdrplay-0.996
-	DEFINES		+= HAVE_SDRPLAY
-	INCLUDEPATH	+= ./input/sdrplay
-	HEADERS		+= ./input/sdrplay/sdrplay.h \
-	                   ./input/sdrplay/sdrplay-loader.h \
-	                   ./input/sdrplay/sdrplay-worker.h 
-	SOURCES		+= ./input/sdrplay/sdrplay.cpp \
-	                   ./input/sdrplay/sdrplay-loader.cpp \
-	                   ./input/sdrplay/sdrplay-worker.cpp 
-	FORMS		+= ./input/sdrplay/sdrplay-widget.ui
-}
-#
 sdrplay-exp {
 	TARGET		= wfm-rpi-sdrplay-0.996
 	DEFINES		+= HAVE_SDRPLAY
-	INCLUDEPATH	+= ./input/sdrplay-exp
-	HEADERS		+= ./input/sdrplay-exp/sdrplay.h 
-	SOURCES		+= ./input/sdrplay-exp/sdrplay.cpp 
-	FORMS		+= ./input/sdrplay-exp/sdrplay-widget.ui
+	INCLUDEPATH	+= ./input/sdrplay
+	HEADERS		+= ./input/sdrplay/sdrplay.h 
+	SOURCES		+= ./input/sdrplay/sdrplay.cpp 
+	FORMS		+= ./input/sdrplay/sdrplay-widget.ui
 }
 #
 #	the AIRSPY

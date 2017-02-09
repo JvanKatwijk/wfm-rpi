@@ -85,11 +85,10 @@ int	i;
 	rdsLowPassFilter	-> setLowPass (RDS_WIDTH, currentRate);
 //
 //	the constant K_FM is still subject to many questions
-	DSPFLOAT	F_G	= 65000;	// highest freq in message
-	DSPFLOAT	Delta_F	= 90000;	//
+	DSPFLOAT	F_G	= 0.65 * currentRate / 2; // highest freq in message
+	DSPFLOAT	Delta_F	= 0.90 * currentRate / 2;
 	DSPFLOAT	B_FM	= 2 * (Delta_F + F_G);
-	K_FM			= 2 * M_PI / currentRate * (B_FM / 2 - F_G);
-	K_FM			= 4 * K_FM;
+	K_FM			= 2 * M_PI / currentRate * B_FM;
 
 	theDemodulator		= new fm_Demodulator (mr,
 	                                              currentRate,

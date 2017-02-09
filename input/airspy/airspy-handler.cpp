@@ -38,20 +38,31 @@ uint16_t	i;
 	this	-> airspySettings	= s;
 	*success		= false;
 	deviceOK		= false;
-	this	-> myFrame		= new QFrame (NULL);
+	this	-> myFrame	= new QFrame (NULL);
 	setupUi (this -> myFrame);
 	this	-> myFrame	-> show ();
 
 	device			= 0;
 
 	airspySettings	-> beginGroup ("airspyHandler");
+	int16_t temp 		= airspySettings -> value ("linearity", 10).
+	                                                          toInt ();
+	linearitySlider		-> setValue (temp);
+	linearityDisplay	-> display  (temp);
+	temp			= airspySettings -> value ("sensitivity", 10).
+	                                                          toInt ();
+	sensitivitySlider	-> setValue (temp);
+	sensitivityDisplay	-> display (temp);
 	vgaGain			= airspySettings -> value ("vga", 5).toInt ();
 	vgaSlider		-> setValue (vgaGain);
+	vgaDisplay		-> display (vgaGain);
 	mixerGain		= airspySettings -> value ("mixer", 10). toInt ();
 	mixerSlider		-> setValue (mixerGain);
+	mixerDisplay		-> display (mixerGain);
 	mixer_agc		= false;
 	lnaGain			= airspySettings -> value ("lna", 5). toInt ();
 	lnaSlider		-> setValue (lnaGain);
+	lnaDisplay		-> display  (lnaGain);
 	mixer_agc		= false;
 	lna_agc			= false;
 	rf_bias			= false;
@@ -192,6 +203,8 @@ err:
 
 	airspyHandler::~airspyHandler (void) {
 	airspySettings	-> beginGroup ("airspyHandler");
+	airspySettings -> setValue ("linearity", linearitySlider -> value ());
+	airspySettings -> setValue ("sensitivity", sensitivitySlider -> value ());
 	airspySettings -> setValue ("vga", vgaGain);
 	airspySettings -> setValue ("mixer", mixerGain);
 	airspySettings -> setValue ("lna", lnaGain);
