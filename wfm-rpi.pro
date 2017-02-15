@@ -18,7 +18,7 @@ QMAKE_LFLAGS	+= -flto
 #
 #	choose ONE device
 #
-#CONFIG	+= airspy
+CONFIG	+= airspy
 #CONFIG	+= sdrplay
 #CONFIG	+= dabstick
 #	Handle with care
@@ -154,7 +154,7 @@ dabstick {
 #
 #	the SDRplay
 #
-sdrplay-exp {
+sdrplay {
 	TARGET		= wfm-rpi-sdrplay-0.996
 	DEFINES		+= HAVE_SDRPLAY
 	INCLUDEPATH	+= ./input/sdrplay

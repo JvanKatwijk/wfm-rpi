@@ -18,7 +18,7 @@ add_definitions (-Wall -flto -ffast-math)
 #	but do not uncomment more than one line
 #	if you want to have the PCM samples sent to port 20040
 #	rather than to the local soundcard, uncomment
-	set(STREAMER true)
+#	set(STREAMER true)
 
 	if (SDRPLAY)
 	   set (objectName wfm-rpi-sdrplay-0.996)
@@ -26,15 +26,11 @@ add_definitions (-Wall -flto -ffast-math)
 	if (AIRSPY)
 	   set (objectName wfm-rpi-airspy-0.996)
 	endif (AIRSPY)
-	if (DABSTICK-OSMO)
+	if (DABSTICK)
 	   set (objectName wfm-rpi-dabstick-0.996)
-	endif (DABSTICK-OSMO)
-	if (DABSTICK-NEW)
-	   set (objectName wfm-rpi-dabstick-0.996)
-	endif (DABSTICK-NEW)
+	endif (DABSTICK)
 ########################################################################
 	find_package (Qt5Widgets REQUIRED)
-	find_package (Qt5Declarative REQUIRED)
 
 	find_library (DYNAMIC_LOAD dl)
 	if(NOT(DYNAMIC_LOAD))
@@ -43,7 +39,6 @@ add_definitions (-Wall -flto -ffast-math)
 	   set(extraLibs ${DYNAMIC_LOAD})
 	endif(NOT(DYNAMIC_LOAD))
 #
-
 	include (FindPackageHandleStandardArgs)
 	if (FFTW_INCLUDE_DIRS)
 #	Already in cache, be silent
@@ -213,8 +208,8 @@ add_definitions (-Wall -flto -ffast-math)
 	   find_path (SDRPLAYLIB_INCLUDE_DIR
                       NAMES mirsdrapi-rsp.h
                       PATHS
-                      /usr/local/include/
-           include_directories (${SDRPLAYLIB_INCLUDE_DI
+                      /usr/local/include/)
+           include_directories (${SDRPLAYLIB_INCLUDE_DIR}$)
 	   set (${objectName}_UIS
 	        ${${objectName}_UIS}
 	        ./src/input/sdrplay/sdrplay-widget.ui 
@@ -290,7 +285,7 @@ add_definitions (-Wall -flto -ffast-math)
 	   add_definitions (-DHAVE_AIRSPY)
 	endif (AIRSPY)
 
-	if (DABSTICK-OSMO)
+	if (DABSTICK)
 	   find_library (RTLSDR rtlsdr)
 	   if (NOT(RTLSDR))
 	      message (FATAL_ERROR "please install librtlsdr")
@@ -307,74 +302,29 @@ add_definitions (-Wall -flto -ffast-math)
 
 	   set (${objectName}_UIS
 	        ${${objectName}_UIS}
-	        ./input/dabstick-osmo/dabstick-widget.ui
+	        ./input/dabstick/dabstick-widget.ui
 	   )
 
 	   set (${objectName}_MOCS
 	        ${${objectName}_MOCS}
-	        ./input/dabstick-osmo/dongleselect.h
-	        ./input/dabstick-osmo/dabstick.h
+	        ./input/dabstick/dongleselect.h
+	        ./input/dabstick/dabstick.h
 	   )
 
 	   include_directories (
-	        ./input/dabstick-osmo/
+	        ./input/dabstick/
 	   )
 
 	   set (${objectName}_HDRS
 	        ${${objectName}_HDRS}
-	        ./input/dabstick-osmo/dabstick.h 
-	        ./input/dabstick-osmo/dongleselect.h
+	        ./input/dabstick/dabstick.h 
+	        ./input/dabstick/dongleselect.h
 	   )
 
 	   set (${objectName}_SRCS
 	        ${${objectName}_SRCS}
-	        ./input/dabstick-osmo/dabstick.cpp
-	        ./input/dabstick-osmo/dongleselect.cpp
-	   )
-
-	   add_definitions (-DHAVE_DABSTICK)
-	endif()
-
-	if (DABSTICK-NEW)
-	   find_library (RTLSDR rtlsdr)
-	   if (NOT(RTLSDR))
-	      message (FATAL_ERROR "please install librtlsdr")
-	   else (NOT(RTLSDR))
-	      set (extraLibs ${extraLibs} ${RTLSDR})
-	   endif()
-	   find_path (DABSTICK_INCLUDE_DIR
-	              NAMES rtl-sdr.h
-	              PATHS
-	              /usr/local/include/
-	              /usr/include/
-	   )
-	   include_directories (${RTLSDR_INCLUDE_DIR})
-
-	   set (${objectName}_UIS
-	        ${${objectName}_UIS}
-	        ./input/dabstick-new/dabstick-widget.ui
-	   )
-
-	   set (${objectName}_MOCS
-	        ${${objectName}_MOCS}
-	        ./input/dabstick-new/dongleselect.h
-	        ./input/dabstick-new/dabstick.h
-	   )
-
-	   include_directories (
-	        ./input/dabstick-new/
-	   )
-
-	   set (${objectName}_HDRS
-	        ${${objectName}_HDRS}
-	        ./input/dabstick-new/dabstick.h 
-	        ./input/dabstick-new/dongleselect.h
-	   )
-
-	   set (${objectName}_SRCS
-	        ${${objectName}_SRCS}
-	        ./input/dabstick-new/dabstick.cpp
-	        ./input/dabstick-new/dongleselect.cpp
+	        ./input/dabstick/dabstick.cpp
+	        ./input/dabstick/dongleselect.cpp
 	   )
 
 	   add_definitions (-DHAVE_DABSTICK)
@@ -402,7 +352,8 @@ add_definitions (-Wall -flto -ffast-math)
 
 	include_directories (${FFTW_INCLUDE_DIRS}
 	                     ${SAMPLERATE_INCLUDE_DIRS}
-	                     ${PORTAUDIO_INCLUDE_DIRS})
+	                     ${PORTAUDIO_INCLUDE_DIRS}
+	)
 
 	add_executable (${objectName}
 	                ${${objectName}_SRCS}
