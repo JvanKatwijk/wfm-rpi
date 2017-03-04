@@ -7,7 +7,6 @@
 TEMPLATE	= app
 QT		+= widgets 
 CONFIG		+= console
-DEFINES		+= SMALL_GUI
 QMAKE_CFLAGS	+= -flto -ffast-math
 QMAKE_CXXFLAGS	+= -flto -ffast-math
 QMAKE_LFLAGS	+= -flto
@@ -54,7 +53,7 @@ INCLUDEPATH += . \
 	      ./input 
 
 # Input
-HEADERS += ./includes/gui.h \
+HEADERS += ./gui.h \
 	   ./includes/popup-keypad.h \
 	   ./includes/fm-constants.h \
 	   ./includes/various/squelchClass.h \
@@ -83,10 +82,10 @@ HEADERS += ./includes/gui.h \
 	   ./includes/rds/charsets.h \
 	   ./input/virtual-input.h 
 
-FORMS += ./src/sdrgui.ui 
+FORMS += ./sdrgui.ui 
 
-SOURCES += ./src/main.cpp \
-	   ./src/gui.cpp \
+SOURCES += ./main.cpp \
+	   ./gui.cpp \
 	   ./src/popup-keypad.cpp \
            ./src/various/fft.cpp \
 	   ./src/various/oscillator.cpp \

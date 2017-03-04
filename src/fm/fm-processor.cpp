@@ -35,7 +35,7 @@
 
 //
 //	Note that no decimation done as yet: the samplestream is still
-//	full speed
+//	full speed entering the fmProcessor
 	fmProcessor::fmProcessor (virtualInput		*vi,
 	                          RadioInterface	*RI,
 	                          int32_t		inputRate,
@@ -77,6 +77,7 @@
 	   while (!isFinished ())
 	      usleep (100);
 	}
+
 	my_fmDecoder -> stop ();
 	fprintf (stderr, "fmprocessor is gestopt\n");
 	delete	decimatingFilter;
@@ -118,7 +119,7 @@ int16_t		passPointer	= 0;
 //	we are now on a lower rate
 	         if (abs (v) > peakLevel)
 	            peakLevel = abs (v);
-	         if (++peakLevelcnt >= fmRate / 2) {
+	         if (++ peakLevelcnt >= fmRate / 2) {
 	            DSPFLOAT	ratio	= 
 	                          max_freq_deviation / norm_freq_deviation;
 	            if (peakLevel > 0)

@@ -124,7 +124,7 @@ add_definitions (-Wall -flto -ffast-math)
 	)
 
 	set ( ${objectName}_HDRS
-	      ./includes/gui.h
+	      ./gui.h
 	      ./includes/popup-keypad.h
 	      ./includes/fm-constants.h
 	      ./includes/various/squelchClass.h
@@ -154,8 +154,8 @@ add_definitions (-Wall -flto -ffast-math)
 	)
 
 	set ( ${objectName}_SRCS
-	      ./src/main.cpp
-	      ./src/gui.cpp
+	      ./main.cpp
+	      ./gui.cpp
 	      ./src/popup-keypad.cpp
               ./src/various/fft.cpp
 	      ./src/various/oscillator.cpp
@@ -180,7 +180,7 @@ add_definitions (-Wall -flto -ffast-math)
 	      ./input/virtual-input.cpp
 	)
 
-	set ( ${objectName}_UIS ./src/sdrgui.ui 
+	set ( ${objectName}_UIS ./sdrgui.ui 
 	)
 
 	set (${objectName}_MOCS ./includes/popup-keypad.h)
@@ -334,7 +334,7 @@ add_definitions (-Wall -flto -ffast-math)
 
 	set ( ${objectName}_MOCS
 	      ${${objectName}_MOCS}
-	      ./includes/gui.h	
+	      ./gui.h	
 	      ./includes/popup-keypad.h
 	      ./input/virtual-input.h
 	      ./includes/rds/rds-groupdecoder.h 

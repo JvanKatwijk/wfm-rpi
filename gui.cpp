@@ -4,17 +4,17 @@
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
  *    Lazy Chair Programming
  *
- *    This file is part of the  SDR-J series.
- *    Many of the ideas as implemented in the SDR-J are derived from
+ *    This file is part of the  WFM-RPI
+ *    Many of the ideas as implemented in the WFM_RPI are derived from
  *    other work, made available through the (a) GNU general Public License. 
  *    All copyrights of the original authors are recognized.
  *
- *    SDR-J is free software; you can redistribute it and/or modify
+ *    WFM-RPI is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
  *    the Free Software Foundation; either version 2 of the License, or
  *    (at your option) any later version.
  *
- *    SDR-J is distributed in the hope that it will be useful,
+ *    WFM-RPI is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *    GNU General Public License for more details.
@@ -598,6 +598,8 @@ void	RadioInterface::showLocked (bool locked, float the_dcComponent) {
 	else
 	   pll_isLocked -> setStyleSheet ("QLabel {background-color:red}");
 	dc_component	-> display (the_dcComponent);
+	if (abs (the_dcComponent) < 0.01)
+	   stopIncrementing ();
 }
 //
 //	handling of audio is now done here
