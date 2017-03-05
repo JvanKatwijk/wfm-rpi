@@ -94,6 +94,11 @@ typedef mir_sdr_ErrT (*pfn_mir_sdr_AgcControl)(uint32_t, int, int, uint32_t,
 typedef mir_sdr_ErrT (*pfn_mir_sdr_DCoffsetIQimbalanceControl) (uint32_t, uint32_t);
 
 typedef mir_sdr_ErrT (*pfn_mir_sdr_SetPpm)(double);   
+typedef mir_sdr_ErrT (*pfn_mir_sdr_DebugEnable)(uint32_t);
+typedef mir_sdr_ErrT (*pfn_mir_sdr_GetDevices) (mir_sdr_DeviceT *, uint32_t *, uint32_t);
+typedef mir_sdr_ErrT (*pfn_mir_sdr_GetCurrentGain) (mir_sdr_GainValuesT *);
+typedef mir_sdr_ErrT (*pfn_mir_sdr_GetHwVersion) (unsigned char *);
+
 
 ///////////////////////////////////////////////////////////////////////////
 class	sdrplay: public virtualInput, public Ui_sdrplayWidget {
@@ -120,7 +125,6 @@ private:
 	pfn_mir_sdr_StreamInit	my_mir_sdr_StreamInit;
 	pfn_mir_sdr_Reinit	my_mir_sdr_Reinit;
 	pfn_mir_sdr_StreamUninit	my_mir_sdr_StreamUninit;
-	pfn_mir_sdr_ReadPacket	my_mir_sdr_ReadPacket;
 	pfn_mir_sdr_SetRf	my_mir_sdr_SetRf;
 	pfn_mir_sdr_SetFs	my_mir_sdr_SetFs;
 	pfn_mir_sdr_SetGr	my_mir_sdr_SetGr;
@@ -132,19 +136,23 @@ private:
 	pfn_mir_sdr_SetSyncUpdatePeriod
 	                        my_mir_sdr_SetSyncUpdatePeriod;
 	pfn_mir_sdr_ApiVersion	my_mir_sdr_ApiVersion;
-	pfn_mir_sdr_SetPpm	my_mir_sdr_SetPpm;
 	pfn_mir_sdr_ResetUpdateFlags
 	                        my_mir_sdr_ResetUpdateFlags;
 	pfn_mir_sdr_AgcControl	my_mir_sdr_AgcControl;
 	pfn_mir_sdr_DCoffsetIQimbalanceControl
 	                        my_mir_sdr_DCoffsetIQimbalanceControl;
+	pfn_mir_sdr_SetPpm	my_mir_sdr_SetPpm;
+	pfn_mir_sdr_DebugEnable	my_mir_sdr_DebugEnable;
+	pfn_mir_sdr_GetDevices  my_mir_sdr_GetDevices;
+	pfn_mir_sdr_GetCurrentGain my_mir_sdr_GetCurrentGain;
+	pfn_mir_sdr_GetHwVersion my_mir_sdr_GetHwVersion;
+
 	bool		loadFunctions	(void);
 	QSettings	*sdrplaySettings;
 	QFrame		*myFrame;
 	int32_t		inputRate;
 	int32_t		vfoFrequency;
 	int		currentGain;
-	int		ppmCorrection_factor;
 	bool		libraryLoaded;
 	bool		running;
 	HINSTANCE	Handle;
@@ -152,7 +160,7 @@ private:
 private slots:
 	void		setExternalGain		(int);
 	void		agcControl_toggled	(int);
-	void		set_ppmCorrection	(int);
+	void		set_ppmControl		(int);
 };
 #endif
 

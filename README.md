@@ -84,3 +84,8 @@ Selecting in the ".pro" file is by commenting or uncommenting lines
 
 Similarly, comment or uncomment the definition lines in the top of the
 CMakeLists.txt file if you use cmake.
+
+-----------------------------------------------------------------------------
+Note on SDRplay
+
+The software is compiled against the 2.09 version of the SDRplay library
