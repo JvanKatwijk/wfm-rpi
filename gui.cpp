@@ -299,6 +299,7 @@ void	RadioInterface::handle_freqButton (void) {
 }
 
 void	RadioInterface::newFrequency	(int f) {
+
 	stopIncrementing ();
 	setTuner (f);
 	Display (myRig -> getVFOFrequency ());

@@ -98,6 +98,7 @@ typedef mir_sdr_ErrT (*pfn_mir_sdr_DebugEnable)(uint32_t);
 typedef mir_sdr_ErrT (*pfn_mir_sdr_GetDevices) (mir_sdr_DeviceT *, uint32_t *, uint32_t);
 typedef mir_sdr_ErrT (*pfn_mir_sdr_GetCurrentGain) (mir_sdr_GainValuesT *);
 typedef mir_sdr_ErrT (*pfn_mir_sdr_GetHwVersion) (unsigned char *);
+typedef mir_sdr_ErrT (*pfn_mir_sdr_RSPII_AntennaControl) (mir_sdr_RSPII_AntennaSelectT);
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -146,21 +147,24 @@ private:
 	pfn_mir_sdr_GetDevices  my_mir_sdr_GetDevices;
 	pfn_mir_sdr_GetCurrentGain my_mir_sdr_GetCurrentGain;
 	pfn_mir_sdr_GetHwVersion my_mir_sdr_GetHwVersion;
+	pfn_mir_sdr_RSPII_AntennaControl my_mir_sdr_RSPII_AntennaControl;
 
 	bool		loadFunctions	(void);
 	QSettings	*sdrplaySettings;
 	QFrame		*myFrame;
 	int32_t		inputRate;
 	int32_t		vfoFrequency;
-	int		currentGain;
+	int		currentGred;
 	bool		libraryLoaded;
 	bool		running;
 	HINSTANCE	Handle;
 	bool		agcMode;
+	int16_t		hwVersion;
 private slots:
 	void		setExternalGain		(int);
 	void		agcControl_toggled	(int);
 	void		set_ppmControl		(int);
+	void		set_antennaControl	(const QString &);
 };
 #endif
 
