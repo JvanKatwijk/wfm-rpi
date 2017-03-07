@@ -139,7 +139,7 @@ ULONG APIkeyValue_length = 255;
         fprintf (stderr, "hwVer = %d\n", devDesc. hwVer);
         unsigned char text;
         (void)my_mir_sdr_GetHwVersion (&text);
-        my_mir_sdr_ResetUpdateFlags (1, 0, 0);
+//	my_mir_sdr_ResetUpdateFlags (1, 0, 0);
 
 	running		= false;
 	agcMode		= false;
