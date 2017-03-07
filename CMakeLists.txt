@@ -11,8 +11,8 @@ add_definitions (-Wall -flto -ffast-math)
 #	adjust to your likings:
 #
 #	if you want support for one of these devices, uncomment ONE of
-#	set(SDRPLAY true) 
-	set(AIRSPY true)
+	set(SDRPLAY true) 
+#	set(AIRSPY true)
 #	set(DABSTICK true)
 
 #	but do not uncomment more than one line
@@ -209,34 +209,30 @@ add_definitions (-Wall -flto -ffast-math)
                       NAMES mirsdrapi-rsp.h
                       PATHS
                       /usr/local/include/)
+
            include_directories (${SDRPLAYLIB_INCLUDE_DIR}$)
 	   set (${objectName}_UIS
 	        ${${objectName}_UIS}
-	        ./src/input/sdrplay/sdrplay-widget.ui 
-	   )
-
-	   set (${objectName}_MOCS
-	        ${${objectName}_MOCS}
-	        ./src/input/sdrplay/sdrplay.h
-	        ./src/input/sdrplay/sdrplay-worker.h
+	        ./input/sdrplay/sdrplay-widget.ui 
 	   )
 
 	   include_directories (
-	     ./src/input/sdrplay
+	     ./input/sdrplay
 	   )
 
 	   set ($(objectName)_HDRS
 	        ${${objectName}_HDRS}
-	        ./src/input/sdrplay/sdrplay.h
-	        ./src/input/sdrplay/sdrplay-loader.h
-                ./src/input/sdrplay/sdrplay-worker.h
+	        ./input/sdrplay/sdrplay.h
            )
+
+	   set (${objectName}_MOCS
+	        ${${objectName}_MOCS}
+	        ./input/sdrplay/sdrplay.h
+	   )
 
 	   set (${objectName}_SRCS
 	        ${${objectName}_SRCS}
-	        ./src/input/sdrplay/sdrplay.cpp
-	        ./src/input/sdrplay/sdrplay-worker.cpp
-                ./src/input/sdrplay/sdrplay-loader.cpp
+	        ./input/sdrplay/sdrplay.cpp
 	   )
 
 	   add_definitions (-DHAVE_SDRPLAY)
