@@ -223,16 +223,19 @@ add_definitions (-Wall -flto -ffast-math)
 	   set ($(objectName)_HDRS
 	        ${${objectName}_HDRS}
 	        ./input/sdrplay/sdrplay.h
+	        ./input/sdrplay/sdrplayselect.h
            )
 
 	   set (${objectName}_MOCS
 	        ${${objectName}_MOCS}
 	        ./input/sdrplay/sdrplay.h
+	        ./input/sdrplay/sdrplayselect.h
 	   )
 
 	   set (${objectName}_SRCS
 	        ${${objectName}_SRCS}
 	        ./input/sdrplay/sdrplay.cpp
+	        ./input/sdrplay/sdrplayselect.cpp
 	   )
 
 	   add_definitions (-DHAVE_SDRPLAY)
