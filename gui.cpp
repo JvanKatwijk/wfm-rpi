@@ -599,8 +599,6 @@ void	RadioInterface::showLocked (bool locked, float the_dcComponent) {
 	else
 	   pll_isLocked -> setStyleSheet ("QLabel {background-color:red}");
 	dc_component	-> display (the_dcComponent);
-	if (abs (the_dcComponent) < 0.01)
-	   stopIncrementing ();
 }
 //
 //	handling of audio is now done here

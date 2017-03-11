@@ -3,25 +3,24 @@
  *
  *    Copyright (C) 2008, 2009, 2010
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
- *    JFF Consultancy
+ *    Lazy Chair Computing
  *
- *    This file is part of the JFF SDR (JSDR).
- *    Many of the ideas as implemented in JSDR are derived from
+ *    This file is part of the wfm-rpi program
+ *    Many of the ideas as implemented in wfm-rpi are derived from
  *    other work, made available through the GNU general Public License. 
  *    All copyrights of the original authors are recognized.
  *
- *    JSDR is free software; you can redistribute it and/or modify
+ *    wfm-rpi is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation; either version 2 of the License, or
- *    (at your option) any later version.
+ *    the Free Software Foundation as version 2 of the License.
  *
- *    JSDR is distributed in the hope that it will be useful,
+ *    wfm-rpi is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *    GNU General Public License for more details.
  *
  *    You should have received a copy of the GNU General Public License
- *    along with JSDR; if not, write to the Free Software
+ *    along with wfm-rpi; if not, write to the Free Software
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
