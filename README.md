@@ -10,9 +10,11 @@ One can add a station to the  station list by selecting the frequency and pushin
 Selecting a station (with the associated frequency) is by clicking ONCE the line in the station list.
 One can remove a line from the station list by clicking TWICE on the line.
 The software - obviously - supports decoding of rds.
+
 ----------------------------------------------------------------------------
 
 The software has - just to experiment with - implemented 5 different algorithms for FM demodulation, user selectable.
+
 ----------------------------------------------------------------------------
 
 The software can be configured for use with an AIRSPY, SDRplay or a DABstick.
