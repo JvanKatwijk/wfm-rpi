@@ -10,9 +10,11 @@ One can add a station to the  station list by selecting the frequency and pushin
 Selecting a station (with the associated frequency) is by clicking ONCE the line in the station list.
 One can remove a line from the station list by clicking TWICE on the line.
 The software - obviously - supports decoding of rds.
+
 ----------------------------------------------------------------------------
 
 The software has - just to experiment with - implemented 5 different algorithms for FM demodulation, user selectable.
+
 ----------------------------------------------------------------------------
 
 The software can be configured for use with an AIRSPY, SDRplay or a DABstick.
@@ -34,8 +36,9 @@ implemented: the sound output can be send to an IP port.
 Define STREAMER in CMake or undefine CONFIG+=streamer in the ".pro" file
 for installing a (simple) streamer that outputs the audio
 on port 20040 allowing you to listen from another computer.
-A simple "listener" is available as client.
-Use qmake to build the listener, which is the same as for the Qt-DAB
+A simple "listener" is available as client, 
+use qmake to build the listener, which is the same as for the Qt-DAB
+
 ---------------------------------------------------------------------------
 
 For creating an executable: install the required libraries and use
