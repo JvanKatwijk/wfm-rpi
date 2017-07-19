@@ -1,7 +1,7 @@
 #
 /*
  *
- *    Copyright (C) 2008, 2009, 2010
+ *    Copyright (C) 2015 .. 2017
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
  *    Lazy Chair Computing
  *
@@ -412,7 +412,8 @@ DSPCOMPLEX	tmp	= 0;
 int16_t		index;
 
 	Buffer [ip] = z;
-	if (++decimationCounter < decimationFactor) {
+	
+	if (++ decimationCounter < decimationFactor) {
 	   ip =  (ip + 1) % filterSize;
 	   return false;
 	}

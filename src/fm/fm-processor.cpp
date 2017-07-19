@@ -2,12 +2,9 @@
 /*
  *    Copyright (C) 2010, 2011, 2012
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
- *    Lazy Chair Programming
+ *    Lazy Chair Computing
  *
  *    This file is part of the SDR-J program suite.
- *    Many of the ideas as implemented in SDR-J are derived from
- *    other work, made available through the GNU general Public License. 
- *    All copyrights of the original authors are recognized.
  *
  *    SDR-J is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -59,7 +56,7 @@
 //	cycles when entering with high rates)
 //	So, what we do here is reduce the speed and delegate the
 //	hard word to others
-	decimatingFilter	= new DecimatingFIR (9,
+	decimatingFilter	= new DecimatingFIR (11,
 	                                             fmRate / 2,
 	                                             inputRate,
 	                                             decimatingScale);

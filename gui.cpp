@@ -1,8 +1,8 @@
 #
 /*
- *    Copyright (C) 2014
+ *    Copyright (C) 2015 .. 2017
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
- *    Lazy Chair Programming
+ *    Lazy Chair Computing
  *
  *    This file is part of the  WFM-RPI
  *    Many of the ideas as implemented in the WFM_RPI are derived from
@@ -125,7 +125,7 @@ int16_t	latency		= 1;
 	fmRate		= inputRate % 256000 == 0 ? 256000 :
 	                  inputRate % 192000 == 0 ? 192000 :
 	                  inputRate % 240000 == 0 ? 240000 :
-	                  inputRate < Khz (400) ? inputRate : 
+	                  inputRate <= Khz (400) ? inputRate : 
 	                  inputRate < Khz (850) ? inputRate / 2 :
 	                  inputRate < Khz (1300) ? inputRate / 4 :
 	                  inputRate < Khz (1900) ? inputRate / 6 :

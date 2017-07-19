@@ -1,10 +1,10 @@
 #
 /*
- *    Copyright (C) 2014
+ *    Copyright (C) 2015 .. 2017
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
- *    Lazy Chair Programming
+ *    Lazy Chair Computing
  *
- *	cuteSDR (c) M Wheatly 2011
+ *	  based on cuteSDR (c) M Wheatly 2011
  *
  *    This file is part of the SDR-J.
  *    Many of the ideas as implemented in SDR-J are derived from

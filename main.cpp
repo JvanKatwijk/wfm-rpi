@@ -1,8 +1,8 @@
 #
 /*
- *    Copyright (C) 2015
+ *    Copyright (C) 2015 .. 2017
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
- *    Lazy Chair Programming
+ *    Lazy Chair Computing
  *
  *    This file is part of the WFM-RPI.
  *    Many of the ideas as implemented in the WFM-RPI are derived from
@@ -69,6 +69,5 @@ QString	stationList	= QDir::homePath ();
 	fflush (stdout);
 	fflush (stderr);
 	fprintf (stderr, "It is done\n");
-	exit (1);
 }
 

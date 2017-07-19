@@ -2,12 +2,9 @@
 /*
  *    Copyright (C) 2015
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
- *    Lazy Chair Programming
+ *    Lazy Chair Computing
  *
  *    This file is part of the SDR-J program suite.
- *    Many of the ideas as implemented in SDR-J are derived from
- *    other work, made available through the GNU general Public License. 
- *    All copyrights of the original authors are recognized.
  *
  *    SDR-J is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -157,18 +154,18 @@ void	fmDecoder::set_fmDemodulator (uint8_t m) {
 }
 
 
-#define	SIZE	(4096)
+#define	SIZE	(16384)
 void	fmDecoder::run (void) {
 DSPCOMPLEX	fmData [SIZE];
 DSPCOMPLEX	audioSample;
 float		rdsSample;
 int16_t		decimationCount	= 0;
 int32_t		totalAmount	= 0;
+DSPCOMPLEX	localBuffer [2048];
 
 	running	= true;
 	try {
 	   int16_t i;
-	   DSPCOMPLEX	localBuffer [2048];
 	   int16_t	localBufferp	= 0;
 //
 //	we get SIZE samples in in app SIZE * 1000 / currentRate msec

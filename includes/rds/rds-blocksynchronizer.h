@@ -1,8 +1,8 @@
 #
 /*
- *    Copyright (C) 2014
+ *    Copyright (C) 2015 .. 2017
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
- *    Lazy Chair Programming
+ *    Lazy Chair Computing
  *
  *    This part of the FM demodulation software is largely a
  *    rewrite and local adaptation of FMSTACK software

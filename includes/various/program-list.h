@@ -1,8 +1,8 @@
 #
 /*
- *    Copyright (C) 2014
+ *    Copyright (C) 2015 .. 2017
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
- *    Lazy Chair Programming
+ *    Lazy Chair Computing
  *
  *    This file is part of the  SDR-J series.
  *    Many of the ideas as implemented in the SDR-J are derived from

@@ -1,8 +1,8 @@
 #
 /*
- *    Copyright (C) 2014
+ *    Copyright (C) 2015 .. 2017
  *    Jan van Katwijk (J.vanKatwijk@gmail.com)
- *    Lazy Chair Programming
+ *    Lazy Chair Computing
  *
  *    This part of the FM demodulation software is largely
  *    a rewrite and local adaptation of FMSTACK software
@@ -14,11 +14,7 @@
  *    Last changed    : 09.03.2010
  * 
  *    This file is part of the SDR-J.
- *    Many of the ideas as implemented in SDR-J are derived from
- *    other work, made available through the GNU general Public License. 
- *    All copyrights of the original authors are recognized.
- *
- *    SDR-J is free software; you can redistribute it and/or modify
+  *    SDR-J is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
  *    the Free Software Foundation; either version 2 of the License, or
  *    (at your option) any later version.

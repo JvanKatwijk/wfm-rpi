@@ -7,12 +7,12 @@
 TEMPLATE	= app
 QT		+= widgets 
 CONFIG		+= console
-QMAKE_CFLAGS	+= -flto -ffast-math
-QMAKE_CXXFLAGS	+= -flto -ffast-math
-QMAKE_LFLAGS	+= -flto
-#QMAKE_CFLAGS	+= -pg
-#QMAKE_CXXFLAGS	+= -pg
-#QMAKE_LFLAGS	+= -pg
+#QMAKE_CFLAGS	+= -flto -ffast-math
+#QMAKE_CXXFLAGS	+= -flto -ffast-math
+#QMAKE_LFLAGS	+= -flto
+QMAKE_CFLAGS	+= -pg
+QMAKE_CXXFLAGS	+= -pg
+QMAKE_LFLAGS	+= -pg
 ########################
 #
 #	choose ONE device
