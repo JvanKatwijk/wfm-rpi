@@ -1,19 +1,31 @@
 
 cmake_minimum_required( VERSION 2.8.11 )
 set (CMAKE_BUILD_TYPE Release )
-#
-set ( CMAKE_INSTALL_PREFIX ../ )
+set (CMAKE_CXX_FLAGS "${CMAKE_XCC_FLAGS} -Wall -std=c++11 -flto")
+set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto")
+
+if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set (CMAKE_INSTALL_PREFIX "/usr/local/bin" CACHE PATH "default install path" FORCE )
+endif()
+#set (CMAKE_INSTALL_PREFIX /usr/local/bin)
 add_definitions (-Wall -flto -ffast-math)
 
 ######################################################################
 #       R E A D  T H I S
 #####################################################################
 #	adjust to your likings:
-#
-#	if you want support for one of these devices, uncomment ONE of
-	set(SDRPLAY true) 
-#	set(AIRSPY true)
-#	set(DABSTICK true)
+
+if(DEFINED AIRSPY)
+   set(AIRSPY true)
+endif ()
+
+if(DEFINED SDRPLAY)
+   set(SDRPLAY true)
+endif ()
+
+if(DEFINED DABSTICK)
+   set(DABSTICK true)
+endif ()
 
 #	but do not uncomment more than one line
 #	if you want to have the PCM samples sent to port 20040
@@ -21,13 +33,13 @@ add_definitions (-Wall -flto -ffast-math)
 #	set(STREAMER true)
 
 	if (SDRPLAY)
-	   set (objectName wfm-rpi-sdrplay-0.996)
+	   set (objectName wfm-rpi-sdrplay-0.998)
 	endif (SDRPLAY)
 	if (AIRSPY)
-	   set (objectName wfm-rpi-airspy-0.996)
+	   set (objectName wfm-rpi-airspy-0.998)
 	endif (AIRSPY)
 	if (DABSTICK)
-	   set (objectName wfm-rpi-dabstick-0.996)
+	   set (objectName wfm-rpi-dabstick-0.998)
 	endif (DABSTICK)
 ########################################################################
 	find_package (Qt5Widgets REQUIRED)
@@ -120,7 +132,7 @@ add_definitions (-Wall -flto -ffast-math)
 	   ./src/fm
 	   ./src/rds
 	   ./src/various
-	   ./input
+	   ./devices
 	)
 
 	set ( ${objectName}_HDRS
@@ -150,7 +162,7 @@ add_definitions (-Wall -flto -ffast-math)
 	      ./includes/rds/rds-blocksynchronizer.h
 	      ./includes/rds/rds-group.h
 	      ./includes/rds/rds-groupdecoder.h 
-	      ./input/virtual-input.h
+	      ./devices/virtual-input.h
 	)
 
 	set ( ${objectName}_SRCS
@@ -177,7 +189,7 @@ add_definitions (-Wall -flto -ffast-math)
 	      ./src/rds/rds-blocksynchronizer.cpp
 	      ./src/rds/rds-group.cpp
 	      ./src/rds/rds-groupdecoder.cpp
-	      ./input/virtual-input.cpp
+	      ./devices/virtual-input.cpp
 	)
 
 	set ( ${objectName}_UIS ./sdrgui.ui 
@@ -213,29 +225,29 @@ add_definitions (-Wall -flto -ffast-math)
            include_directories (${SDRPLAYLIB_INCLUDE_DIR}$)
 	   set (${objectName}_UIS
 	        ${${objectName}_UIS}
-	        ./input/sdrplay/sdrplay-widget.ui 
+	        ./devices/sdrplay-handler/sdrplay-widget.ui 
 	   )
 
 	   include_directories (
-	     ./input/sdrplay
+	     ./devices/sdrplay-handler
 	   )
 
 	   set ($(objectName)_HDRS
 	        ${${objectName}_HDRS}
-	        ./input/sdrplay/sdrplay.h
-	        ./input/sdrplay/sdrplayselect.h
+	        ./devices/sdrplay-handler/sdrplay-handler.h
+	        ./devices/sdrplay-handler/sdrplayselect.h
            )
 
 	   set (${objectName}_MOCS
 	        ${${objectName}_MOCS}
-	        ./input/sdrplay/sdrplay.h
-	        ./input/sdrplay/sdrplayselect.h
+	        ./devices/sdrplay-handler/sdrplay-handler.h
+	        ./devices/sdrplay-handler/sdrplayselect.h
 	   )
 
 	   set (${objectName}_SRCS
 	        ${${objectName}_SRCS}
-	        ./input/sdrplay/sdrplay.cpp
-	        ./input/sdrplay/sdrplayselect.cpp
+	        ./devices/sdrplay-handler/sdrplay-handler.cpp
+	        ./devices/sdrplay-handler/sdrplayselect.cpp
 	   )
 
 	   add_definitions (-DHAVE_SDRPLAY)
@@ -259,26 +271,26 @@ add_definitions (-Wall -flto -ffast-math)
 
 	   set (${objectName}_UIS
 	        ${${objectName}_UIS}
-	        ./input/airspy/airspy-widget.ui 
+	        ./devices/airspy-handler/airspy-widget.ui 
 	   )
 
 	   set (${objectName}_MOCS
 	        ${${objectName}_MOCS}
-	        ./input/airspy/airspy-handler.h
+	        ./devices/airspy-handler/airspy-handler.h
 	   )
 
 	   include_directories (
-	     ./input/airspy
+	     ./devices/airspy-handler
 	   )
 
 	   set ($(objectName)_HDRS
 	        ${${objectName}_HDRS}
-	        ./input/airspy/airspy-handler.h
+	        ./devices/airspy-handler/airspy-handler.h
 	   )
 
 	   set (${objectName}_SRCS
 	        ${${objectName}_SRCS}
-	        ./input/airspy/airspy-handler.cpp
+	        ./devices/airspy-handler/airspy-handler.cpp
 	   )
 
 	   add_definitions (-DHAVE_AIRSPY)
@@ -301,29 +313,29 @@ add_definitions (-Wall -flto -ffast-math)
 
 	   set (${objectName}_UIS
 	        ${${objectName}_UIS}
-	        ./input/dabstick/dabstick-widget.ui
+	        ./devices/rtlsdr-handler/dabstick-widget.ui
 	   )
 
 	   set (${objectName}_MOCS
 	        ${${objectName}_MOCS}
-	        ./input/dabstick/dongleselect.h
-	        ./input/dabstick/dabstick.h
+	        ./devices/rtlsdr-handler/dongleselect.h
+	        ./devices/rtlsdr-handler/rtlsdr-handler.h
 	   )
 
 	   include_directories (
-	        ./input/dabstick/
+	        ./devices/rtlsdr-handler/
 	   )
 
 	   set (${objectName}_HDRS
 	        ${${objectName}_HDRS}
-	        ./input/dabstick/dabstick.h 
-	        ./input/dabstick/dongleselect.h
+	        ./devices/rtlsdr-handler/rtlsdr-handler.h 
+	        ./devices/rtlsdr-handler/dongleselect.h
 	   )
 
 	   set (${objectName}_SRCS
 	        ${${objectName}_SRCS}
-	        ./input/dabstick/dabstick.cpp
-	        ./input/dabstick/dongleselect.cpp
+	        ./devices/rtlsdr-handler/rtlsdr-handler.cpp
+	        ./devices/rtlsdr-handler/dongleselect.cpp
 	   )
 
 	   add_definitions (-DHAVE_DABSTICK)
@@ -335,7 +347,7 @@ add_definitions (-Wall -flto -ffast-math)
 	      ${${objectName}_MOCS}
 	      ./gui.h	
 	      ./includes/popup-keypad.h
-	      ./input/virtual-input.h
+	      ./devices/virtual-input.h
 	      ./includes/rds/rds-groupdecoder.h 
 	      ./includes/rds/rds-blocksynchronizer.h
 	      ./includes/rds/rds-decoder.h
@@ -367,4 +379,4 @@ add_definitions (-Wall -flto -ffast-math)
 	                       ${NETWORK_LIB}
 	                       ${SAMPLERATE_LIBRARIES})
 
-	INSTALL (TARGETS ${objectName} DESTINATION ./linux-bin)
+	INSTALL (TARGETS ${objectName} DESTINATION ./)

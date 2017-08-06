@@ -38,12 +38,17 @@
 #include	"squelchClass.h"
 #include	"program-list.h"
 #include	"virtual-input.h"
+#include        <fstream>
+#include        <iostream>
+#include        <numeric>
+#include        <unistd.h>
+#include        <vector>
 #ifdef	HAVE_SDRPLAY
-#include	"sdrplay.h"
+#include	"sdrplay-handler.h"
 #elif	HAVE_AIRSPY
 #include	"airspy-handler.h"
 #elif	HAVE_DABSTICK
-#include	"dabstick.h"
+#include	"rtlsdr-handler.h"
 #elif	HAVE_EXTIO
 #include	"extio-handler.h"
 #elif	HAVE_ELAD_S1
@@ -83,6 +88,25 @@ int16_t	delayTable [] = {1, 3, 5, 7, 9, 10, 15};
  *	gui elements and the handling agents. All real action
  *	is embedded in actions, initiated by gui buttons
  */
+#ifndef	__MINGW32__
+std::vector<size_t> get_cpu_times (void) {
+	std::ifstream proc_stat ("/proc/stat");
+	proc_stat. ignore (5, ' ');    // Skip the 'cpu' prefix.
+	std::vector<size_t> times;
+	for (size_t time; proc_stat >> time; times. push_back (time));
+	return times;
+}
+ 
+bool get_cpu_times (size_t &idle_time, size_t &total_time) {
+	const std::vector <size_t> cpu_times = get_cpu_times ();
+	if (cpu_times. size () < 4)
+           return false;
+	idle_time  = cpu_times [3];
+	total_time = std::accumulate (cpu_times. begin(), cpu_times. end (), 0);
+	return true;
+}
+#endif
+
 	RadioInterface::RadioInterface (QSettings	*Si,
 	                                QString		stationList,
 	                                QWidget		*parent): QDialog (parent) {
@@ -100,9 +124,9 @@ int16_t	latency		= 1;
 	runMode			= IDLE;
 //
 #ifdef	HAVE_DABSTICK
-	myRig		= new dabStick	(fmSettings, false, &success);
+	myRig		= new rtlsdrHandler	(fmSettings, false, &success);
 #elif	HAVE_SDRPLAY
-	myRig		= new sdrplay	(fmSettings, &success);
+	myRig		= new sdrplayHandler	(fmSettings, &success);
 #elif	HAVE_AIRSPY
 	myRig		= new airspyHandler (fmSettings, &success);
 #elif	HAVE_EXTIO
@@ -400,12 +424,29 @@ void	RadioInterface::setTuner (int32_t n) {
 	   myFMprocessor	-> reset_rds	();
 }
 //
+static size_t previous_idle_time        = 0;
+static size_t previous_total_time       = 0;
 
+static	int cnt	= 0;
 void	RadioInterface::updateTimeDisplay (void) {
 QDateTime	currentTime = QDateTime::currentDateTime ();
 
 	timeDisplay	-> setText (currentTime.
 	                            toString (QString ("dd.MM.yy:hh:mm:ss")));
+#ifndef	__MINGW32__
+	cnt ++;
+	if (cnt > 3) {
+	   size_t idle_time, total_time;
+	   get_cpu_times (idle_time, total_time);
+	   const float idle_time_delta = idle_time - previous_idle_time;
+           const float total_time_delta = total_time - previous_total_time;
+           const float utilization = 100.0 * (1.0 - idle_time_delta / total_time_delta);
+	   loadIndicator -> display (utilization);
+	   previous_idle_time = idle_time;
+	   previous_total_time = total_time;
+	   cnt = 0;
+	}
+#endif
 }
 
 /*

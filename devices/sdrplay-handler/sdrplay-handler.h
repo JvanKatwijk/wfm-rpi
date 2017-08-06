@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef __SDRPLAY__
-#define	__SDRPLAY__
+#ifndef __SDRPLAY_HANDLER__
+#define	__SDRPLAY_HANDLER__
 
 #include	<QObject>
 #include	<QFrame>
@@ -33,7 +33,6 @@
 #include	"virtual-input.h"
 #include	"ui_sdrplay-widget.h"
 #include	"mirsdrapi-rsp.h"
-#include	"sdrplay.h"	// our header
 
 typedef void (*mir_sdr_StreamCallback_t)(int16_t	*xi,
 	                                 int16_t	*xq,
@@ -85,6 +84,8 @@ typedef mir_sdr_ErrT (*pfn_mir_sdr_ApiVersion)(float *version);
 
 typedef mir_sdr_ErrT (*pfn_mir_sdr_ResetUpdateFlags)(int resetGainUpdate, int resetRfUpdate, int resetFsUpdate);   
 
+typedef mir_sdr_ErrT (*pfn_mir_sdr_DecimateControl)(uint32_t enable, uint32_t decimationFactor, uint32_t widebandSignal);
+
 typedef mir_sdr_ErrT (*pfn_mir_sdr_AgcControl)(uint32_t, int, int, uint32_t,
 	                                       uint32_t, int, int);
 
@@ -102,12 +103,12 @@ typedef mir_sdr_ErrT (*pfn_mir_sdr_ReleaseDeviceIdx) (unsigned int);
 
 
 ///////////////////////////////////////////////////////////////////////////
-class	sdrplay: public virtualInput, public Ui_sdrplayWidget {
+class	sdrplayHandler: public virtualInput, public Ui_sdrplayWidget {
 Q_OBJECT
 public:
-		sdrplay		(QSettings *,  bool *);
-		~sdrplay	(void);
-	void	setVFOFrequency	(int32_t);
+		sdrplayHandler		(QSettings *,  bool *);
+		~sdrplayHandler		(void);
+	void	setVFOFrequency		(int32_t);
 	int32_t	getVFOFrequency		(void);
 	bool	legalFrequency		(int32_t);
 	int32_t	defaultFrequency	(void);
@@ -139,6 +140,7 @@ private:
 	pfn_mir_sdr_ApiVersion	my_mir_sdr_ApiVersion;
 	pfn_mir_sdr_ResetUpdateFlags
 	                        my_mir_sdr_ResetUpdateFlags;
+	pfn_mir_sdr_DecimateControl my_mir_sdr_DecimateControl;
 	pfn_mir_sdr_AgcControl	my_mir_sdr_AgcControl;
 	pfn_mir_sdr_DCoffsetIQimbalanceControl
 	                        my_mir_sdr_DCoffsetIQimbalanceControl;

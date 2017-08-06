@@ -33,7 +33,7 @@
 
 #include	<QThread>
 #include	"rtl-sdr.h"
-#include	"dabstick.h"
+#include	"rtlsdr-handler.h"
 
 #ifdef	__MINGW32__
 #define	GETPROCADDRESS	GetProcAddress
@@ -50,7 +50,7 @@
 //	ctx is the calling task
 static
 void	RTLSDRCallBack (uint8_t *buf, uint32_t len, void *ctx) {
-dabStick	*theStick	= (dabStick *)ctx;
+rtlsdrHandler	*theStick	= (rtlsdrHandler *)ctx;
 int32_t	tmp;
 
 	if ((theStick == NULL) || (len != READLEN_DEFAULT))
@@ -66,10 +66,10 @@ int32_t	tmp;
 //	from the lib.
 class	dll_driver : public QThread {
 private:
-	dabStick	*theStick;
+	rtlsdrHandler	*theStick;
 public:
 
-	dll_driver (dabStick *d) {
+	dll_driver (rtlsdrHandler *d) {
 	theStick	= d;
 	start ();
 	}
@@ -88,7 +88,7 @@ virtual void	run (void) {
 };
 //
 //	Our wrapper is a simple classs
-	dabStick::dabStick (QSettings *s, bool full, bool *success) {
+	rtlsdrHandler::rtlsdrHandler (QSettings *s, bool full, bool *success) {
 int16_t	deviceCount;
 int32_t	r;
 int16_t	deviceIndex;
@@ -224,7 +224,7 @@ err:
 	return;
 }
 
-	dabStick::~dabStick	(void) {
+	rtlsdrHandler::~rtlsdrHandler	(void) {
 	if (open)
 	   this -> rtlsdr_close (device);
 	if (_I_Buffer != NULL)
@@ -244,24 +244,24 @@ err:
 	open = false;
 }
 
-void	dabStick::setVFOFrequency	(int32_t f) {
+void	rtlsdrHandler::setVFOFrequency	(int32_t f) {
 	(void)(this -> rtlsdr_set_center_freq (device, f + vfoOffset));
 }
 
-int32_t	dabStick::getVFOFrequency	(void) {
+int32_t	rtlsdrHandler::getVFOFrequency	(void) {
 	return (int32_t)(this -> rtlsdr_get_center_freq (device)) - vfoOffset;
 }
 
-bool	dabStick::legalFrequency (int32_t f) {
+bool	rtlsdrHandler::legalFrequency (int32_t f) {
 	return  Mhz (24) <= f && f <= Mhz (1400);
 }
 
-int32_t	dabStick::defaultFrequency	(void) {
+int32_t	rtlsdrHandler::defaultFrequency	(void) {
 	return Khz (94700);
 }
 //
 //
-bool	dabStick::restartReader	(void) {
+bool	rtlsdrHandler::restartReader	(void) {
 int32_t	r;
 
 	if (workerHandle != NULL)
@@ -279,7 +279,7 @@ int32_t	r;
 	return true;
 }
 
-void	dabStick::stopReader		(void) {
+void	rtlsdrHandler::stopReader		(void) {
 	if (workerHandle == NULL)
 	   return;
 
@@ -297,7 +297,7 @@ void	dabStick::stopReader		(void) {
 //	Note that this function is neither used for the
 //	dabreceiver nor for the fmreceiver
 //
-int32_t	dabStick::setExternalRate	(int32_t newRate) {
+int32_t	rtlsdrHandler::setExternalRate	(int32_t newRate) {
 int32_t	r;
 
 	if (newRate < 900000) return inputRate;
@@ -328,7 +328,7 @@ int32_t	r;
 	return r;
 }
 
-void	dabStick::setExternalGain	(int gain) {
+void	rtlsdrHandler::setExternalGain	(int gain) {
 static int	oldGain	= 0;
 
 	if (gain == oldGain)
@@ -343,7 +343,7 @@ static int	oldGain	= 0;
 }
 //
 //	correction is in Hz
-void	dabStick::freqCorrection	(int32_t ppm) {
+void	rtlsdrHandler::freqCorrection	(int32_t ppm) {
 	this -> rtlsdr_set_freq_correction (device, ppm);
 }
 
@@ -351,7 +351,7 @@ void	dabStick::freqCorrection	(int32_t ppm) {
 //	The brave old getSamples. For the dab stick, we get
 //	size: still in I/Q pairs, but we have to convert the data from
 //	uint8_t to DSPCOMPLEX *
-int32_t	dabStick::getSamples (DSPCOMPLEX *V, int32_t size) { 
+int32_t	rtlsdrHandler::getSamples (DSPCOMPLEX *V, int32_t size) { 
 int32_t	amount, i;
 uint8_t	*tempBuffer = (uint8_t *)alloca (2 * size * sizeof (uint8_t));
 //
@@ -362,27 +362,27 @@ uint8_t	*tempBuffer = (uint8_t *)alloca (2 * size * sizeof (uint8_t));
 	return amount / 2;
 }
 
-int32_t	dabStick::Samples	(void) {
+int32_t	rtlsdrHandler::Samples	(void) {
 	return _I_Buffer	-> GetRingBufferReadAvailable () / 2;
 }
 //
-uint8_t	dabStick::myIdentity		(void) {
+uint8_t	rtlsdrHandler::myIdentity		(void) {
 	return DAB_STICK;
 }
 
 //	vfoOffset is in Hz, we have two spinboxes influencing the
 //	settings
-void	dabStick::setKhzOffset	(int k) {
+void	rtlsdrHandler::setKhzOffset	(int k) {
 	vfoOffset	= vfoOffset % Khz (1) + Khz (k);
 	setVFOFrequency (getVFOFrequency ());
 }
 
-void	dabStick::setHzOffset	(int h) {
+void	rtlsdrHandler::setHzOffset	(int h) {
 	vfoOffset	= KHz (1) * vfoOffset / KHz (1) + h;
 	setVFOFrequency (getVFOFrequency ());
 }
 
-bool	dabStick::load_rtlFunctions (void) {
+bool	rtlsdrHandler::load_rtlFunctions (void) {
 //
 //	link the required procedures
 	rtlsdr_open	= (pfnrtlsdr_open)
@@ -424,6 +424,13 @@ bool	dabStick::load_rtlFunctions (void) {
 	                     GETPROCADDRESS (Handle, "rtlsdr_set_tuner_gain_mode");
 	if (rtlsdr_set_tuner_gain_mode == NULL) {
 	   fprintf (stderr, "Could not find rtlsdr_set_tuner_gain_mode\n");
+	   return false;
+	}
+
+	rtlsdr_set_agc_mode	= (pfnrtlsdr_set_agc_mode)
+	                     GETPROCADDRESS (Handle, "rtlsdr_set_agc_mode");
+	if (rtlsdr_set_agc_mode == NULL) {
+	   fprintf (stderr, "Could not find rtlsdr_set_agc_mode\n");
 	   return false;
 	}
 
@@ -507,19 +514,19 @@ bool	dabStick::load_rtlFunctions (void) {
 	return true;
 }
 
-void	dabStick::resetBuffer (void) {
+void	rtlsdrHandler::resetBuffer (void) {
 	_I_Buffer -> FlushRingBuffer ();
 }
 
-int16_t	dabStick::bitDepth	(void) {
+int16_t	rtlsdrHandler::bitDepth	(void) {
 	return 8;
 }
 
-int32_t	dabStick::getRate	(void) {
+int32_t	rtlsdrHandler::getRate	(void) {
 	return inputRate;
 }
 
-void	dabStick::set_rateSelector (const QString &s) {
+void	rtlsdrHandler::set_rateSelector (const QString &s) {
 int32_t v	= s. toInt ();
 	return;
 }

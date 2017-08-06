@@ -7,18 +7,18 @@
 TEMPLATE	= app
 QT		+= widgets 
 CONFIG		+= console
-#QMAKE_CFLAGS	+= -flto -ffast-math
-#QMAKE_CXXFLAGS	+= -flto -ffast-math
-#QMAKE_LFLAGS	+= -flto
-QMAKE_CFLAGS	+= -pg
-QMAKE_CXXFLAGS	+= -pg
-QMAKE_LFLAGS	+= -pg
+QMAKE_CFLAGS	+= -flto -ffast-math
+QMAKE_CXXFLAGS	+= -flto -ffast-math
+QMAKE_LFLAGS	+= -flto
+#QMAKE_CFLAGS	+= -pg
+#QMAKE_CXXFLAGS	+= -pg
+#QMAKE_LFLAGS	+= -pg
 ########################
 #
 #	choose ONE device
 #
-#CONFIG	+= airspy
-CONFIG	+= sdrplay
+CONFIG	+= airspy
+#CONFIG	+= sdrplay
 #CONFIG	+= dabstick
 #	Handle with care
 #CONFIG	+= extio
@@ -50,7 +50,7 @@ INCLUDEPATH += . \
 	      ./includes/fm \
 	      ./includes/rds \
 	      ./includes/various \
-	      ./input 
+	      ./devices 
 
 # Input
 HEADERS += ./gui.h \
@@ -80,7 +80,7 @@ HEADERS += ./gui.h \
 	   ./includes/rds/rds-group.h \
 	   ./includes/rds/rds-groupdecoder.h  \
 	   ./includes/rds/charsets.h \
-	   ./input/virtual-input.h 
+	   ./devices/virtual-input.h 
 
 FORMS += ./sdrgui.ui 
 
@@ -108,7 +108,7 @@ SOURCES += ./main.cpp \
 	   ./src/rds/rds-group.cpp \
 	   ./src/rds/rds-groupdecoder.cpp \
 	   ./src/rds/charsets.cpp \
-	   ./input/virtual-input.cpp 
+	   ./devices/virtual-input.cpp 
 #
 # for windows32 we use:
 win32 {
@@ -139,42 +139,42 @@ LIBS		+= -lsamplerate
 #	the devices:
 #	for the "standard" rtlsdr library use:
 dabstick {
-	TARGET		= wfm-rpi-dabstick-0.996
+	TARGET		= wfm-rpi-dabstick-0.998
 	DEFINES		+= HAVE_DABSTICK
-	FORMS		+= ./input/dabstick/dabstick-widget.ui
-	INCLUDEPATH	+= ./input/dabstick
-	DEPENDPATH	+= ./input/dabstick
-	HEADERS		+= ./input/dabstick/dabstick.h \
-	                   ./input/dabstick/dongleselect.h
-	SOURCES		+= ./input/dabstick/dabstick.cpp \
-	                   ./input/dabstick/dongleselect.cpp
+	FORMS		+= ./devices/rtlsdr-handler/dabstick-widget.ui
+	INCLUDEPATH	+= ./devices/rtlsdr-handler
+	DEPENDPATH	+= ./devices/rtlsdr-handler
+	HEADERS		+= ./devices/rtlsdr-handler/rtlsdr-handler.h \
+	                   ./devices/rtlsdr-handler/dongleselect.h
+	SOURCES		+= ./devices/rtlsdr-handler/rtlsdr-handler.cpp \
+	                   ./devices/rtlsdr-handler/dongleselect.cpp
 #	LIBS		+= -lrtlsdr
 }
 #
 #	the SDRplay
 #
 sdrplay {
-	TARGET		= wfm-rpi-sdrplay-0.996
+	TARGET		= wfm-rpi-sdrplay-0.998
 	DEFINES		+= HAVE_SDRPLAY
-	INCLUDEPATH	+= ./input/sdrplay
-	HEADERS		+= ./input/sdrplay/sdrplay.h \
-	                   ./input/sdrplay/sdrplayselect.h
-	SOURCES		+= ./input/sdrplay/sdrplay.cpp \
-	                   ./input/sdrplay/sdrplayselect.cpp
-	FORMS		+= ./input/sdrplay/sdrplay-widget.ui
+	INCLUDEPATH	+= ./devices/sdrplay-handler
+	HEADERS		+= ./devices/sdrplay-handler/sdrplay-handler.h \
+	                   ./devices/sdrplay-handler/sdrplayselect.h
+	SOURCES		+= ./devices/sdrplay-handler/sdrplay-handler.cpp \
+	                   ./devices/sdrplay-handler/sdrplayselect.cpp
+	FORMS		+= ./devices/sdrplay-handler/sdrplay-widget.ui
 }
 #
 #	the AIRSPY
 #
 airspy {
-	TARGET		= wfm-rpi-airspy-0.996
+	TARGET		= wfm-rpi-airspy-0.998
 	DEFINES		+= HAVE_AIRSPY
-	FORMS		+= ./input/airspy/airspy-widget.ui
-	DEPENDPATH	+= ./input/airspy
-	INCLUDEPATH	+= ./input/airspy \
+	FORMS		+= ./devices/airspy-handler/airspy-widget.ui
+	DEPENDPATH	+= ./devices/airspy-handler
+	INCLUDEPATH	+= ./devices/airspy-handler \
 	                   /usr/local/include/libairspy
-	HEADERS		+= ./input/airspy/airspy-handler.h 
-	SOURCES		+= ./input/airspy/airspy-handler.cpp 
+	HEADERS		+= ./devices/airspy-handler/airspy-handler.h 
+	SOURCES		+= ./devices/airspy-handler/airspy-handler.cpp 
 }
 #
 streamer	{
@@ -187,30 +187,30 @@ streamer	{
 #	the elad-s1
 #
 elad-s1 {
-	TARGET		= wfm-rpi-elad-0.996
+	TARGET		= wfm-rpi-elad-0.998
 	DEFINES		+= HAVE_ELAD_S1
-	FORMS		+= ./input/sw-elad-s1/elad_widget.ui
-	DEPENDPATH	+= ./input/sw-elad-s1
-	INCLUDEPATH	+= ./input/sw-elad-s1 
-	HEADERS		+= ./input/sw-elad-s1/elad-s1.h \
-	                   ./input/sw-elad-s1/elad-worker.h \
-	                   ./input/sw-elad-s1/elad-loader.h
-	SOURCES		+= ./input/sw-elad-s1/elad-s1.cpp \
-	                   ./input/sw-elad-s1/elad-worker.cpp \
-	                   ./input/sw-elad-s1/elad-loader.cpp
+	FORMS		+= ./devices/sw-elad-s1/elad_widget.ui
+	DEPENDPATH	+= ./devices/sw-elad-s1
+	INCLUDEPATH	+= ./devices/sw-elad-s1 
+	HEADERS		+= ./devices/sw-elad-s1/elad-s1.h \
+	                   ./devices/sw-elad-s1/elad-worker.h \
+	                   ./devices/sw-elad-s1/elad-loader.h
+	SOURCES		+= ./devices/sw-elad-s1/elad-s1.cpp \
+	                   ./devices/sw-elad-s1/elad-worker.cpp \
+	                   ./devices/sw-elad-s1/elad-loader.cpp
 }
 #
 #	extio dependencies, windows only
 #
 extio {
-	TARGET		= wfm-rpi-extio-0.996
+	TARGET		= wfm-rpi-extio-0.998
 	DEFINES		+= HAVE_EXTIO
-	INCLUDEPATH	+= ./input/extio-handler
-	HEADERS		+= ./input/extio-handler/extio-handler.h \
-	                   ./input/extio-handler/common-readers.h \
-	                   ./input/extio-handler/virtual-reader.h 
-	SOURCES		+= ./input/extio-handler/extio-handler.cpp \
-	                   ./input/extio-handler/common-readers.cpp \
-	                   ./input/extio-handler/virtual-reader.cpp 
+	INCLUDEPATH	+= ./devices/extio-handler
+	HEADERS		+= ./devices/extio-handler/extio-handler.h \
+	                   ./devices/extio-handler/common-readers.h \
+	                   ./devices/extio-handler/virtual-reader.h 
+	SOURCES		+= ./devices/extio-handler/extio-handler.cpp \
+	                   ./devices/extio-handler/common-readers.cpp \
+	                   ./devices/extio-handler/virtual-reader.cpp 
 }
 
