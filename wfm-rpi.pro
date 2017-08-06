@@ -17,11 +17,11 @@ QMAKE_LFLAGS	+= -flto
 #
 #	choose ONE device
 #
-CONFIG	+= airspy
+#CONFIG	+= airspy
 #CONFIG	+= sdrplay
 #CONFIG	+= dabstick
 #	Handle with care
-#CONFIG	+= extio
+CONFIG	+= extio
 #	Handle not at all
 #CONFIG	+= elad-s1
 #

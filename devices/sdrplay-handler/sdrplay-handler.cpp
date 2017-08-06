@@ -42,7 +42,7 @@ sdrplaySelect	*sdrplaySelector;
 	setupUi (this -> myFrame);
 	antennaSelector	-> hide ();
 	this	-> myFrame	-> show ();
-	this	-> inputRate	= Khz (2000);
+	this	-> inputRate	= Khz (2112);
 
 	*success		= false;
 	_I_Buffer	= NULL;
@@ -214,7 +214,7 @@ bool	sdrplayHandler::legalFrequency (int32_t f) {
 	return (bankFor_sdr (f) != -1);
 }
 
-int32_t	sdrplayHandler::defaultFrequency	(void) {
+int32_t	sdrplayHandler::defaultFrequency (void) {
 	return Khz (94700);
 }
 
@@ -232,16 +232,13 @@ int	localGred	= currentGred;
 	   return;
 	}
 
-	err = my_mir_sdr_DecimateControl (1, 8, 0);
-	fprintf (stderr, "err code = %d\n", err);
-	
 	if (bankFor_sdr (newFrequency) == bankFor_sdr (vfoFrequency)) 
 	    err	= my_mir_sdr_SetRf (double (newFrequency), 1, 1);
 	else 
 	   err = my_mir_sdr_Reinit (&localGred,
 	                            double (inputRate) / Mhz (1),
 	                            double (newFrequency) / Mhz (1),
-	                            mir_sdr_BW_0_200,
+	                            mir_sdr_BW_0_300,
 	                            mir_sdr_IF_Zero,
 	                            mir_sdr_LO_Undefined,	// LOMode
 	                            0,	// LNA enable
@@ -315,9 +312,6 @@ int	localGred	= currentGred;
 	if (running)
 	   return true;
 
-	err = my_mir_sdr_DecimateControl (1, 8, 0);
-	fprintf (stderr, "err code = %d\n", err);
-
 	err	= my_mir_sdr_StreamInit (&localGred,
 	                                 double (inputRate) / MHz (1),
 	                                 double (vfoFrequency) / Mhz (1),
@@ -375,7 +369,7 @@ void	sdrplayHandler::resetBuffer	(void) {
 }
 
 int16_t	sdrplayHandler::bitDepth	(void) {
-	return 11;
+	return 12;
 }
 
 bool	sdrplayHandler::loadFunctions	(void) {
@@ -456,13 +450,6 @@ bool	sdrplayHandler::loadFunctions	(void) {
 	                GETPROCADDRESS (Handle, "mir_sdr_ApiVersion");
 	if (my_mir_sdr_ApiVersion == NULL) {
 	   fprintf (stderr, "Could not find mir_sdr_ApiVersion\n");
-	   return false;
-	}
-
-	my_mir_sdr_DecimateControl	= (pfn_mir_sdr_DecimateControl)
-	                GETPROCADDRESS (Handle, "mir_sdr_DecimateControl");
-	if (my_mir_sdr_DecimateControl == NULL) {
-	   fprintf (stderr, "Could not find mir_sdr_DecimateControl\n");
 	   return false;
 	}
 
@@ -562,7 +549,7 @@ void	sdrplayHandler::agcControl_toggled (int agcMode) {
 }
 
 int32_t	sdrplayHandler::getRate	(void) {
-	return 250000;
+	return inputRate;
 }
 
 void	sdrplayHandler::set_ppmControl (int ppm) {
