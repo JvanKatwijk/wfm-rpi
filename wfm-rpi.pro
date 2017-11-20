@@ -13,15 +13,18 @@ QMAKE_LFLAGS	+= -flto
 #QMAKE_CFLAGS	+= -pg
 #QMAKE_CXXFLAGS	+= -pg
 #QMAKE_LFLAGS	+= -pg
+RC_ICONS        =  FM-Radio.ico
+RESOURCES       += resources.qrc
+
 ########################
 #
 #	choose ONE device
 #
 #CONFIG	+= airspy
 #CONFIG	+= sdrplay
-#CONFIG	+= dabstick
+CONFIG	+= dabstick
 #	Handle with care
-CONFIG	+= extio
+#CONFIG	+= extio
 #	Handle not at all
 #CONFIG	+= elad-s1
 #
