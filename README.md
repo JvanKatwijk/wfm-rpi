@@ -91,4 +91,6 @@ CMakeLists.txt file if you use cmake.
 -----------------------------------------------------------------------------
 Note on SDRplay
 
-The software is compiled against the 2.09 version of the SDRplay library
+The software is compiled against the 2.13 version of the SDRplay library,
+note that there is an incompatibility between 2.13 and its predecessors
+

@@ -100,8 +100,8 @@ ULONG APIkeyValue_length = 255;
 	}
 
 	my_mir_sdr_ApiVersion (&ver);
-	if (ver < 2.05) {
-	   fprintf (stderr, "sorry, library too old\n");
+	if (ver < 2.13) {
+	   fprintf (stderr, "please update to version 2.13 of sdrplay library\n");
 	   *success = false;
 	   return;
         }
@@ -277,8 +277,9 @@ void myStreamCallback (int16_t		*xi,
 	               int32_t		grChanged,
 	               int32_t		rfChanged,
 	               int32_t		fsChanged,
-	               uint32_t	numSamples,
-	               uint32_t	reset,
+	               uint32_t		numSamples,
+	               uint32_t		reset,
+	               uint32_t		hwRemoved,
 	               void		*cbContext) {
 int16_t	i;
 sdrplayHandler	*p	= static_cast<sdrplayHandler *> (cbContext);
