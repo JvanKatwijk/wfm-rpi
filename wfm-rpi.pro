@@ -21,8 +21,8 @@ RESOURCES       += resources.qrc
 #	choose ONE device
 #
 #CONFIG	+= airspy
-#CONFIG	+= sdrplay
-CONFIG	+= dabstick
+CONFIG	+= sdrplay
+#CONFIG	+= dabstick
 #	Handle with care
 #CONFIG	+= extio
 #	Handle not at all

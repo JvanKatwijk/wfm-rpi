@@ -1,7 +1,11 @@
 #wfm-rpi
 
-A simple FM receiver for use on the Raspberry PI 2
+A simple FM receiver
+
 ---------------------------------------------------------------------------
+
+![wfm-rpi](/wfm-rpi.png?raw=true)
+
 
 WFM-rpi is software for the decoding of an FM signal.
 The software allows selecting a frequency through a small - separate - keypath, and
