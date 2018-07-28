@@ -27,8 +27,8 @@
  *	want the interface with different devices (including  filehandling)
  *	to be transparent
  */
-#ifndef	__VIRTUAL_INPUT__
-#define	__VIRTUAL_INPUT__
+#ifndef	__DEVICE_HANDLER__
+#define	__DEVICE_HANDLER__
 
 #include	<stdint.h>
 #include	"fm-constants.h"
@@ -42,7 +42,12 @@
 #define	EXTIO		0104
 #define	AIRSPY		0110
 #define	PMSDR		0111
+#define	HACKRF		0114
 //
+//	in some cases we anly want to differentiate between sticks
+//	and non-sticks
+
+#define	someStick(x)	((x) & 03)
 
 /**
   *	\class virtualInput
@@ -50,28 +55,29 @@
   *	The class is not completely virtual, since it is
   *	used as a default in case selecting a "real" class did not work out
   */
-class	virtualInput: public QThread {
+class	deviceHandler: public QThread {
 Q_OBJECT
 public:
-			virtualInput 	(void);
-virtual			~virtualInput 	(void);
-virtual		uint8_t	myIdentity	(void);
+			deviceHandler 	(void);
+virtual			~deviceHandler 	(void);
 virtual		int32_t	getRate		(void);
 virtual		void	setVFOFrequency	(int32_t);
 virtual		int32_t	getVFOFrequency	(void);
+virtual		uint8_t	myIdentity	(void);
 virtual		bool	legalFrequency	(int32_t);
 virtual		int32_t	defaultFrequency (void);
-virtual		int16_t	bitDepth	(void);
-
 virtual		bool	restartReader	(void);
 virtual		void	stopReader	(void);
 virtual		int32_t	getSamples	(DSPCOMPLEX *, int32_t);
 virtual		int32_t	Samples		(void);
 virtual		void	resetBuffer	(void);
+virtual		int16_t	bitDepth	(void);
+	        int32_t	vfoOffset;
 //
 protected:
 		int32_t	lastFrequency;
-	        int32_t	vfoOffset;
+signals:
+		void	set_changeRate	(int);
 };
 #endif
 

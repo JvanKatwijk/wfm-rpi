@@ -22,7 +22,7 @@
 #include	<QFrame>
 #include	"fm-constants.h"
 #include	"ringbuffer.h"
-#include	"virtual-input.h"
+#include	"device-handler.h"
 #include	"ui_airspy-widget.h"
 #include	"airspy.h"
 
@@ -73,10 +73,10 @@ typedef int (*pfn_airspy_set_linearity_gain) (struct airspy_device* device, uint
 typedef int (*pfn_airspy_set_sensitivity_gain)(struct airspy_device* device, uint8_t value);
 }
 
-class airspyHandler: public virtualInput, public Ui_airspyWidget {
+class airspyHandler: public deviceHandler, public Ui_airspyWidget {
 Q_OBJECT
 public:
-			airspyHandler	(QSettings *, bool *);
+			airspyHandler	(QSettings *);
 			~airspyHandler	(void);
 	void		setVFOFrequency (int32_t nf);
 	int32_t		getVFOFrequency (void);

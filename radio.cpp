@@ -28,7 +28,7 @@
 #include	<QDebug>
 #include	<QDateTime>
 #include	"fm-constants.h"
-#include	"gui.h"
+#include	"radio.h"
 #include	"popup-keypad.h"
 #include	"fm-processor.h"
 #include	"fm-demodulator.h"
@@ -37,7 +37,6 @@
 #include	"resampler.h"
 #include	"squelchClass.h"
 #include	"program-list.h"
-#include	"virtual-input.h"
 #include        <fstream>
 #include        <iostream>
 #include        <numeric>
@@ -45,15 +44,18 @@
 #include        <vector>
 #ifdef	HAVE_SDRPLAY
 #include	"sdrplay-handler.h"
-#elif	HAVE_AIRSPY
-#include	"airspy-handler.h"
-#elif	HAVE_DABSTICK
-#include	"rtlsdr-handler.h"
-#elif	HAVE_EXTIO
-#include	"extio-handler.h"
-#elif	HAVE_ELAD_S1
-#include	"elad-s1.h"
 #endif
+#ifdef	HAVE_AIRSPY
+#include	"airspy-handler.h"
+#endif
+#ifdef	HAVE_DABSTICK
+#include	"rtlsdr-handler.h"
+#endif
+//#elif	HAVE_EXTIO
+//#include	"extio-handler.h"
+//#elif	HAVE_ELAD_S1
+//#include	"elad-s1.h"
+//#endif
 #ifdef	HAVE_STREAMER
 #include	"tcp-streamer.h"
 #else
@@ -111,7 +113,6 @@ bool get_cpu_times (size_t &idle_time, size_t &total_time) {
 	                                QString		stationList,
 	                                QWidget		*parent): QDialog (parent) {
 QString h;
-bool	success;
 int32_t	startFreq;
 int16_t	latency		= 1;
 
@@ -123,23 +124,41 @@ int16_t	latency		= 1;
 
 	runMode			= IDLE;
 //
+	QString	v	= "unknown";
+	myRig		= nullptr;
+	try {
 #ifdef	HAVE_DABSTICK
-	myRig		= new rtlsdrHandler	(fmSettings, false, &success);
-#elif	HAVE_SDRPLAY
-	myRig		= new sdrplayHandler	(fmSettings, &success);
-#elif	HAVE_AIRSPY
-	myRig		= new airspyHandler (fmSettings, &success);
-#elif	HAVE_EXTIO
-	myRig		= new extioHandler (fmSettings, &success);
-#elif	HAVE_ELAD_S1
-	myRig		= new eladHandler (fmSettings, false, &success);
+	   myRig	= new rtlsdrHandler	(fmSettings);
+	   v		= "wfm-rpi-dabstick";
+	} catch (int e) {}
 #endif
-	if (!success) {
+#ifdef	HAVE_SDRPLAY
+	if (myRig == nullptr) 
+	   try {
+	      myRig	= new sdrplayHandler	(fmSettings);
+	      v		= "wfm-rpi-sdrplay";
+	   } catch (int e) {}
+#endif
+#ifdef	HAVE_AIRSPY
+	if (myRig == nullptr)
+	   try {
+	      myRig	= new airspyHandler	(fmSettings);
+	      v		= "wfm-rpi-airspy";
+	   } catch (int e) {}
+#endif
+//#elif	HAVE_EXTIO
+//	   myRig	= new extioHandler	(fmSettings);
+//	   v		= "wfm-rpi-extio";
+//#elif	HAVE_ELAD_S1
+//	   myRig	= new eladHandler	(fmSettings);
+//	   v		= "wfm-rpi-elad";
+//#endif
+
+	if (myRig == nullptr) {
 	   QMessageBox::warning (this, tr ("sdr"),
-	                               tr ("Device problem\n"));
+	                               tr ("no device configured\n"));
 	   exit (1);
 	}
-//
 //	about Rates
 //	inputRate is the rate with which we get in samples from the device
 //	fmRate is the rate where we do the demodulation
@@ -186,13 +205,13 @@ int16_t	latency		= 1;
 	                                       workingRate / 20,
 	                                       workingRate);
 	squelchOn		= false;
-	theConverter		= NULL;
+	theConverter		= nullptr;
 	int32_t	dummy;
 	if (audioRate != workingRate)
            theConverter = new newConverter (workingRate, audioRate,
                                             workingRate / 20, dummy);
 
-	myFMprocessor		= NULL;
+	myFMprocessor		= nullptr;
 	startFreq		= myRig	-> defaultFrequency	();
 	startFreq		= fmSettings -> value ("frequency",
 	                                                startFreq). toInt ();
@@ -207,23 +226,7 @@ int16_t	latency		= 1;
 //	Set relevant sliders etc to the value they had last time
 	restoreGUIsettings	(fmSettings);
 //
-//	Display the version
-#ifdef	HAVE_SDRPLAY
-	QString v = "wfm-rpi-sdrplay";
-#elif	HAVE_AIRSPY
-	QString v = "wfm-rpi-airspy";
-#elif	HAVE_DABSTICK
-	QString v = "wfm-rpi-dabstick";
-#elif	HAVE_ELAD_S1
-	QString v = "wfm-rpi-elad";
-#elif	HAVE_EXTIO
-	QString v = "wfm-rpi-extio";
-#else
-	QString v = "UNIDENTIFIED";
-#endif
-	
 	v. append (CURRENT_VERSION);
-	
 	systemindicator	-> setText (v);
 
 	currentPIcode		= 0;
@@ -301,9 +304,10 @@ int16_t	latency		= 1;
 //	testje
 	myList	= new programList (this, stationList);
 	myList	-> show ();
-	myLine	= NULL;
+	myLine	= nullptr;
 	connect (freqSave, SIGNAL (clicked (void)),
 	         this, SLOT (set_freqSave (void)));
+	setStart ();
 }
 
 	RadioInterface::~RadioInterface () {
@@ -332,7 +336,7 @@ void	RadioInterface::newFrequency	(int f) {
 //	When stopping, we save the values of some state elements
 void	RadioInterface::dumpControlState	(QSettings *s) {
 
-	if (s == NULL)		// should not happen
+	if (s == nullptr)		// should not happen
 	   return;
 
 	s	-> setValue ("frequency", myRig -> getVFOFrequency ());
@@ -392,6 +396,8 @@ void	RadioInterface::TerminateProcess (void) {
 	autoIncrementTimer	-> stop ();
 	myRig			-> stopReader ();
 	soundOut		-> stop ();
+
+	usleep (10000);
 	myList			-> saveTable ();
 	dumpControlState (fmSettings);
 	audioSamples		-> reset ();
@@ -399,10 +405,10 @@ void	RadioInterface::TerminateProcess (void) {
 	qDebug () <<  "Termination started";
 	usleep (10000);
 	accept ();
-	if (myFMprocessor != NULL) 
+	if (myFMprocessor != nullptr) 
 	   delete myFMprocessor;
 
-	if (theConverter != NULL)
+	if (theConverter != nullptr)
 	   delete theConverter;
 
 	runMode		= IDLE;
@@ -420,7 +426,7 @@ void	RadioInterface::abortSystem (int d) {
 //	The generic setTuner.
 void	RadioInterface::setTuner (int32_t n) {
 	myRig		-> setVFOFrequency	(n);
-	if (myFMprocessor != NULL)
+	if (myFMprocessor != nullptr)
 	   myFMprocessor	-> reset_rds	();
 }
 //
@@ -455,10 +461,6 @@ QDateTime	currentTime = QDateTime::currentDateTime ();
  *	are connected here.
  */
 void	RadioInterface::localConnects (void) {
-	connect (startButton, SIGNAL (clicked ()),
-	              this, SLOT (setStart ()));
-	connect (quitButton, SIGNAL (clicked ()),
-	              this, SLOT (TerminateProcess (void)));
 	connect (squelchButton , SIGNAL (clicked (void)),
                       this, SLOT (set_squelchMode (void)));
         connect (squelchSlider, SIGNAL (valueChanged (int)),
@@ -531,11 +533,17 @@ void	RadioInterface::setPTYCode	(int n) {
 }
 
 void	RadioInterface::setAFDisplay	(int n) {
-	rdsAFDisplay	-> display (n);
+	if (runMode == RUNNING)
+	   rdsAFDisplay	-> display (n);
 }
 
 void	RadioInterface::setPiCode	(int n) {
-int32_t	t	= myRig -> getVFOFrequency ();
+int32_t	t;
+
+	if (runMode != RUNNING)
+	   return;
+
+	t = myRig -> getVFOFrequency ();
 
 	if ((frequencyforPICode != t) || (n != 0)) {
 	   currentPIcode	= n;
@@ -546,6 +554,8 @@ int32_t	t	= myRig -> getVFOFrequency ();
 }
 
 void	RadioInterface::clearStationLabel (void) {
+	if (runMode != RUNNING)
+	   return;
 	StationLabel = QString ("");
 	stationLabelTextBox	-> setText (StationLabel);
 }
@@ -553,10 +563,14 @@ void	RadioInterface::clearStationLabel (void) {
 //	Note: although s is a char * type, its value does not
 //	end with a zero, so it is not a C string
 void	RadioInterface::setStationLabel (const QString &s) {
+	if (runMode != RUNNING)
+	   return;
 	stationLabelTextBox	-> setText (s);
 }
 
 void	RadioInterface::setMusicSpeechFlag (int n) {
+	if (runMode != RUNNING)
+	   return;
 	if (n != 0)
 	   speechLabel -> setText (QString ("music"));
 	else
@@ -564,19 +578,27 @@ void	RadioInterface::setMusicSpeechFlag (int n) {
 }
 
 void	RadioInterface::clearMusicSpeechFlag (void) {
+	if (runMode != RUNNING)
+	   return;
 	speechLabel	-> setText (QString (""));
 }
 
 void	RadioInterface::clearRadioText (void) {
+	if (runMode != RUNNING)
+	   return;
 	RadioText = QString ("");
 	radioTextBox	-> setText (RadioText);
 }
 //
 void	RadioInterface::setRadioText (const QString &s) {
+	if (runMode != RUNNING)
+	   return;
 	radioTextBox	-> setText (s);
 }
 
 void	RadioInterface::setRDSisSynchronized (bool syn) {
+	if (runMode != RUNNING)
+	   return;
 	if (!syn)
 	   rdsSyncLabel -> setStyleSheet ("QLabel {background-color:red}");
 	else
@@ -585,6 +607,8 @@ void	RadioInterface::setRDSisSynchronized (bool syn) {
 //
 
 void	RadioInterface::setfmMode (const QString &s) {
+	if (runMode != RUNNING)
+	   return;
 	myFMprocessor	-> set_fmMode (s == "stereo");
 }
 
@@ -966,7 +990,22 @@ int32_t	freq	= myRig -> getVFOFrequency ();
 QString	programName	= myLine -> text ();
 	myList	-> addRow (programName, QString::number (freq / Khz (1)));
 	delete myLine;
-	myLine	= NULL;
+	myLine	= nullptr;
 }
 
+#include <QCloseEvent>
+void RadioInterface::closeEvent (QCloseEvent *event) {
+
+        QMessageBox::StandardButton resultButton =
+                        QMessageBox::question (this, "wfm-rpi",
+                                               tr("Are you sure?\n"),
+                                               QMessageBox::No | QMessageBox::Yes,
+                                               QMessageBox::Yes);
+        if (resultButton != QMessageBox::Yes) {
+           event -> ignore();
+        } else {
+           TerminateProcess ();
+           event -> accept ();
+        }
+}
 

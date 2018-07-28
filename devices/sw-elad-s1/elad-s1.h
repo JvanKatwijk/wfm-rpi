@@ -24,8 +24,8 @@
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __ELAD_S1
-#define	__ELAD_S1
+#ifndef __ELAD_S1__
+#define	__ELAD_S1__
 
 #include	<QObject>
 #include	<QFrame>
@@ -44,7 +44,7 @@ typedef	DSPCOMPLEX(*makeSampleP)(uint8_t *);
 class	eladHandler: public virtualInput, public Ui_elad_widget {
 Q_OBJECT
 public:
-		eladHandler		(QSettings *, bool, bool *);
+		eladHandler		(QSettings *);
 		~eladHandler		(void);
 	void	setVFOFrequency		(int32_t);
 	int32_t	getVFOFrequency		(void);

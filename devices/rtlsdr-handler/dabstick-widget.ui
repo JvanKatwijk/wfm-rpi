@@ -37,7 +37,7 @@
       <height>21</height>
      </rect>
     </property>
-    <property name="numDigits">
+    <property name="digitCount">
      <number>7</number>
     </property>
     <property name="segmentStyle">
@@ -166,46 +166,6 @@
     <property name="text">
      <string>gain</string>
     </property>
-   </widget>
-   <widget class="QComboBox" name="rateSelector">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>100</y>
-      <width>121</width>
-      <height>29</height>
-     </rect>
-    </property>
-    <item>
-     <property name="text">
-      <string>960</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>1200</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>1536</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>2000</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>2500</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>3000</string>
-     </property>
-    </item>
    </widget>
   </widget>
  </widget>

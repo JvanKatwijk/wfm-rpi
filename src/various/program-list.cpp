@@ -23,14 +23,14 @@
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include	"program-list.h"
-#include	"gui.h"
+#include	"radio.h"
 #include	<QFile>
 #include	<QDataStream>
 
 	programList::programList (RadioInterface *mr,
 	                          QString saveName) {
 	this	-> saveName	= saveName;
-	myWidget	= new QScrollArea (NULL);
+	myWidget	= new QScrollArea;
 	myWidget	-> resize (240, 200);
 	myWidget	-> setWidgetResizable(true);
 

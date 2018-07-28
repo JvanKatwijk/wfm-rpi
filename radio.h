@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef __GUI
-#define __GUI
+#ifndef __RADIO__
+#define __RADIO__
 
 #include	<QDialog>
 #include	<QInputDialog>
@@ -43,7 +43,7 @@ class	keyPad;
 class	QSettings;
 class	fmProcessor;
 class	audioBase;
-class	virtualInput;
+class	deviceHandler;
 class	lowpassFIR;
 class	squelch;
 class	newConverter;
@@ -82,7 +82,7 @@ private:
 	int32_t		workingRate;
 	int32_t		audioRate;
 	audioBase	*soundOut;
-	virtualInput	*myRig;
+	deviceHandler	*myRig;
 	int16_t		*outTable;
 	int16_t		numberofDevices;
 
@@ -188,6 +188,8 @@ public slots:
 	void	set_audioGain		(float);
 	void	newFrequency		(int);
 	void	showDecoder		(const QString &);
+	void	closeEvent              (QCloseEvent *event);
+
 };
 
 #endif

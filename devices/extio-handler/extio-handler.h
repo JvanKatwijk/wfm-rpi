@@ -174,7 +174,7 @@ typedef enum {
 class	extioHandler:public virtualInput {
 Q_OBJECT
 public:
-			extioHandler		(QSettings *, bool *);
+			extioHandler		(QSettings *);
 			~extioHandler		(void);
 	uint8_t		myIdentity		(void);
 	int32_t		getRate			(void);

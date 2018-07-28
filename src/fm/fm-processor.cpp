@@ -22,9 +22,9 @@
  *
  */
 #include	"fm-processor.h"
-#include	"gui.h"
+#include	"radio.h"
 #include	"fm-constants.h"
-#include	"virtual-input.h"
+#include	"device-handler.h"
 #include	"rds-decoder.h"
 #include	"fm-decoder.h"
 
@@ -33,7 +33,7 @@
 //
 //	Note that no decimation done as yet: the samplestream is still
 //	full speed entering the fmProcessor
-	fmProcessor::fmProcessor (virtualInput		*vi,
+	fmProcessor::fmProcessor (deviceHandler		*vi,
 	                          RadioInterface	*RI,
 	                          int32_t		inputRate,
 	                          int32_t		fmRate,
@@ -102,7 +102,7 @@ int16_t		passPointer	= 0;
 
 	      if (!running)
 	         throw (22);
-//
+
 //	This is what we get in, first thing: decimating
 //	which - by the way - is a pretty resource consuming operation
 	      int32_t amount = myRig -> getSamples (dataBuffer, bufferSize);

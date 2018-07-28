@@ -35,7 +35,7 @@
 #include	"fir-filters.h"
 #include	"ringbuffer.h"
 
-class		virtualInput;
+class		deviceHandler;
 class		RadioInterface;
 class		fmDecoder;
 class		rdsDecoder;
@@ -43,7 +43,7 @@ class		rdsDecoder;
 class	fmProcessor:public QThread {
 Q_OBJECT
 public:
-			fmProcessor (virtualInput *,
+			fmProcessor (deviceHandler *,
 	                             RadioInterface *,
 	                             int32_t,	// inputRate
 	                             int32_t,	// fmRate
@@ -59,7 +59,7 @@ public:
 	void		set_fmMode		(bool);
 	void		set_rdsMode		(bool);
 private:
-	virtualInput	*myRig;
+	deviceHandler	*myRig;
 	RadioInterface	*myRadioInterface;
 	void		run			(void);
 	RingBuffer<DSPCOMPLEX> *fmSamples;

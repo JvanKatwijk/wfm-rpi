@@ -74,11 +74,10 @@ int32_t validRate	(int32_t r) {
 
 //	Currently, we do not have lots of settings,
 //	it just might change suddenly, but not today
-	eladHandler::eladHandler (QSettings *s, bool full, bool *success) {
+	eladHandler::eladHandler (QSettings *s) {
 int16_t	retValue;
 
 	this	-> eladSettings	= s;
-	*success		= false;
 	deviceOK		= false;
 	myFrame			= new QFrame (NULL);
 	setupUi (myFrame);
@@ -151,7 +150,6 @@ int16_t	retValue;
 	         this, SLOT (setGainReduction (void)));
 	connect (filter, SIGNAL (clicked (void)),
 	         this, SLOT (setFilter (void)));
-	*success	= true;
 }
 //
 //	... that will allow a decent destructor

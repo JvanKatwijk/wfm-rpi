@@ -28,7 +28,7 @@ const	int	EXTIO_NS	=  8192;
 static
 const	int	EXTIO_BASE_TYPE_SIZE = sizeof (float);
 
-	airspyHandler::airspyHandler (QSettings *s, bool *success) {
+	airspyHandler::airspyHandler (QSettings *s) {
 int	result;
 QString	h;
 uint32_t buffer [20];
@@ -36,7 +36,6 @@ uint	nr_rates;
 uint16_t	i;
 
 	this	-> airspySettings	= s;
-	*success		= false;
 	deviceOK		= false;
 	this	-> myFrame	= new QFrame (NULL);
 	setupUi (this -> myFrame);
@@ -78,7 +77,7 @@ uint16_t	i;
 	Handle		= dlopen ("libusb-1.0.so", RTLD_NOW | RTLD_GLOBAL);
 	if (Handle == NULL) {
 	   fprintf (stderr, "libusb cannot be loaded\n");
-	   goto err;
+	   throw (21);
 	}
 	   
 	Handle		= dlopen ("libairspy.so", RTLD_LAZY);
@@ -89,13 +88,13 @@ uint16_t	i;
 #ifndef	__MINGW32__
 	   fprintf (stderr, "Error = %s\n", dlerror ());
 #endif
-	   goto err;
+	   throw (22);
 	}
 	libraryLoaded	= true;
 
 	if (!load_airspyFunctions ()) {
 	   fprintf (stderr, "problem in loading functions\n");
-	   return;
+	   throw (23);
 	}
 //
 	strcpy (serial,"");
@@ -103,21 +102,21 @@ uint16_t	i;
 	if (result != AIRSPY_SUCCESS) {
 	   printf("my_airspy_init () failed: %s (%d)\n",
 	             my_airspy_error_name((airspy_error)result), result);
-        return;
+	   throw (24);
 	}
 	
 	result = my_airspy_open (&device);
 	if (result != AIRSPY_SUCCESS) {
 	   printf ("my_airpsy_open () failed: %s (%d)\n",
 	             my_airspy_error_name ((airspy_error)result), result);
-	   return;
+	   throw (25);
 	}
 
 	result = my_airspy_set_sample_type (device, AIRSPY_SAMPLE_FLOAT32_IQ);
 	if (result != AIRSPY_SUCCESS) {
 	   printf ("my_airspy_set_sample_type () failed: %s (%d)\n",
 	            my_airspy_error_name ((airspy_error)result), result);
-	   return;
+	   throw (26);
 	}
 //
 //	poll for the frequencies supported
@@ -141,7 +140,7 @@ uint16_t	i;
 	      dlclose (Handle);
 #endif
 	   Handle		= NULL;
-	   return;
+	   throw (27);
 	}
 	show_tab (0);
 //
@@ -149,7 +148,7 @@ uint16_t	i;
 	if (result != AIRSPY_SUCCESS) {
 	   printf ("airspy_set_samplerate() failed: %s (%d)\n",
 	            my_airspy_error_name ((airspy_error)result), result);
-	   return;
+	   throw (28);
 	} 
 
 	airspy_rate	-> display ((int)inputRate);
@@ -185,19 +184,7 @@ uint16_t	i;
 	         this, SLOT (set_rf_bias (void)));
 	displaySerial	-> setText (getSerial ());
 	running		= false;
-	*success	= true;
 	deviceOK	= true;
-	return;
-err:
-#ifdef __MINGW32__
-	FreeLibrary (Handle);
-#else
-	if (Handle != NULL)
-	   dlclose (Handle);
-#endif
-	Handle		= NULL;
-	libraryLoaded	= false;
-	*success	= false;
 	return;
 }
 

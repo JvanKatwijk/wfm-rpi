@@ -104,15 +104,13 @@ int	extioCallback (int cnt, int status, float IQoffs, void *IQData) {
 //	We assume that if there are settings possible, they
 //	are dealt with by the producer of the extio, so here 
 //	no frame whatsoever.
-	extioHandler::extioHandler (QSettings *s, bool *success) {
+	extioHandler::extioHandler (QSettings *s) {
 #ifdef	__MINGW32__
 char	temp [256];
 wchar_t	*windowsName;
 int16_t	wchars_num;
 #endif
 int32_t	inputRate	= 0;
-
-	*success	= false;
 
 	inputRate	= 3072000;	// default
 	lastFrequency	= Khz (25000);
@@ -137,7 +135,7 @@ int32_t	inputRate	= 0;
 	if (dll_file == QString ("")) {
 	   QMessageBox::warning (NULL, tr ("sdr"),
 	                               tr ("incorrect filename\n"));
-	   return;
+	   throw (20);
 	}
 
 #ifdef	__MINGW32__
@@ -157,13 +155,13 @@ int32_t	inputRate	= 0;
 	if (Handle == NULL) {
 	   QMessageBox::warning (NULL, tr ("sdr"),
 	                               tr ("loading dll failed\n"));
-	   return;
+	   throw (21);
 	}
 
 	if (!loadFunctions ()) {
 	   QMessageBox::warning (NULL, tr ("sdr"),
 	                               tr ("loading functions failed\n"));
-	   return;
+	   throw (22);
 	}
 //	apparently, the library is open, so record that
 	dll_open	= true;
@@ -175,14 +173,14 @@ int32_t	inputRate	= 0;
 	if (!((*InitHW) (rigName, rigModel, hardwareType))) {
 	   QMessageBox::warning (NULL, tr ("sdr"),
 	                               tr ("init failed\n"));
-	   exit (1);
+	   throw (23);
 	}
 
 	SetCallback (extioCallback);
 	if (!(*OpenHW)()) {
 	   QMessageBox::warning (NULL, tr ("sdr"),
 	                               tr ("Opening hardware failed\n"));
-	   exit (1);
+	   throw (24);
 	}
 
 	fprintf (stderr, "Opening OK\n");
@@ -193,7 +191,7 @@ int32_t	inputRate	= 0;
 	    (1000 * (inputRate / 1000) != inputRate)) {
 	   QMessageBox::warning (NULL, tr ("sdr"),
 	                               tr ("cannot handle this rate"));
-	   return;
+	   throw (25);
 	}
 
 	theBuffer	= new RingBuffer<DSPCOMPLEX>(1024 * 1024);
@@ -207,7 +205,7 @@ int32_t	inputRate	= 0;
 	   default:
 	      QMessageBox::warning (NULL, tr ("sdr"),
 	                               tr ("device not supported\n"));
-	      return;
+	      throw (26);
 
 	   case exthwUSBdata16:
 	      theReader	= new reader_16 (theBuffer, base_16, inputRate);
@@ -225,8 +223,6 @@ int32_t	inputRate	= 0;
 
 	ShowGUI ();
 	fprintf (stderr, "Hw open successful\n");
-
-	*success	= true;
 }
 
 	extioHandler::~extioHandler (void) {

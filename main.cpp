@@ -30,7 +30,7 @@
 #include	<unistd.h>
 #include	<QDir>
 #include	"fm-constants.h"
-#include	"gui.h"
+#include	"radio.h"
 
 #define	DEFAULT_INI	".wfm-rpi.ini"
 #define	STATION_LIST	".wfm-rpi-stations.bin"

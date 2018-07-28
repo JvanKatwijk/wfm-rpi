@@ -25,7 +25,7 @@
  */
 
 #include	"fm-demodulator.h"
-#include	"gui.h"
+#include	"radio.h"
 
 #include	"the-decoders.h"
 

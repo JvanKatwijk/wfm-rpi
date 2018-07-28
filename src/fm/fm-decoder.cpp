@@ -22,7 +22,7 @@
  *
  */
 #include	"fm-decoder.h"
-#include	"gui.h"
+#include	"radio.h"
 #include	"fm-constants.h"
 #include	"fm-demodulator.h"
 #include	"fft-filters.h"

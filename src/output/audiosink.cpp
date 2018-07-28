@@ -58,7 +58,7 @@ int32_t	i;
 	outTable	= new int16_t [numofDevices + 1];
 	for (i = 0; i < numofDevices; i ++)
 	   outTable [i] = -1;
-	ostream		= NULL;
+	ostream		= nullptr;
 	setupChannels (streamSelector);
 	connect (streamSelector, SIGNAL (activated (int)),
 	         this,  SLOT (set_streamSelector (int)));
@@ -68,7 +68,7 @@ int32_t	i;
 }
 
 	audioSink::~audioSink	(void) {
-	if ((ostream != NULL) && !Pa_IsStreamStopped (ostream)) {
+	if ((ostream != nullptr) && !Pa_IsStreamStopped (ostream)) {
 	   paCallbackReturn = paAbort;
 	   (void) Pa_AbortStream (ostream);
 	   while (!Pa_IsStreamStopped (ostream))
@@ -76,7 +76,7 @@ int32_t	i;
 	   writerRunning = false;
 	}
 
-	if (ostream != NULL)
+	if (ostream != nullptr)
 	   Pa_CloseStream (ostream);
 
 	if (portAudio)
@@ -94,7 +94,7 @@ PaError err;
 	if (!isValidDevice (odev))
 	   return false;
 
-	if ((ostream != NULL) && !Pa_IsStreamStopped (ostream)) {
+	if ((ostream != nullptr) && !Pa_IsStreamStopped (ostream)) {
 	   paCallbackReturn = paAbort;
 	   (void) Pa_AbortStream (ostream);
 	   while (!Pa_IsStreamStopped (ostream))
@@ -102,7 +102,7 @@ PaError err;
 	   writerRunning = false;
 	}
 
-	if (ostream != NULL)
+	if (ostream != nullptr)
 	   Pa_CloseStream (ostream);
 
 	outputParameters. device		= odev;
@@ -114,7 +114,7 @@ PaError err;
 //	bufSize	= (int)((float)outputParameters. suggestedLatency);
 	bufSize	= latency * 128;
 
-	outputParameters. hostApiSpecificStreamInfo = NULL;
+	outputParameters. hostApiSpecificStreamInfo = nullptr;
 //
 	fprintf (stderr, "Suggested size for outputbuffer = %d\n", bufSize);
 	err = Pa_OpenStream (

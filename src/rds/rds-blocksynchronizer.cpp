@@ -33,7 +33,7 @@
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include	"rds-blocksynchronizer.h"
-#include	"gui.h"
+#include	"radio.h"
 
 uint16_t	H [] = {
 	0x2DC,		//10 1101 1100		0

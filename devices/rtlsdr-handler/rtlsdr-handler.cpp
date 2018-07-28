@@ -88,7 +88,7 @@ virtual void	run (void) {
 };
 //
 //	Our wrapper is a simple classs
-	rtlsdrHandler::rtlsdrHandler (QSettings *s, bool full, bool *success) {
+	rtlsdrHandler::rtlsdrHandler (QSettings *s) {
 int16_t	deviceCount;
 int32_t	r;
 int16_t	deviceIndex;
@@ -97,26 +97,8 @@ QString	h;
 int	k;
 
 	dabSettings		= s;
-	this	-> myFrame	= new QFrame (NULL);
-	setupUi (this -> myFrame);
-	this	-> myFrame	-> show ();
-	dabSettings	-> beginGroup ("dabstick");
-	h	= dabSettings	-> value ("dabRate", 960). toString ();
-	k	=  rateSelector -> findText (h);
-	if (k != -1)
-	   rateSelector -> setCurrentIndex (k);
-	inputRate	=  Khz (rateSelector -> currentText (). toInt ());
-	dabSettings	-> endGroup ();
+	inputRate		=  Khz (1920);	// multiple of 192
 //
-//	for the mini we only allow selection of this value,
-//	i.e. kill all others
-	if (!full) {
-	   while (rateSelector -> count () > 0)
-	      rateSelector -> removeItem (rateSelector -> currentIndex ());
-	   rateSelector	-> addItem (QString::number (inputRate / Khz (1)));
-	}
-	  
-	*success			= false;	// just the default
 	libraryLoaded			= false;
 	open				= false;
 	_I_Buffer			= NULL;
@@ -134,20 +116,24 @@ int	k;
 
 	if (Handle == NULL) {
 	   fprintf (stderr, "failed to open %s\n", libraryString);
-	   return;
+	   throw (20);
 	}
 
 	libraryLoaded	= true;
 	if (!load_rtlFunctions ())
-	   goto err;
+	   throw (21);
 
 //
 //	Ok, from here we have the library functions accessible
 	deviceCount 		= this -> rtlsdr_get_device_count ();
 	if (deviceCount == 0) {
 	   fprintf (stderr, "No devices found\n");
-	   return;
+	   throw (22);
 	}
+
+	this	-> myFrame	= new QFrame (NULL);
+	setupUi (this -> myFrame);
+	this	-> myFrame	-> show ();
 
 	deviceIndex = 0;	// default
 	if (deviceCount > 1) {
@@ -164,16 +150,14 @@ int	k;
 	r			= this -> rtlsdr_open (&device, deviceIndex);
 	if (r < 0) {
 	   fprintf (stderr, "Opening dabstick failed\n");
-	   *success = false;
-	   return;
+	   throw (25);
 	}
 	open			= true;
 	r			= this -> rtlsdr_set_sample_rate (device,
 	                                                          inputRate);
 	if (r < 0) {
 	   fprintf (stderr, "Setting samplerate failed\n");
-	   *success = false;
-	   return;
+	   throw (26);
 	}
 
 	r			= this -> rtlsdr_get_sample_rate (device);
@@ -195,8 +179,6 @@ int	k;
 	         this, SLOT (setExternalGain (int)));
 	connect (f_correction, SIGNAL (valueChanged (int)),
 	         this, SLOT (freqCorrection  (int)));
-	connect (rateSelector, SIGNAL (activated (const QString &)),
-	         this, SLOT (set_rateSelector (const QString &)));
 	connect (KhzOffset, SIGNAL (valueChanged (int)),
 	         this, SLOT (setKhzOffset (int)));
 	connect (HzOffset, SIGNAL (valueChanged (int)),
@@ -207,21 +189,6 @@ int	k;
 	KhzOffset	-> setValue (dabSettings -> value ("KhzOffset", 0). toInt ());
 	HzOffset	-> setValue (dabSettings -> value ("HzOffset", 0). toInt ());
 	dabSettings	-> endGroup ();
-	*success 		= true;
-	return;
-
-err:
-	if (open)
-	   this -> rtlsdr_close (device);
-#ifdef __MINGW32__
-	FreeLibrary (Handle);
-#else
-	dlclose (Handle);
-#endif
-	libraryLoaded	= false;
-	open		= false;
-	*success	= false;
-	return;
 }
 
 	rtlsdrHandler::~rtlsdrHandler	(void) {
@@ -237,8 +204,6 @@ err:
 	dabSettings	-> setValue ("f_correction", f_correction -> value ());
 	dabSettings	-> setValue ("KhzOffset", KhzOffset -> value ());
 	dabSettings	-> setValue ("HzOffset", HzOffset -> value ());
-	dabSettings	-> setValue ("dabRate",
-	                              rateSelector -> currentText (). toLatin1 (). data ());
 	dabSettings	-> endGroup ();
 	delete myFrame;
 	open = false;
@@ -524,10 +489,5 @@ int16_t	rtlsdrHandler::bitDepth	(void) {
 
 int32_t	rtlsdrHandler::getRate	(void) {
 	return inputRate;
-}
-
-void	rtlsdrHandler::set_rateSelector (const QString &s) {
-int32_t v	= s. toInt ();
-	return;
 }
 

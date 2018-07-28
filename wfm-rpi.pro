@@ -6,6 +6,7 @@
 
 TEMPLATE	= app
 QT		+= widgets 
+TARGET		= wfm-rpi-1.0
 CONFIG		+= console
 QMAKE_CFLAGS	+= -flto -ffast-math
 QMAKE_CXXFLAGS	+= -flto -ffast-math
@@ -18,11 +19,10 @@ RESOURCES       += resources.qrc
 
 ########################
 #
-#	choose ONE device
 #
-#CONFIG	+= airspy
+CONFIG	+= airspy
 CONFIG	+= sdrplay
-#CONFIG	+= dabstick
+CONFIG	+= dabstick
 #	Handle with care
 #CONFIG	+= extio
 #	Handle not at all
@@ -56,7 +56,7 @@ INCLUDEPATH += . \
 	      ./devices 
 
 # Input
-HEADERS += ./gui.h \
+HEADERS += ./radio.h \
 	   ./includes/popup-keypad.h \
 	   ./includes/fm-constants.h \
 	   ./includes/various/squelchClass.h \
@@ -83,12 +83,12 @@ HEADERS += ./gui.h \
 	   ./includes/rds/rds-group.h \
 	   ./includes/rds/rds-groupdecoder.h  \
 	   ./includes/rds/charsets.h \
-	   ./devices/virtual-input.h 
+	   ./devices/device-handler.h 
 
 FORMS += ./sdrgui.ui 
 
 SOURCES += ./main.cpp \
-	   ./gui.cpp \
+	   ./radio.cpp \
 	   ./src/popup-keypad.cpp \
            ./src/various/fft.cpp \
 	   ./src/various/oscillator.cpp \
@@ -111,7 +111,7 @@ SOURCES += ./main.cpp \
 	   ./src/rds/rds-group.cpp \
 	   ./src/rds/rds-groupdecoder.cpp \
 	   ./src/rds/charsets.cpp \
-	   ./devices/virtual-input.cpp 
+	   ./devices/device-handler.cpp 
 #
 # for windows32 we use:
 win32 {
@@ -142,7 +142,6 @@ LIBS		+= -lsamplerate
 #	the devices:
 #	for the "standard" rtlsdr library use:
 dabstick {
-	TARGET		= wfm-rpi-dabstick-0.998
 	DEFINES		+= HAVE_DABSTICK
 	FORMS		+= ./devices/rtlsdr-handler/dabstick-widget.ui
 	INCLUDEPATH	+= ./devices/rtlsdr-handler
@@ -157,7 +156,6 @@ dabstick {
 #	the SDRplay
 #
 sdrplay {
-	TARGET		= wfm-rpi-sdrplay-0.998
 	DEFINES		+= HAVE_SDRPLAY
 	INCLUDEPATH	+= ./devices/sdrplay-handler
 	HEADERS		+= ./devices/sdrplay-handler/sdrplay-handler.h \
@@ -170,7 +168,6 @@ sdrplay {
 #	the AIRSPY
 #
 airspy {
-	TARGET		= wfm-rpi-airspy-0.998
 	DEFINES		+= HAVE_AIRSPY
 	FORMS		+= ./devices/airspy-handler/airspy-widget.ui
 	DEPENDPATH	+= ./devices/airspy-handler
@@ -190,7 +187,6 @@ streamer	{
 #	the elad-s1
 #
 elad-s1 {
-	TARGET		= wfm-rpi-elad-0.998
 	DEFINES		+= HAVE_ELAD_S1
 	FORMS		+= ./devices/sw-elad-s1/elad_widget.ui
 	DEPENDPATH	+= ./devices/sw-elad-s1
@@ -206,7 +202,6 @@ elad-s1 {
 #	extio dependencies, windows only
 #
 extio {
-	TARGET		= wfm-rpi-extio-0.998
 	DEFINES		+= HAVE_EXTIO
 	INCLUDEPATH	+= ./devices/extio-handler
 	HEADERS		+= ./devices/extio-handler/extio-handler.h \
