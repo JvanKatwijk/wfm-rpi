@@ -21,7 +21,16 @@ The software has - just to experiment with - implemented 5 different algorithms 
 
 ----------------------------------------------------------------------------
 
-The software can be configured for use with an AIRSPY, SDRplay or a DABstick.
+The software can be configured for use with an AIRSPY, SDRplay and/or
+a DABstick.
+
+The 1.0 version differs from the 0.998 version in two ways
++ it allows configuration for more than one device, it will use \
+the device attached.
++ for the SDRplay, it now has an improved gain reduction setting, and \
+it depends on library 2.13. In case an RSPduo is used, tuner 1 will we
+selected by default.
+
 This version of the FM software was designed such that it
 runs on a Raspberry PI 2. The - high - input samplerate
 is filtered and decimated to a rate around 192000. Note that the

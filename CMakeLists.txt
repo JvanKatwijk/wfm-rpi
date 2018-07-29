@@ -27,20 +27,7 @@ if(DEFINED DABSTICK)
    set(DABSTICK true)
 endif ()
 
-#	but do not uncomment more than one line
-#	if you want to have the PCM samples sent to port 20040
-#	rather than to the local soundcard, uncomment
-#	set(STREAMER true)
-
-	if (SDRPLAY)
-	   set (objectName wfm-rpi-sdrplay-0.998)
-	endif (SDRPLAY)
-	if (AIRSPY)
-	   set (objectName wfm-rpi-airspy-0.998)
-	endif (AIRSPY)
-	if (DABSTICK)
-	   set (objectName wfm-rpi-dabstick-0.998)
-	endif (DABSTICK)
+	set (objectName wfm-rpi-1.0)
 ########################################################################
 	find_package (Qt5Widgets REQUIRED)
 
